@@ -1,0 +1,6 @@
+tasks.register('copyConfig') {
+    copy {
+        from 'src/main/resources/config'
+        into "$buildDir/resources/main"
+    }
+}
