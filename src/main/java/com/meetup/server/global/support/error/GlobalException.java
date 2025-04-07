@@ -3,7 +3,7 @@ package com.meetup.server.global.support.error;
 import lombok.Getter;
 
 @Getter
-public class GlobalException extends RuntimeException{
+public class GlobalException extends RuntimeException {
 
     private final ErrorType errorType;
 
