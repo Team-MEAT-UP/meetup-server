@@ -22,15 +22,15 @@ public class Event extends BaseEntity {
     @Column(name = "event_id")
     private UUID eventId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subway_id", nullable = false)
     private Subway subway;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommend_id", nullable = false)
     private Recommend recommend;
 

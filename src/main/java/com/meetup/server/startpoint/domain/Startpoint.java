@@ -20,7 +20,7 @@ public class Startpoint extends BaseEntity {
     @Column(name = "start_point_id")
     private Long startPointId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
