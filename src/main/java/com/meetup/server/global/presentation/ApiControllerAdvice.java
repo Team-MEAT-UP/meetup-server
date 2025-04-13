@@ -3,15 +3,19 @@ package com.meetup.server.global.presentation;
 import com.meetup.server.global.support.error.GlobalErrorType;
 import com.meetup.server.global.support.error.GlobalException;
 import com.meetup.server.global.support.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+
 @Slf4j
-public class ApiControllerAdvice {
+@Hidden
+@RestControllerAdvice(annotations = {RestController.class})
+public class ApiControllerAdvice{
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
