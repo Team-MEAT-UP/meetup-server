@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "event")
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class Event extends BaseEntity {
 
@@ -24,15 +24,15 @@ public class Event extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "subway_id", nullable = false)
-    private Subway subwayId;
+    private Subway subway;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
-    private Member memberId;
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "recommend_id", nullable = false)
-    private Recommend recommendId;
+    private Recommend recommend;
 
     @PrePersist
     public void prePersist() {
@@ -40,9 +40,9 @@ public class Event extends BaseEntity {
     }
 
     @Builder
-    public Event(Subway subwayId, Member memberId, Recommend recommendId) {
-        this.subwayId = subwayId;
-        this.memberId = memberId;
-        this.recommendId = recommendId;
+    public Event(Subway subway, Member member, Recommend recommend) {
+        this.subway = subway;
+        this.member = member;
+        this.recommend = recommend;
     }
 }

@@ -22,7 +22,7 @@ public class Startpoint extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    private Event eventId;
+    private Event event;
 
     @Embedded
     private Address address;
@@ -31,8 +31,8 @@ public class Startpoint extends BaseEntity {
     private Location location;
 
     @Builder
-    public Startpoint(Event eventId, Address address, Location location) {
-        this.eventId = eventId;
+    public Startpoint(Event event, Address address, Location location) {
+        this.event = event;
         this.address = address;
         this.location = location;
     }

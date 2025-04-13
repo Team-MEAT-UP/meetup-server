@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class Location {
 
     @Column(name = "road_longitude", length = 255, nullable = false)
-    private String roadLongitude;   //경도
+    private Double roadLongitude;   //경도
 
     @Column(name = "road_latitude", length = 255, nullable = false)
-    private String roadLatitude;    //위도
+    private Double roadLatitude;    //위도
 }
