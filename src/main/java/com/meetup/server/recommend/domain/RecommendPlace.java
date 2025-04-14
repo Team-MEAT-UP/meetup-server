@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "recommend_place")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class Recommend {
+public class RecommendPlace {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
