@@ -1,6 +1,7 @@
 package com.meetup.server.event.domain;
 
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.member.domain.Member;
 import com.meetup.server.recommend.domain.RecommendPlace;
@@ -36,7 +37,8 @@ public class Event extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        eventId = UUID.randomUUID();
+//        eventId = UUID.randomUUID();
+        this.eventId = UuidCreator.getTimeOrderedEpoch();
     }
 
     @Builder
