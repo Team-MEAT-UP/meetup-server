@@ -76,5 +76,5 @@ jobs:
           port: ${{ secrets.NCP_PORT }}
           script: |
             sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/spot-backend:${{ github.sha }}
-            sudo docker rm -f spot-backend || true
+            sudo docker ps -q -f "name=spot-backend" | xargs sudo docker stop | xargs sudo docker rm
             sudo docker run -d -p 8080:8080 --name spot-backend ${{ secrets.NCP_CONTAINER_REGISTRY }}/spot-backend:${{ github.sha }}
