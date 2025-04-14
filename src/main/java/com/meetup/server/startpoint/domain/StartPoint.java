@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "start_point")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class Startpoint extends BaseEntity {
+public class StartPoint extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Startpoint extends BaseEntity {
     private Location location;
 
     @Builder
-    public Startpoint(Event event, Address address, Location location) {
+    public StartPoint(Event event, Address address, Location location) {
         this.event = event;
         this.address = address;
         this.location = location;
