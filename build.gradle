@@ -27,19 +27,7 @@ repositories {
 	mavenCentral()
 }
 
-def generated = 'src/main/generated'
 
-tasks.withType(JavaCompile).configureEach {
-	options.getGeneratedSourceOutputDirectory().set(file(generated))
-}
-
-sourceSets {
-	main.java.srcDirs += [ generated ]
-}
-
-clean {
-	delete file(generated)
-}
 
 apply from: "gradle/spring.gradle"
 apply from: "gradle/database.gradle"
@@ -47,3 +35,5 @@ apply from: "gradle/docs.gradle"
 apply from: "gradle/util.gradle"
 apply from: "gradle/test.gradle"
 apply from: "gradle/config.gradle"
+
+
