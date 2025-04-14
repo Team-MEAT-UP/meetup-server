@@ -37,7 +37,6 @@ public class Event extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
-//        eventId = UUID.randomUUID();
         this.eventId = UuidCreator.getTimeOrderedEpoch();
     }
 
