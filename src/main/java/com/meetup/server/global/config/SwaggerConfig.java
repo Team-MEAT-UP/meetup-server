@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
 @OpenAPIDefinition(
-        info = @Info(title = "MeetUp API 명세서",
-                description = "MeetUp API 명세서",
+        info = @Info(title = "SPOT API 명세서",
+                description = "SPOT API 명세서",
                 version = "v1"
         ),
         servers = @Server(url = "/", description = "Default Server URL")
