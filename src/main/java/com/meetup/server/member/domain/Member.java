@@ -23,8 +23,17 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image", length = 255, nullable = true)
     private String profileImage;
 
+    @Column(name = "email", length = 255, nullable = false, unique = true)
+    private String email;
+
     @Builder
-    public Member(String nickname, String profileImage) {
+    public Member(String nickname, String profileImage, String email) {
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.email = email;
+    }
+
+    public void updateProfile(String nickname, String profileImage) {
         this.nickname = nickname;
         this.profileImage = profileImage;
     }

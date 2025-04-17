@@ -1,10 +1,10 @@
-package com.meetup.server.member.dto.response;
+package com.meetup.server.auth.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record KakaoLoginResponse(
+public record KakaoAuthResponse(
         @JsonProperty("token_type") String tokenType,
         @JsonProperty("access_token") String accessToken,
         @JsonProperty("id_token") String idToken,

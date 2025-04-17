@@ -1,11 +1,12 @@
-package com.meetup.server.member.application;
+package com.meetup.server.auth.application;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "oauth2.kakao")
-public record KakaoProperties(
+public record KakaoAuthProperties(
         String clientId,
         String redirectUri,
-        String clientSecret
+        String clientSecret,
+        String propertyKeys
 ) {
 }
