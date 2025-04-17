@@ -2,6 +2,8 @@ package com.meetup.server.auth.application;
 
 import com.meetup.server.auth.dto.response.KakaoAuthResponse;
 import com.meetup.server.auth.dto.response.KakaoResourceResponse;
+import com.meetup.server.auth.exception.AuthErrorType;
+import com.meetup.server.auth.exception.AuthException;
 import com.meetup.server.member.domain.Member;
 import com.meetup.server.member.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +40,7 @@ public class KakaoLoginService {
         );
 
         if (memberInfo.kakaoAccount().email().isEmpty()) {
-            throw new IllegalArgumentException("카카오톡 계정정보가 유효하지 않습니다."); //TODO: CUSTOM EXCEPTION 처리하기
+            throw new AuthException(AuthErrorType.NOT_INVALID_KAKAO_TOKEN);
         }
 
         return saveOrUpdateMemberInfo(memberInfo);
