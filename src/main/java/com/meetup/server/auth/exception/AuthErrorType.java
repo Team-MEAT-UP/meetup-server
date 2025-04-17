@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum AuthErrorType implements ErrorType {
-    NOT_INVALID_KAKAO(HttpStatus.UNAUTHORIZED, "카카오 계정이 유효하지 않습니다."),
+    INVALID_KAKAO_ACCOUNT(HttpStatus.UNAUTHORIZED, "카카오 계정이 유효하지 않습니다."),
 
     ;
 

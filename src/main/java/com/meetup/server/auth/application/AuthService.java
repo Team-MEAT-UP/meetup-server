@@ -16,7 +16,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public String loginWithKakao(String code) {
-        Member member = kakaoLoginService.getToken(code);
+        Member member = kakaoLoginService.authenticateWithKakaoCode(code);
 
         return jwtTokenProvider.createAccessToken(member);
     }

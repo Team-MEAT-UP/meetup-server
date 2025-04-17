@@ -20,7 +20,7 @@ public class KakaoLoginService {
     private final KakaoAuthClient kakaoAuthClient;
     private final KakaoResourceClient kakaoResourceClient;
 
-    public Member getToken(String code) {
+    public Member authenticateWithKakaoCode(String code) {
         KakaoAuthResponse response = kakaoAuthClient.getTokenWithCode(
 
                 "authorization_code",
@@ -40,7 +40,7 @@ public class KakaoLoginService {
         );
 
         if (memberInfo.kakaoAccount().email().isEmpty()) {
-            throw new AuthException(AuthErrorType.NOT_INVALID_KAKAO);
+            throw new AuthException(AuthErrorType.INVALID_KAKAO_ACCOUNT);
         }
 
         return saveOrUpdateMemberInfo(memberInfo);
