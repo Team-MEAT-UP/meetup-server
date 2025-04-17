@@ -1,4 +1,4 @@
-package com.meetup.server.auth.application;
+package com.meetup.server.auth.application.ext;
 
 import com.meetup.server.auth.dto.response.KakaoResourceResponse;
 import org.springframework.cloud.openfeign.FeignClient;

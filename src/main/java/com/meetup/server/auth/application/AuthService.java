@@ -1,5 +1,6 @@
 package com.meetup.server.auth.application;
 
+import com.meetup.server.auth.application.ext.KakaoLoginService;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
 import com.meetup.server.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,3 @@ public class AuthService {
         return jwtTokenProvider.createAccessToken(member);
     }
 }
-

@@ -1,4 +1,4 @@
-package com.meetup.server.auth.application;
+package com.meetup.server.auth.application.ext;
 
 import com.meetup.server.auth.dto.response.KakaoAuthResponse;
 import com.meetup.server.auth.dto.response.KakaoResourceResponse;
@@ -40,7 +40,7 @@ public class KakaoLoginService {
         );
 
         if (memberInfo.kakaoAccount().email().isEmpty()) {
-            throw new AuthException(AuthErrorType.NOT_INVALID_KAKAO_TOKEN);
+            throw new AuthException(AuthErrorType.NOT_INVALID_KAKAO);
         }
 
         return saveOrUpdateMemberInfo(memberInfo);

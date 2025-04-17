@@ -1,4 +1,4 @@
-package com.meetup.server.auth.application;
+package com.meetup.server.auth.application.ext;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
