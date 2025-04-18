@@ -1,8 +1,8 @@
 package com.meetup.server.global.support.jwt;
 
+import com.meetup.server.auth.dto.response.JwtUserDetails;
 import com.meetup.server.member.domain.Member;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,7 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void setKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey());
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
     public String createAccessToken(Member member) {
@@ -61,5 +60,15 @@ public class JwtTokenProvider {
             log.error("Token validation error: ", e);
             return false;
         }
+    }
+
+    public JwtUserDetails getJwtUserDetails(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return JwtUserDetails.fromClaim(claims);
     }
 }
