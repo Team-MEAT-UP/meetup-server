@@ -1,7 +1,7 @@
 package com.meetup.server.global.support.jwt;
 
+import com.meetup.server.auth.dto.CustomOAuth2User;
 import com.meetup.server.auth.dto.response.JwtUserDetails;
-import com.meetup.server.member.domain.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -24,30 +24,35 @@ public class JwtTokenProvider {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
-    public String createAccessToken(Member member) {
+    public String createAccessToken(Object member) {
         return createToken(member, jwtProperties.accessTokenExpiration());
     }
 
-    public String createRefreshToken(Member member) {
+    public String createRefreshToken(Object member) {
         return createToken(member, jwtProperties.refreshTokenExpiration());
     }
 
-    private String createToken(Member member, long expiration) {
+    private String createToken(Object member, long expiration) {
         long now = (new Date()).getTime();
         Date validity = new Date(now + expiration);
 
         JwtBuilder builder = Jwts.builder()
-                .setSubject(member.getMemberId().toString())
                 .setIssuedAt(new Date(now))
                 .setExpiration(validity)
                 .setIssuer(jwtProperties.issuer())
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .signWith(key, SignatureAlgorithm.HS512);
 
+        if (member instanceof CustomOAuth2User oAuth2User) {
+            builder.setSubject(oAuth2User.getMemberId().toString());
+        } else {
+            throw new IllegalArgumentException("Unsupported user type: " + member.getClass().getName());
+        }
+
         return builder.compact();
     }
 
-    public boolean validateToken(final String token) {
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(key)

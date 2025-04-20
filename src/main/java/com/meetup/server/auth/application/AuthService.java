@@ -1,8 +1,5 @@
 package com.meetup.server.auth.application;
 
-import com.meetup.server.auth.application.ext.KakaoLoginService;
-import com.meetup.server.global.support.jwt.JwtTokenProvider;
-import com.meetup.server.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,13 +8,4 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
-    private final KakaoLoginService kakaoLoginService;
-    private final JwtTokenProvider jwtTokenProvider;
-
-    public String loginWithKakao(String code) {
-        Member member = kakaoLoginService.authenticateWithKakaoCode(code);
-
-        return jwtTokenProvider.createAccessToken(member);
-    }
 }
