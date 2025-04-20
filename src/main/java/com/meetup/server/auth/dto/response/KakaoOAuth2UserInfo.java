@@ -47,8 +47,6 @@ public record KakaoOAuth2UserInfo(
         return kakaoAccount.profile.profileImageUrl();
     }
 
-    //kakao name은 앱 권한 신청은 기존 운영 서비스에서 이 정보가 회원가입에 사용되고 있음을 증빙해야 사용 가능
-    //따라서 nickname으로 대체
     @Override
     public String getName() {
         return kakaoAccount.getNickname();

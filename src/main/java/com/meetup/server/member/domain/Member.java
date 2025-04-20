@@ -36,9 +36,4 @@ public class Member extends BaseEntity {
         this.email = email;
         this.socialId = socialId;
     }
-
-    public void updateProfile(String nickname, String profileImage) {
-        this.nickname = nickname;
-        this.profileImage = profileImage;
-    }
 }
