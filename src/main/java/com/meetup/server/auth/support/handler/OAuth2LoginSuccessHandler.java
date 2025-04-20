@@ -30,8 +30,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     ) throws IOException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        log.info("OAuth2 login success: {}", oAuth2User.getEmail());
-
         if (response.isCommitted()) {
             log.debug("Response has already been committed");
             return;
