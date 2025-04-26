@@ -30,11 +30,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     ) throws IOException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        if (response.isCommitted()) {
-            log.debug("Response has already been committed");
-            return;
-        }
-
         String targetUrl = createRedirectUrlWithTokens(oAuth2User);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

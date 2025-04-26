@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/**
- * AccessToken 은 있으나 권한이 맞지 않는 경우 - 403
- */
 @RequiredArgsConstructor
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {

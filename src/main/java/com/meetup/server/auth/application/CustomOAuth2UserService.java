@@ -40,7 +40,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // Default 객체 아닌, Custom 객체 생성 하여 반환
         return new CustomOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("dummy_role")),
+                Collections.singleton(new SimpleGrantedAuthority("dummy_role")),    //TODO
                 attributes,
                 extractAttributes.nameAttributeKey(),
                 createdMember.getEmail(),

@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/**
- * 인증 되지 않은 사용자가 security 가 적용된 uri 에 액세스 할 때 호출(AccessToken 부정확 or 없음) - 401
- */
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
