@@ -1,6 +1,7 @@
 package com.meetup.server.member.domain;
 
 import com.meetup.server.global.domain.BaseEntity;
+import com.meetup.server.member.domain.type.Role;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,11 +30,17 @@ public class Member extends BaseEntity {
     @Column(name = "email", length = 255, nullable = false, unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 10, nullable = false)
+    private Role role;
+
+
     @Builder
-    public Member(String nickname, String profileImage, String email, String socialId) {
+    public Member(String nickname, String profileImage, String email, String socialId, Role role) {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;
         this.socialId = socialId;
+        this.role = role;
     }
 }
