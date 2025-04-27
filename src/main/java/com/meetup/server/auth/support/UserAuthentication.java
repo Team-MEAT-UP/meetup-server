@@ -14,6 +14,6 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
     }
 
     public static UserAuthentication from(JwtUserDetails jwtUserDetails) {
-        return new UserAuthentication(jwtUserDetails.userId(), "", List.of());
+        return new UserAuthentication(jwtUserDetails.userId(), "", List.of());  //TODO: MEBMER 객체로 넘기기
     }
 }

@@ -23,11 +23,11 @@ import java.util.Map;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+    private static final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String userNameAttributeName = userRequest.getClientRegistration()
@@ -35,7 +35,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> attributes = oAuth2User.getAttributes(); // 소셜 로그인 userInfo
 
         OAuthAttributes extractAttributes = OAuthAttributes.of(userNameAttributeName, attributes);
-
         Member createdMember = getOrGenerateMember(extractAttributes);
 
         // Default 객체 아닌, Custom 객체 생성 하여 반환

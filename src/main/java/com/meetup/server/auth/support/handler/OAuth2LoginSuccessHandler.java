@@ -34,13 +34,13 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    //parameter로 access_token과 refresh_token을 추가한 URL 생성
     private String createRedirectUrlWithTokens(CustomOAuth2User user) {
         String accessToken = tokenProvider.createAccessToken(user);
         String refreshToken = tokenProvider.createRefreshToken(user);
 
         return UriComponentsBuilder.fromUriString(successRedirectUri)
                 .queryParam("access_token", accessToken)
+                //TODO: refresh_token cookie에 담아 보내기 (-> 검증과 발급 과정 수정 필요)
                 .queryParam("refresh_token", refreshToken)
                 .build()
                 .toUriString();

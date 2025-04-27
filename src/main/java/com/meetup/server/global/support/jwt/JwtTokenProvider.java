@@ -21,7 +21,7 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void setKey() {
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        this.key = Keys.hmacShaKeyFor(jwtProperties.secretKey().getBytes());
     }
 
     public String createAccessToken(Object member) {

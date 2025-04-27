@@ -36,7 +36,7 @@ public record OAuthAttributes(
                 .nickname(oauth2UserInfo.getNickname())
                 .profileImage(oauth2UserInfo.getProfileImage())
                 .socialId(oauth2UserInfo.getSocialId())
-                .role(Role.USER)
+                .role(Role.MEMBER)
                 .build();
     }
 }
