@@ -52,7 +52,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7일
+                .maxAge(24 * 60 * 60)
                 .sameSite("Lax")    //GET 요청
                 .build();
 
