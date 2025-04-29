@@ -11,14 +11,14 @@ import java.util.Map;
 public class CustomOAuth2User extends DefaultOAuth2User {
 
     private final String email;
-    private final Long memberId;
+    private final Long userId;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
                             Map<String, Object> attributes, String nameAttributeKey,
-                            String email, Long memberId
+                            String email, Long userId
     ) {
         super(authorities, attributes, nameAttributeKey);
         this.email = email;
-        this.memberId = memberId;
+        this.userId = userId;
     }
 }

@@ -44,7 +44,7 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512);
 
         if (member instanceof CustomOAuth2User oAuth2User) {
-            builder.setSubject(oAuth2User.getMemberId().toString());
+            builder.setSubject(oAuth2User.getUserId().toString());
         } else {
             throw new IllegalArgumentException("Unsupported user type: " + member.getClass().getName());
         }
