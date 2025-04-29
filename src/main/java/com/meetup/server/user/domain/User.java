@@ -1,22 +1,22 @@
-package com.meetup.server.member.domain;
+package com.meetup.server.user.domain;
 
 import com.meetup.server.global.domain.BaseEntity;
-import com.meetup.server.member.domain.type.Role;
+import com.meetup.server.user.domain.type.Role;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "member")
+@Table(name = "users")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class Member extends BaseEntity {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "nickname", length = 255, nullable = false)
     private String nickname;
@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
 
 
     @Builder
-    public Member(String nickname, String profileImage, String email, String socialId, Role role) {
+    public User(String nickname, String profileImage, String email, String socialId, Role role) {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;

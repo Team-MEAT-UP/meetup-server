@@ -1,6 +1,6 @@
 package com.meetup.server.auth.dto.response;
 
-import com.meetup.server.member.domain.type.Role;
+import com.meetup.server.user.domain.type.Role;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public record JwtUserDetails(
     public static JwtUserDetails fromClaim(Claims claims) {
         Long userId = Long.valueOf(claims.getSubject());
         Collection<? extends GrantedAuthority> authorities = List.of(
-                Role.MEMBER::getAuthority
+                Role.USER::getAuthority
         );
         return new JwtUserDetails(userId, authorities);
     }

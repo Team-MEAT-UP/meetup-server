@@ -1,8 +1,8 @@
 package com.meetup.server.auth.dto.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meetup.server.member.domain.Member;
-import com.meetup.server.member.domain.type.Role;
+import com.meetup.server.user.domain.User;
+import com.meetup.server.user.domain.type.Role;
 import lombok.Builder;
 
 import java.util.Map;
@@ -29,14 +29,14 @@ public record OAuthAttributes(
                 .build();
     }
 
-    public Member toEntity(OAuth2UserInfo oauth2UserInfo) {
+    public User toEntity(OAuth2UserInfo oauth2UserInfo) {
 
-        return Member.builder()
+        return User.builder()
                 .email(oauth2UserInfo.getEmail())
                 .nickname(oauth2UserInfo.getNickname())
                 .profileImage(oauth2UserInfo.getProfileImage())
                 .socialId(oauth2UserInfo.getSocialId())
-                .role(Role.MEMBER)
+                .role(Role.USER)
                 .build();
     }
 }

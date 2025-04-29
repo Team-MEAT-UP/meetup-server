@@ -1,4 +1,4 @@
-package com.meetup.server.member.presentation;
+package com.meetup.server.user.presentation;
 
 import com.meetup.server.global.support.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/members")
 @RestController
 @RequiredArgsConstructor
-public class MemberController {
+public class UserController {
 
     @GetMapping("/test")
     public ApiResponse<?> test(

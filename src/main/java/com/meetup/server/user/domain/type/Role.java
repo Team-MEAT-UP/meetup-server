@@ -1,4 +1,4 @@
-package com.meetup.server.member.domain.type;
+package com.meetup.server.user.domain.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Role {
 
-    MEMBER("ROLE_MEMBER"),
+    USER("ROLE_USER"),
     ADMIN("ROLE_ADMIN"),
     ;
 

@@ -2,8 +2,8 @@ package com.meetup.server.auth.application;
 
 import com.meetup.server.auth.dto.CustomOAuth2User;
 import com.meetup.server.auth.dto.response.OAuthAttributes;
-import com.meetup.server.member.domain.Member;
-import com.meetup.server.member.persistence.MemberRepository;
+import com.meetup.server.user.domain.User;
+import com.meetup.server.user.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private static final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
     @Override
@@ -35,22 +35,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> attributes = oAuth2User.getAttributes(); // 소셜 로그인 userInfo
 
         OAuthAttributes extractAttributes = OAuthAttributes.of(userNameAttributeName, attributes);
-        Member createdMember = getOrGenerateMember(extractAttributes);
+        User createdUser = getOrGenerateMember(extractAttributes);
 
         // Default 객체 아닌, Custom 객체 생성 하여 반환
         return new CustomOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(createdMember.getRole().getAuthority())),
+                Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getAuthority())),
                 attributes,
                 extractAttributes.nameAttributeKey(),
-                createdMember.getEmail(),
-                createdMember.getMemberId()
+                createdUser.getEmail(),
+                createdUser.getUserId()
         );
     }
 
-    private Member getOrGenerateMember(OAuthAttributes attributes) {
+    private User getOrGenerateMember(OAuthAttributes attributes) {
         log.info("attributes: {}", attributes);
 
-        return memberRepository.findBySocialId(attributes.oauth2UserInfo().getSocialId())
-                .orElseGet(() -> memberRepository.save(attributes.toEntity(attributes.oauth2UserInfo())));
+        return userRepository.findBySocialId(attributes.oauth2UserInfo().getSocialId())
+                .orElseGet(() -> userRepository.save(attributes.toEntity(attributes.oauth2UserInfo())));
     }
 }
