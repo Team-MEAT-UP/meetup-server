@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,19 +31,33 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     ) throws IOException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        String targetUrl = createRedirectUrlWithTokens(oAuth2User);
+        String accessToken = tokenProvider.createAccessToken(oAuth2User);
+        String refreshToken = tokenProvider.createRefreshToken(oAuth2User);
+
+        setRefreshTokenCookie(response, refreshToken);
+
+        String targetUrl = createRedirectUrlWithTokens(accessToken);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    private String createRedirectUrlWithTokens(CustomOAuth2User user) {
-        String accessToken = tokenProvider.createAccessToken(user);
-        String refreshToken = tokenProvider.createRefreshToken(user);
-
+    private String createRedirectUrlWithTokens(String accessToken) {
         return UriComponentsBuilder.fromUriString(successRedirectUri)
                 .queryParam("access_token", accessToken)
-                //TODO: refresh_token cookie에 담아 보내기 (-> 검증과 발급 과정 수정 필요)
-                .queryParam("refresh_token", refreshToken)
                 .build()
                 .toUriString();
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Lax")    //GET 요청
+                .build();
+
+        log.info("Refresh token cookie: {}", refreshTokenCookie);
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
     }
 }
