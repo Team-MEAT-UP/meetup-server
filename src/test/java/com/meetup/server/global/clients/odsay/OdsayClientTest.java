@@ -1,5 +1,6 @@
 package com.meetup.server.global.clients.odsay;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,7 @@ class OdsayClientTest {
     @Autowired
     private OdsayTransitRouteSearchClient odsayTransitRouteSearchClient;
 
+    @Disabled("API 호출 시, IP 등록이 필요하여 테스트 비활성화")
     @Test
     void 오디세이_대중교통_길찾기_조회에_성공한다() {
         // given
