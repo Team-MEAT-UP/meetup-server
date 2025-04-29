@@ -35,7 +35,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> attributes = oAuth2User.getAttributes(); // 소셜 로그인 userInfo
 
         OAuthAttributes extractAttributes = OAuthAttributes.of(userNameAttributeName, attributes);
-        User createdUser = getOrGenerateMember(extractAttributes);
+        User createdUser = getOrGenerateUser(extractAttributes);
 
         // Default 객체 아닌, Custom 객체 생성 하여 반환
         return new CustomOAuth2User(
@@ -47,7 +47,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-    private User getOrGenerateMember(OAuthAttributes attributes) {
+    private User getOrGenerateUser(OAuthAttributes attributes) {
         log.info("attributes: {}", attributes);
 
         return userRepository.findBySocialId(attributes.oauth2UserInfo().getSocialId())

@@ -24,15 +24,15 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(jwtProperties.secretKey().getBytes());
     }
 
-    public String createAccessToken(Object member) {
-        return createToken(member, jwtProperties.accessTokenExpiration());
+    public String createAccessToken(Object user) {
+        return createToken(user, jwtProperties.accessTokenExpiration());
     }
 
-    public String createRefreshToken(Object member) {
-        return createToken(member, jwtProperties.refreshTokenExpiration());
+    public String createRefreshToken(Object user) {
+        return createToken(user, jwtProperties.refreshTokenExpiration());
     }
 
-    private String createToken(Object member, long expiration) {
+    private String createToken(Object user, long expiration) {
         long now = (new Date()).getTime();
         Date validity = new Date(now + expiration);
 
@@ -43,10 +43,10 @@ public class JwtTokenProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .signWith(key, SignatureAlgorithm.HS512);
 
-        if (member instanceof CustomOAuth2User oAuth2User) {
+        if (user instanceof CustomOAuth2User oAuth2User) {
             builder.setSubject(oAuth2User.getUserId().toString());
         } else {
-            throw new IllegalArgumentException("Unsupported user type: " + member.getClass().getName());
+            throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
         }
 
         return builder.compact();
