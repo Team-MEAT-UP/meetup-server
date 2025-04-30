@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum AuthErrorType implements ErrorType {
     INVALID_KAKAO_ACCOUNT(HttpStatus.UNAUTHORIZED, "카카오 계정이 유효하지 않습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 유효하지 않습니다."),
     INVALID_TOKEN_ROLE(HttpStatus.FORBIDDEN, "ROLE이 유효하지 않습니다."),
     ;
 

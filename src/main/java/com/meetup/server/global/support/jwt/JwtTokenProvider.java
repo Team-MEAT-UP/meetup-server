@@ -2,6 +2,10 @@ package com.meetup.server.global.support.jwt;
 
 import com.meetup.server.auth.dto.CustomOAuth2User;
 import com.meetup.server.auth.dto.response.JwtUserDetails;
+import com.meetup.server.auth.exception.AuthErrorType;
+import com.meetup.server.auth.exception.AuthException;
+import com.meetup.server.user.application.UserService;
+import com.meetup.server.user.domain.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -16,6 +20,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
+    private final UserService userService;
     private final JwtProperties jwtProperties;
     private Key key;
 
@@ -43,13 +48,15 @@ public class JwtTokenProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .signWith(key, SignatureAlgorithm.HS512);
 
-        if (user instanceof CustomOAuth2User oAuth2User) {
-            builder.setSubject(oAuth2User.getUserId().toString());
-        } else {
-            throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
-        }
+            if (user instanceof CustomOAuth2User oAuth2User) {
+                builder.setSubject(oAuth2User.getUserId().toString());
+            } else if (user instanceof User normalUser) {
+                builder.setSubject(normalUser.getUserId().toString());
+            } else {
+                throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
+            }
 
-        return builder.compact();
+            return builder.compact();
     }
 
     public boolean validateToken(String token) {
@@ -75,5 +82,16 @@ public class JwtTokenProvider {
                 .getBody();
 
         return JwtUserDetails.fromClaim(claims);
+    }
+
+    public Long extractUserIdFromToken(String token) {
+        try {
+            return Long.parseLong(Jwts.parserBuilder().setSigningKey(key).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject());
+        } catch (JwtException | NumberFormatException e) {
+            throw new AuthException(AuthErrorType.INVALID_TOKEN);
+        }
     }
 }
