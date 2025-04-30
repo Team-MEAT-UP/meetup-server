@@ -48,23 +48,16 @@ public class JwtTokenProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .signWith(key, SignatureAlgorithm.HS512);
 
-        if (user instanceof CustomOAuth2User oAuth2User) {
-            builder.setSubject(oAuth2User.getUserId().toString());
-        } else {
-            builder.setSubject("defaultUser");
-        }
+            if (user instanceof CustomOAuth2User oAuth2User) {
+                builder.setSubject(oAuth2User.getUserId().toString());
+            } else if (user instanceof User normalUser) {
+                builder.setSubject(normalUser.getUserId().toString());
+            } else {
+                throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
+            }
 
-        return builder.compact();
+            return builder.compact();
     }
-
-//        if (user instanceof CustomOAuth2User oAuth2User) {
-//            builder.setSubject(oAuth2User.getUserId().toString());
-//        } else {
-//            throw new IllegalArgumentException("Unsupported user type: " + user.getClass().getName());
-//        }
-
-//        return builder.compact();
-//    }
 
     public boolean validateToken(String token) {
         try {
