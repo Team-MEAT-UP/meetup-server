@@ -2,10 +2,8 @@ package com.meetup.server.global.support.jwt;
 
 import com.meetup.server.auth.dto.CustomOAuth2User;
 import com.meetup.server.auth.dto.response.JwtUserDetails;
+import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.domain.User;
-import com.meetup.server.user.exception.UserErrorType;
-import com.meetup.server.user.exception.UserException;
-import com.meetup.server.user.persistence.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -20,7 +18,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtProperties jwtProperties;
     private Key key;
 
@@ -84,15 +82,12 @@ public class JwtTokenProvider {
         return JwtUserDetails.fromClaim(claims);
     }
 
-    public User getUser(String token) {
+    public User extractUserIdFromToken(String token) {
         Long id = Long.parseLong(Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject());
 
-        log.info("in getUser() id: {}", id);
-
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserException(UserErrorType.USER_NOT_FOUND));
+        return userService.getUserById(id);
     }
 }

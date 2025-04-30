@@ -24,7 +24,7 @@ public class AuthService {
             throw new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN);
         }
 
-        User user = jwtTokenProvider.getUser(refreshToken);
+        User user = jwtTokenProvider.extractUserIdFromToken(refreshToken);
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
 

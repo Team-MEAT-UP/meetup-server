@@ -25,4 +25,9 @@ public class UserService {
 
         return UserProfileInfoResponse.from(user);
     }
+
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorType.USER_NOT_FOUND));
+    }
 }
