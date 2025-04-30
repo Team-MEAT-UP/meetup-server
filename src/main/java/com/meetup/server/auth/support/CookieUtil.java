@@ -13,10 +13,10 @@ public class CookieUtil {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(24 * 60 * 60)
-                .sameSite("Lax")    //GET 요청
+                .sameSite("Strict")   //GET 요청
                 .build();
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
