@@ -29,6 +29,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     public void onAuthenticationSuccess(
             HttpServletRequest request, HttpServletResponse response, Authentication authentication
     ) throws IOException {
+        log.info("Authentication: {}", authentication);
+        log.info("Principal: {}", authentication.getPrincipal());
+
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         String accessToken = tokenProvider.createAccessToken(oAuth2User);
