@@ -4,6 +4,7 @@ import com.meetup.server.auth.dto.response.ReissueTokenResponse;
 import com.meetup.server.auth.exception.AuthErrorType;
 import com.meetup.server.auth.exception.AuthException;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
+import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
 
     public ReissueTokenResponse reIssueToken(String refreshToken) {
 
@@ -24,7 +26,9 @@ public class AuthService {
             throw new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN);
         }
 
-        User user = jwtTokenProvider.extractUserIdFromToken(refreshToken);
+        Long userId = jwtTokenProvider.extractUserIdFromToken(refreshToken);
+        User user = userService.getUserById(userId);
+
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
 
@@ -37,7 +41,6 @@ public class AuthService {
         if (token == null) {
             throw new AuthException(AuthErrorType.INVALID_REFRESH_TOKEN);
         }
-
         if (token.startsWith("Bearer ")) {
             return token.substring(7);
         }

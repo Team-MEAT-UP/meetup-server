@@ -2,6 +2,8 @@ package com.meetup.server.global.support.jwt;
 
 import com.meetup.server.auth.dto.CustomOAuth2User;
 import com.meetup.server.auth.dto.response.JwtUserDetails;
+import com.meetup.server.auth.exception.AuthErrorType;
+import com.meetup.server.auth.exception.AuthException;
 import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.domain.User;
 import io.jsonwebtoken.*;
@@ -82,12 +84,14 @@ public class JwtTokenProvider {
         return JwtUserDetails.fromClaim(claims);
     }
 
-    public User extractUserIdFromToken(String token) {
-        Long id = Long.parseLong(Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject());
-
-        return userService.getUserById(id);
+    public Long extractUserIdFromToken(String token) {
+        try {
+            return Long.parseLong(Jwts.parserBuilder().setSigningKey(key).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject());
+        } catch (JwtException | NumberFormatException e) {
+            throw new AuthException(AuthErrorType.INVALID_TOKEN);
+        }
     }
 }
