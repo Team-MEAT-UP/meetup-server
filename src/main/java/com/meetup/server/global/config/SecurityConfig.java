@@ -4,6 +4,7 @@ import com.meetup.server.auth.application.CustomOAuth2UserService;
 import com.meetup.server.auth.presentation.filter.JwtAccessDeniedHandler;
 import com.meetup.server.auth.presentation.filter.JwtAuthenticationEntryPoint;
 import com.meetup.server.auth.presentation.filter.JwtAuthenticationFilter;
+import com.meetup.server.auth.presentation.filter.ResponseContextFilter;
 import com.meetup.server.auth.support.handler.OAuth2LoginFailureHandler;
 import com.meetup.server.auth.support.handler.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final ResponseContextFilter responseContextFilter;
 
     private final String[] WHITE_LIST = {
             "/v3/api-docs/**",
@@ -60,7 +62,8 @@ public class SecurityConfig {
                                 .successHandler(oAuth2LoginSuccessHandler)
                                 .failureHandler(oAuth2LoginFailureHandler)
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(responseContextFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }
