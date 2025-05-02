@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Address {
 
-    @Column(name = "road_name", length = 255, nullable = false)
-    private String roadName;    //출발지명
+    @Column(name = "address", length = 255, nullable = false)
+    private String address;    //지번주소
 
     @Column(name = "road_address", length = 255, nullable = false)
     private String roadAddress; //도로명주소

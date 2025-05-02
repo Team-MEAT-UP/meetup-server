@@ -24,6 +24,9 @@ public class StartPoint extends BaseEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @Column(name = "start_point_name", nullable = false)
+    private String name;
+
     @Embedded
     private Address address;
 
@@ -31,8 +34,9 @@ public class StartPoint extends BaseEntity {
     private Location location;
 
     @Builder
-    public StartPoint(Event event, Address address, Location location) {
+    public StartPoint(Event event, String name, Address address, Location location) {
         this.event = event;
+        this.name = name;
         this.address = address;
         this.location = location;
     }

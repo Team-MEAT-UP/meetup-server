@@ -38,6 +38,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**",
             "/auth/**",
+            "/events"
     };
 
     @Bean
