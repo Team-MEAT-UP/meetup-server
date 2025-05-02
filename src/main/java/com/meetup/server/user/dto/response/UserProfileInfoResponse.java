@@ -7,7 +7,8 @@ import lombok.Builder;
 public record UserProfileInfoResponse(
         Long userId,
         String nickname,
-        String profileImageUrl
+        String profileImageUrl,
+        boolean agreement
 ) {
     public static UserProfileInfoResponse from(User user) {
 
@@ -15,6 +16,7 @@ public record UserProfileInfoResponse(
                 .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImage())
+                .agreement(user.isAgreement())
                 .build();
     }
 }

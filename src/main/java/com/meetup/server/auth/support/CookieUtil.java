@@ -4,30 +4,50 @@ package com.meetup.server.auth.support;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
 
-
+@Component
+@RequiredArgsConstructor
 public class CookieUtil {
 
-    public static void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+    private final CookieProperties cookieProperties;
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+    private void setCommonCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(24 * 60 * 60)
-                .sameSite("Strict")   //GET 요청
+                .maxAge(maxAge)
+                .sameSite("Strict")
                 .build();
 
-        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        response.addHeader(cookieProperties.setCookie(), cookie.toString());
     }
 
-    public static String getRefreshTokenFromCookie(HttpServletRequest request) {
+    public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
+        setCommonCookie(response, cookieProperties.accessToken(), accessToken, 30);
+    }
+
+    public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        setCommonCookie(response, cookieProperties.refreshToken(), refreshToken, 60 * 30);
+    }
+
+    public void deleteRefreshTokenCookie(HttpServletResponse response) {
+        setCommonCookie(response, cookieProperties.refreshToken(), null, 0);
+    }
+
+    public void deleteAccessTokenCookie(HttpServletResponse response) {
+        setCommonCookie(response, cookieProperties.accessToken(), null, 0);
+    }
+
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("Refresh-Token".equals(cookie.getName())) {
+                if (cookie.getName().equals(cookieProperties.refreshToken())) {
                     return cookie.getValue();
                 }
             }

@@ -24,6 +24,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private String successRedirectUri;
 
     private final JwtTokenProvider tokenProvider;
+    private final CookieUtil cookieUtil;
 
     @Override
     public void onAuthenticationSuccess(
@@ -35,15 +36,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String accessToken = tokenProvider.createAccessToken(oAuth2User);
         String refreshToken = tokenProvider.createRefreshToken(oAuth2User);
 
-        CookieUtil.setRefreshTokenCookie(response, refreshToken);
+        cookieUtil.setAccessTokenCookie(response, accessToken);
+        cookieUtil.setRefreshTokenCookie(response, refreshToken);
 
-        String targetUrl = createRedirectUrlWithTokens(accessToken);
+        String targetUrl = createRedirectUrlWithTokens();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    private String createRedirectUrlWithTokens(String accessToken) {
+    private String createRedirectUrlWithTokens() {
         return UriComponentsBuilder.fromUriString(successRedirectUri)
-                .queryParam("Access_Token", accessToken)
                 .build()
                 .toUriString();
     }
