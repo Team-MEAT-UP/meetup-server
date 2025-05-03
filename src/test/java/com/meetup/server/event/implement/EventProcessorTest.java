@@ -42,5 +42,4 @@ class EventProcessorTest {
         Event event = eventProcessor.saveForLoggedInUser(user);
         assertThat(event.getUser().getUserId()).isEqualTo(user.getUserId());
     }
-
 }
