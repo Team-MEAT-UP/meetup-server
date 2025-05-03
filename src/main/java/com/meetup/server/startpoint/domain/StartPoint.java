@@ -1,28 +1,35 @@
 package com.meetup.server.startpoint.domain;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.startpoint.domain.type.Address;
 import com.meetup.server.startpoint.domain.type.Location;
+import com.meetup.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
-@Table(name = "start_point")
+@Table(name = "start_point", uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "user_id"})})
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
 public class StartPoint extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "start_point_id")
-    private Long startPointId;
+    private UUID startPointId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
 
     @Column(name = "start_point_name", nullable = false)
     private String name;
@@ -33,9 +40,15 @@ public class StartPoint extends BaseEntity {
     @Embedded
     private Location location;
 
+    @PrePersist
+    public void prePersist() {
+        this.startPointId = UuidCreator.getTimeOrderedEpoch();
+    }
+
     @Builder
-    public StartPoint(Event event, String name, Address address, Location location) {
+    public StartPoint(Event event, User user, String name, Address address, Location location) {
         this.event = event;
+        this.user = user;
         this.name = name;
         this.address = address;
         this.location = location;

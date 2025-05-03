@@ -3,7 +3,6 @@ package com.meetup.server.event.domain;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import com.meetup.server.global.domain.BaseEntity;
-import com.meetup.server.user.domain.User;
 import com.meetup.server.recommend.domain.RecommendPlace;
 import com.meetup.server.subway.domain.Subway;
 import jakarta.persistence.*;
@@ -28,10 +27,6 @@ public class Event extends BaseEntity {
     private Subway subway;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommend_id", nullable = true)
     private RecommendPlace recommendPlace;
 
@@ -41,9 +36,8 @@ public class Event extends BaseEntity {
     }
 
     @Builder
-    public Event(Subway subway, User user, RecommendPlace recommendPlace) {
+    public Event(Subway subway, RecommendPlace recommendPlace) {
         this.subway = subway;
-        this.user = user;
         this.recommendPlace = recommendPlace;
     }
 }
