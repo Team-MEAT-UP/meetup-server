@@ -38,7 +38,8 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**",
             "/auth/**",
-            "/events"
+            "/events",
+            "/events/*/start-points"
     };
 
     @Bean
