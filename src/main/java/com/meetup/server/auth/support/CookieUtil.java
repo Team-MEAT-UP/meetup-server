@@ -27,11 +27,11 @@ public class CookieUtil {
     }
 
     public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
-        setCommonCookie(response, cookieProperties.accessToken(), accessToken, 30);
+        setCommonCookie(response, cookieProperties.accessToken(), accessToken, cookieProperties.accessTokenMaxAge());
     }
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        setCommonCookie(response, cookieProperties.refreshToken(), refreshToken, 60 * 30);
+        setCommonCookie(response, cookieProperties.refreshToken(), refreshToken, cookieProperties.refreshTokenMaxAge());
     }
 
     public void deleteRefreshTokenCookie(HttpServletResponse response) {

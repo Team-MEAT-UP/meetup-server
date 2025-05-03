@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record CookieProperties(
         String accessToken,
         String refreshToken,
-        String setCookie
+        String setCookie,
+        int accessTokenMaxAge,
+        int refreshTokenMaxAge
 ) {
 }
