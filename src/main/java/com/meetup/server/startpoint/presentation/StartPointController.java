@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "StartPoint", description = "장소 검색 API")
@@ -20,7 +21,8 @@ public class StartPointController {
 
     @Operation(summary = "장소 검색하기", description = "외부 API를 통해 장소를 검색합니다.")
     @GetMapping("")
-    public ApiResponse<KakaoLocalResponse> searchStartPoint(String textQuery) {
+    public ApiResponse<KakaoLocalResponse> searchStartPoint(
+            @RequestParam(name = "textQuery") String textQuery) {
         KakaoLocalResponse response = startPointService.searchStartPoint(textQuery);
         return ApiResponse.success(response);
     }
