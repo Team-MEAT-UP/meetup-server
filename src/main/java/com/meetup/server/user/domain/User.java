@@ -30,17 +30,21 @@ public class User extends BaseEntity {
     @Column(name = "email", length = 255, nullable = false, unique = true)
     private String email;
 
+    @Column(name = "agreement", nullable = false)
+    private boolean agreement;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 10, nullable = false)
     private Role role;
 
 
     @Builder
-    public User(String nickname, String profileImage, String email, String socialId, Role role) {
+    public User(String nickname, String profileImage, String email, String socialId, Role role, boolean agreement) {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;
         this.socialId = socialId;
+        this.agreement = agreement;
         this.role = role;
     }
 }

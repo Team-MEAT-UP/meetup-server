@@ -3,6 +3,7 @@ package com.meetup.server.auth.presentation.filter;
 import com.meetup.server.auth.application.AuthService;
 import com.meetup.server.auth.dto.response.ReissueTokenResponse;
 import com.meetup.server.auth.support.CookieUtil;
+import com.meetup.server.user.exception.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,8 @@ import java.io.IOException;
 public class ResponseContextFilter extends OncePerRequestFilter {
 
     private final AuthService authService;
+    private final CookieUtil cookieUtil;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -28,18 +31,24 @@ public class ResponseContextFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String refreshToken = CookieUtil.getRefreshTokenFromCookie(request);
+        String refreshToken = cookieUtil.getRefreshTokenFromCookie(request);
 
         if (refreshToken != null) {
-            ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(refreshToken);
-            setResponseCookies(response, reissueTokenResponse);
+            try {
+                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(response, refreshToken);
+                setResponseCookies(response, reissueTokenResponse);
+
+            } catch (UserException e) {
+                log.error("token is invalidate and check user: {}", e.getMessage());
+                cookieUtil.deleteAccessTokenCookie(response);
+                cookieUtil.deleteRefreshTokenCookie(response);
+            }
         }
 
         filterChain.doFilter(request, response);
     }
 
     private void setResponseCookies(HttpServletResponse response, ReissueTokenResponse reissueTokenResponse) {
-
-        CookieUtil.setRefreshTokenCookie(response, reissueTokenResponse.refreshToken());
+        cookieUtil.setRefreshTokenCookie(response, reissueTokenResponse.refreshToken());
     }
 }
