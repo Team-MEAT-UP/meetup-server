@@ -1,5 +1,6 @@
 package com.meetup.server.subway.infrastructure.csv;
 
+import com.meetup.server.global.support.DummyDataInit;
 import com.meetup.server.startpoint.domain.type.Location;
 import com.meetup.server.subway.domain.Subway;
 import com.meetup.server.subway.domain.SubwayConnection;
@@ -7,14 +8,19 @@ import com.meetup.server.subway.domain.TransferInfo;
 import com.meetup.server.subway.infrastructure.csv.mapping.SectionTimeCsvMapping;
 import com.meetup.server.subway.infrastructure.csv.mapping.SubwayCsvMapping;
 import com.meetup.server.subway.infrastructure.csv.mapping.TransferInfoMapping;
+import com.meetup.server.subway.persistence.SubwayConnectionRepository;
 import com.meetup.server.subway.persistence.SubwayRepository;
+import com.meetup.server.subway.persistence.TransferInfoRepository;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,12 +29,29 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
 @Slf4j
-public class SubwayCsvLoader {
+@RequiredArgsConstructor
+@Profile("local")
+@Order(2)
+@DummyDataInit
+public class SubwayCsvLoader implements ApplicationRunner {
 
     private final SubwayRepository subwayRepository;
+    private final SubwayConnectionRepository subwayConnectionRepository;
+    private final TransferInfoRepository transferInfoRepository;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        if (subwayRepository.count() == 0 || subwayConnectionRepository.count() == 0 || transferInfoRepository.count() == 0) {
+            subwayConnectionRepository.deleteAll();
+            transferInfoRepository.deleteAll();
+            subwayRepository.deleteAll();
+
+            subwayRepository.saveAll(parseSubwayCsv());
+            subwayConnectionRepository.saveAll(parseSectionTimeCsv());
+            transferInfoRepository.saveAll(parseTransferInfoCsv());
+        }
+    }
 
     private List<Subway> parseSubwayCsv() throws IOException {
         ClassPathResource resource = new ClassPathResource("csv/서울교통공사_1_8호선 역사 좌표(위경도) 정보_20241031.csv");
