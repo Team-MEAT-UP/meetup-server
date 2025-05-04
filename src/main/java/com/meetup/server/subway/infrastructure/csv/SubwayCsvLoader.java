@@ -3,8 +3,10 @@ package com.meetup.server.subway.infrastructure.csv;
 import com.meetup.server.startpoint.domain.type.Location;
 import com.meetup.server.subway.domain.Subway;
 import com.meetup.server.subway.domain.SubwayConnection;
+import com.meetup.server.subway.domain.TransferInfo;
 import com.meetup.server.subway.infrastructure.csv.mapping.SectionTimeCsvMapping;
 import com.meetup.server.subway.infrastructure.csv.mapping.SubwayCsvMapping;
+import com.meetup.server.subway.infrastructure.csv.mapping.TransferInfoMapping;
 import com.meetup.server.subway.persistence.SubwayRepository;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -18,10 +20,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -113,6 +112,64 @@ public class SubwayCsvLoader {
             }
 
             return connections;
+        }
+    }
+
+    private List<TransferInfo> parseTransferInfoCsv() throws IOException {
+        ClassPathResource resource = new ClassPathResource("csv/서울교통공사_서울 도시철도 환승정보_20250319.csv");
+
+        try (Reader reader = Files.newBufferedReader(resource.getFile().toPath(), Charset.forName("EUC-KR"))) {
+            HeaderColumnNameMappingStrategy<TransferInfoMapping> strategy = new HeaderColumnNameMappingStrategy<>();
+            strategy.setType(TransferInfoMapping.class);
+
+            CsvToBean<TransferInfoMapping> csvToBean = new CsvToBeanBuilder<TransferInfoMapping>(reader)
+                    .withMappingStrategy(strategy)
+                    .withIgnoreEmptyLine(true)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            List<TransferInfoMapping> transferInfoMappings = csvToBean.parse();
+
+            Set<String> existingTransferKeys = new HashSet<>();
+            List<TransferInfo> transferInfos = new ArrayList<>();
+
+            for (TransferInfoMapping mapping : transferInfoMappings) {
+                int fromCode, toCode;
+                try {
+                    fromCode = Integer.parseInt(mapping.getFromCode());
+                    toCode = Integer.parseInt(mapping.getToCode());
+                } catch (NumberFormatException e) {
+                    log.warn("숫자 변환 실패 - 무시된 행: {}", mapping);
+                    continue;
+                }
+
+                Subway fromSubway = subwayRepository.findByCode(fromCode).orElse(null);
+                Subway toSubway = subwayRepository.findByCode(toCode).orElse(null);
+
+                if (fromSubway == null || toSubway == null) {
+                    log.warn("지하철 정보 없음 - from: {} (code: {}, line: {}) / to: {} (code: {}, line: {})",
+                            mapping.getFromName(), mapping.getFromCode(), mapping.getFromLine(),
+                            mapping.getToName(), mapping.getToCode(), mapping.getToLine());
+                    continue;
+                }
+
+                String key = fromSubway.getSubwayId() + "-" + toSubway.getSubwayId();
+                if (existingTransferKeys.contains(key)) {
+                    log.info("중복 환승 정보 무시됨 - from: {} / to: {}", fromSubway.getSubwayId(), toSubway.getSubwayId());
+                    continue;
+                }
+
+                existingTransferKeys.add(key);
+
+                TransferInfo transferInfo = TransferInfo.builder()
+                        .fromSubway(fromSubway)
+                        .toSubway(toSubway)
+                        .build();
+
+                transferInfos.add(transferInfo);
+            }
+
+            return transferInfos;
         }
     }
 
