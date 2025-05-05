@@ -1,6 +1,6 @@
 package com.meetup.server.review.domain;
 
-import com.meetup.server.review.domain.type.NonVistedReasonCategory;
+import com.meetup.server.review.domain.type.NonVisitedReasonCategory;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "non_visited_reason")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class NonVistedReason {
+public class NonVisitedReason {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "non_visited_reason_id")
@@ -22,10 +22,10 @@ public class NonVistedReason {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = true)
-    private NonVistedReasonCategory category;
+    private NonVisitedReasonCategory category;
 
     @Builder
-    public NonVistedReason(Review review, NonVistedReasonCategory category) {
+    public NonVisitedReason(Review review, NonVisitedReasonCategory category) {
         this.review = review;
         this.category = category;
     }

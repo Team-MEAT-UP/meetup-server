@@ -19,6 +19,7 @@ public class Satisfaction {
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private ScoreCategory category;
 

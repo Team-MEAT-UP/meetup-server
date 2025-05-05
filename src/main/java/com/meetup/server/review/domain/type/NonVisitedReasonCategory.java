@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum NonVistedReasonCategory {
+public enum NonVisitedReasonCategory {
     NOISY("시끄러워서"),
     CONGESTION("사람이 많아서"),
     DARKNESS("공간이 어두워서"),
