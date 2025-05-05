@@ -17,4 +17,17 @@ public record KakaoMobilityRequest(
         Boolean carHiPass,
         Boolean summary
 ) {
+//    @Builder
+//    public record Origin(
+//            String x,
+//            String y
+//    ) {
+//    }
+//
+//    @Builder
+//    public record Destination(
+//            String x,
+//            String y
+//    ) {
+//    }
 }
