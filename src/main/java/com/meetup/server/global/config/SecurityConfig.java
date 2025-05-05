@@ -31,15 +31,8 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final ResponseContextFilter responseContextFilter;
 
-    private final String[] WHITE_LIST = {
-            "/v3/api-docs/**",
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/auth/**",
-            "/events",
-            "/events/*/start-points"
+    private final String[] BLACK_LIST = {
+            "/historys/**"
     };
 
     @Bean
@@ -51,8 +44,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(WHITE_LIST).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(BLACK_LIST).authenticated()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling -> {
                     exceptionHandling

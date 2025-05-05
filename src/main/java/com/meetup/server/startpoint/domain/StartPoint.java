@@ -34,6 +34,12 @@ public class StartPoint extends BaseEntity {
     @Column(name = "start_point_name", nullable = false)
     private String name;
 
+    @Column(name = "is_user", nullable = false)
+    private boolean isUser;
+
+    @Column(name ="is_transit", nullable = false)
+    private boolean isTransit;
+
     @Column(name = "non_user_name", length = 255, nullable = true)
     private String nonUserName;
 
@@ -49,12 +55,22 @@ public class StartPoint extends BaseEntity {
     }
 
     @Builder
-    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName) {
+    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, boolean isUser, boolean isTransit) {
         this.event = event;
         this.user = user;
         this.name = name;
         this.address = address;
         this.location = location;
         this.nonUserName = nonUserName;
+        this.isUser = isUser;
+        this.isTransit = isTransit;
+    }
+
+    public boolean getIsUser() {
+        return isUser;
+    }
+
+    public boolean getIsTransit() {
+        return isTransit;
     }
 }
