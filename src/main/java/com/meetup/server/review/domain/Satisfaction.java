@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Satisfaction {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @Column(name = "satisfaction_id")
     private Long satisfactionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
