@@ -1,5 +1,6 @@
 package com.meetup.server.event.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
 import com.meetup.server.subway.dto.repsonse.PassStopList;
 import com.meetup.server.subway.dto.repsonse.Stations;
@@ -8,17 +9,18 @@ import lombok.Builder;
 import java.util.List;
 import java.util.Optional;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 public record TransitRouteResponse(
         int trafficType,    //1: 지하철, 2: 버스, 3: 도보
+        String startExitNo,
+        String endExitNo,
         double distance,
         String laneName,  //지하철 노선명
         String startBoardName,
         String endBoardName,
         int stationCount,
         PassStopList passStopList,
-        String startExitNo,
-        String endExitNo,
         int sectionTime //이동 소요 시간
 ) {
     public static List<TransitRouteResponse> from(OdsayTransitRouteSearchResponse response) {
@@ -47,7 +49,7 @@ public record TransitRouteResponse(
                             .startBoardName(subPath.startName())
                             .endBoardName(subPath.endName())
                             .stationCount(subPath.stationCount() != null ? subPath.stationCount() : 0)
-                            .passStopList(new PassStopList(passStopList))
+                            .passStopList(subPath.trafficType() == 3 ? null : new PassStopList(passStopList))
                             .startExitNo(subPath.startExitNo())
                             .endExitNo(subPath.endExitNo())
                             .sectionTime(subPath.sectionTime())
@@ -69,9 +71,5 @@ public record TransitRouteResponse(
                         station.y()
                 ))
                 .toList();
-    }
-
-    private static Object convertToDomainWalk() {
-        return null;
     }
 }
