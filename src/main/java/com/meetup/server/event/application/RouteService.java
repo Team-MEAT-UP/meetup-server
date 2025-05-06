@@ -56,7 +56,6 @@ public class RouteService {
                 .toList();
 
         return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY));
-
     }
 
     private RouteResponse fetchPerRouteDetails(
