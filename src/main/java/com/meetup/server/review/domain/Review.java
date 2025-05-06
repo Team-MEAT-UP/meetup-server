@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class Review {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)

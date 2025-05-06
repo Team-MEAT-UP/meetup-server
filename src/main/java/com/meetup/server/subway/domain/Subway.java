@@ -18,20 +18,20 @@ public class Subway extends BaseEntity {
     @Column(name = "subway_id")
     private Integer subwayId;
 
-    @Column(name = "subway_name", nullable = false)
+    @Column(name = "subway_name", length = 50, nullable = false)
     private String name;
 
     @Column(name = "subway_code", nullable = false)
-    private Integer code;
+    private int code;
 
     @Column(name = "subway_line", nullable = false)
-    private Integer line;
+    private int line;
 
     @Embedded
     private Location location;
 
     @Builder
-    public Subway(String name, Integer code, Integer line, Location location) {
+    public Subway(String name, int code, int line, Location location) {
         this.name = name;
         this.code = code;
         this.line = line;
