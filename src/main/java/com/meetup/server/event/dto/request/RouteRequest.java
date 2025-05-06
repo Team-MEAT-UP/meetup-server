@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record RouteRequest(
         UUID eventId,
-        UUID id,
+        UUID startPointId,
         boolean isTransit
 
 ) {

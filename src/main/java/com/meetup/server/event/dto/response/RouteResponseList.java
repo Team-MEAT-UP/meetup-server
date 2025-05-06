@@ -6,17 +6,19 @@ import java.util.List;
 
 @Builder
 public record RouteResponseList(
-        List<RouteResponse> routeResponse,
         int peopleCount,
         int averageTime,
-        boolean isTransit   // true: 대중교통, false: 자동차
+        MeetingPoint meetingPoint,
+        List<RouteResponse> routeResponse
 ) {
-    public static RouteResponseList of(List<RouteResponse> routeResponse, boolean isTransit) {
+
+
+    public static RouteResponseList of(List<RouteResponse> routeResponse, MeetingPoint meetingPoint) {
         return RouteResponseList.builder()
-                .routeResponse(routeResponse)
                 .averageTime(calculateAverageTime(routeResponse))
-                .isTransit(isTransit)
                 .peopleCount(routeResponse.size())
+                .meetingPoint(meetingPoint)
+                .routeResponse(routeResponse)
                 .build();
     }
 

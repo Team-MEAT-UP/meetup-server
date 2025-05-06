@@ -22,7 +22,7 @@ public class RouteController {
     public ApiResponse<RouteResponseList> searchMiddlePoint(RouteRequest routeRequest) {
         RouteResponseList response = routeService.getAllRouteDetails(
                 routeRequest.eventId(),
-                routeRequest.id()
+                routeRequest.startPointId()
         );
         return ApiResponse.success(response);
     }

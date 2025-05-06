@@ -1,6 +1,7 @@
 package com.meetup.server.event.application;
 
 import com.meetup.server.event.domain.Event;
+import com.meetup.server.event.dto.response.MeetingPoint;
 import com.meetup.server.event.dto.response.RouteResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
 import com.meetup.server.event.persistence.EventRepository;
@@ -39,21 +40,23 @@ public class RouteService {
         List<StartPoint> startPointList = startPointRepository.findAllByEvent(event);
 
         boolean isTransit = getIsTransit(startPointList, startPointId);
-        String endX = getEndX(event);
-        String endY = getEndY(event);
+        double endX = getEndX(event);
+        double endY = getEndY(event);
+
 
         List<RouteResponse> routeList = startPointList.stream()
                 .map(startPoint -> fetchPerRouteDetails(
                         startPoint,
                         getStartX(startPoint),
                         getStartY(startPoint),
-                        endX,
-                        endY,
+                        String.valueOf(endX),
+                        String.valueOf(endY),
                         isTransit
                 ))
                 .toList();
 
-        return RouteResponseList.of(routeList, isTransit);
+        return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY));
+
     }
 
     private RouteResponse fetchPerRouteDetails(
@@ -74,20 +77,29 @@ public class RouteService {
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, isTransit);
     }
 
-    private String getEndX(Event event) {
-        return event.getSubway().getLocation().getRoadLongitude().toString();
+    private double getEndX(Event event) {
+        return event.getSubway().getLocation().getRoadLongitude();
     }
 
-    private String getEndY(Event event) {
-        return event.getSubway().getLocation().getRoadLatitude().toString();
+    private double getEndY(Event event) {
+        return event.getSubway().getLocation().getRoadLatitude();
     }
 
     private String getStartX(StartPoint startPoint) {
-        return startPoint.getLocation().getRoadLongitude().toString();
+        return String.valueOf(startPoint.getLocation().getRoadLongitude());
     }
 
     private String getStartY(StartPoint startPoint) {
-        return startPoint.getLocation().getRoadLatitude().toString();
+        return String.valueOf(startPoint.getLocation().getRoadLatitude());
+    }
+
+    private String getStartPointName(List<StartPoint> startPointList, UUID startPointId) {
+        for (StartPoint startPoint : startPointList) {
+            if (startPoint.getStartPointId().equals(startPointId)) {
+                return startPoint.getName();
+            }
+        }
+        return null;
     }
 
     private boolean getIsTransit(List<StartPoint> startPointList, UUID startPointId) {

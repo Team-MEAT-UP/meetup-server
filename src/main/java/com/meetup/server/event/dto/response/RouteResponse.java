@@ -6,27 +6,24 @@ import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.user.domain.User;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Builder
 public record RouteResponse(
+        boolean isTransit,  // true: 대중교통, false: 자동차
         UUID id,
         String nickname,
         String profileImage,
-        String startStationName,  //출발지와 가장 가까운 역
-        BigDecimal SX,  //역 경도(:longitude)
-        BigDecimal SY,  //역 위도(:latitude)
-        String startAddress,  //출발지 주소
-        BigDecimal RX,  //실제 출발지 경도(:longitude)
-        BigDecimal RY,  //실제 출발지 위도(:latitude)
+        String startName,  //출발지 주소
+        double startLongitude,  //실제 출발지 경도(:longitude)
+        double startLatitude,  //실제 출발지 위도(:latitude)
         List<TransitRouteResponse> transitRoute,
         List<DrivingRouteResponse> drivingRoute,
-        int totalTime,
-        String middlePointStation,  //중간지점 역
-        BigDecimal EX, //경도(:longitude)
-        BigDecimal EY //위도(:latitude)
+        int totalTime
+
 ) {
     public static RouteResponse of(StartPoint startPoint,
                                    User user,
@@ -34,23 +31,30 @@ public record RouteResponse(
                                    KakaoMobilityResponse drivingResponse,
                                    boolean isTransit) {
         return RouteResponse.builder()
+                .isTransit(isTransit)
                 .id(startPoint.getStartPointId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
                 .profileImage(startPoint.getIsTransit() ? user.getProfileImage() : null)
-                .startStationName(startPoint.getName())
-                .SX(startPoint.getLocation().getRoadLatitude())
-                .SY(startPoint.getLocation().getRoadLongitude())
-                .startAddress(startPoint.getAddress().getRoadAddress())
-                .RX(startPoint.getLocation().getRoadLatitude())
-                .RY(startPoint.getLocation().getRoadLongitude())
-                .transitRoute(TransitRouteResponse.of(transitResponse))
-                .drivingRoute(DrivingRouteResponse.of(drivingResponse))
+                .startName(convertStartPointName(startPoint.getAddress().getAddress()))
+                .startLongitude(startPoint.getLocation().getRoadLongitude())
+                .startLatitude(startPoint.getLocation().getRoadLatitude())
+                .transitRoute(TransitRouteResponse.from(transitResponse))
+                .drivingRoute(DrivingRouteResponse.from(drivingResponse))
                 .totalTime(isTransit ?
                         transitResponse.data().path().getFirst().info().totalTime()
                         : drivingResponse.routes().getFirst().summary().duration())
-                .middlePointStation(startPoint.getEvent().getSubway().getName())
-                .EX(startPoint.getEvent().getSubway().getLocation().getRoadLatitude())
-                .EY(startPoint.getEvent().getSubway().getLocation().getRoadLongitude())
                 .build();
+    }
+
+    private static String convertStartPointName(String address) {
+        if (address == null || address.isBlank()) return "";
+
+        Pattern pattern = Pattern.compile("(\\S+(구|군))\\s+(\\S+(동|읍))");
+        Matcher matcher = pattern.matcher(address);
+
+        if (matcher.find()) {
+            return matcher.group(1) + " " + matcher.group(3);
+        }
+        return "";
     }
 }
