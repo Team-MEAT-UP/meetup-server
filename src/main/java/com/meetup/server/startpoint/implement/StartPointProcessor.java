@@ -2,6 +2,7 @@ package com.meetup.server.startpoint.implement;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.event.implement.EventValidator;
+import com.meetup.server.global.util.CoordinateUtil;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.domain.type.Address;
 import com.meetup.server.startpoint.domain.type.Location;
@@ -26,6 +27,7 @@ public class StartPointProcessor {
                 .name(startPointRequest.startPoint())
                 .address(Address.of(startPointRequest.address(), startPointRequest.roadAddress()))
                 .location(Location.of(startPointRequest.longitude(), startPointRequest.latitude()))
+                .point(CoordinateUtil.createPoint(startPointRequest.longitude(), startPointRequest.latitude()))
                 .build();
 
         return startPointRepository.save(startPoint);

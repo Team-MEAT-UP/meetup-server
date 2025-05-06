@@ -1,6 +1,7 @@
 package com.meetup.server.subway.infrastructure.csv;
 
 import com.meetup.server.global.support.DummyDataInit;
+import com.meetup.server.global.util.CoordinateUtil;
 import com.meetup.server.startpoint.domain.type.Location;
 import com.meetup.server.subway.domain.Subway;
 import com.meetup.server.subway.domain.SubwayConnection;
@@ -73,6 +74,7 @@ public class SubwayCsvLoader implements ApplicationRunner {
                             .code(csvLine.getCode())
                             .line(csvLine.getLine())
                             .location(Location.of(csvLine.getLongitude(), csvLine.getLatitude()))
+                            .point(CoordinateUtil.createPoint(csvLine.getLongitude(), csvLine.getLatitude()))
                             .build()
                     ).toList();
         }
