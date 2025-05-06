@@ -8,20 +8,19 @@ import com.meetup.server.fixture.UserFixture;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.dto.request.StartPointRequest;
 import com.meetup.server.startpoint.persistence.StartPointRepository;
+import com.meetup.server.support.PostgisContainer;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class EventServiceTest {
+class EventServiceTest extends PostgisContainer {
 
     @Autowired
     private EventService eventService;
