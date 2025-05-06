@@ -12,7 +12,7 @@ public record DrivingRouteResponse(
         int duration, //총 이동 소요 시간(sec)
         int distance //총 이동 거리(m)
 ) {
-    public static DrivingRouteResponse of(int taxi, int toll, int duration, int distance) {
+    public static DrivingRouteResponse from(int taxi, int toll, int duration, int distance) {
         return DrivingRouteResponse.builder()
                 .taxi(taxi)
                 .toll(toll)
@@ -21,7 +21,7 @@ public record DrivingRouteResponse(
                 .build();
     }
 
-    public static List<DrivingRouteResponse> of(KakaoMobilityResponse drivingResponse) {
+    public static List<DrivingRouteResponse> from(KakaoMobilityResponse drivingResponse) {
         if (drivingResponse.routes() == null || drivingResponse.routes().isEmpty()) {
             return List.of();
         }
@@ -31,7 +31,7 @@ public record DrivingRouteResponse(
                     KakaoMobilityResponse.Summary summary = route.summary();
                     KakaoMobilityResponse.Fare fare = summary.fare();
 
-                    return DrivingRouteResponse.of(
+                    return DrivingRouteResponse.from(
                             fare.taxi(),
                             fare.toll(),
                             summary.duration(),

@@ -55,7 +55,7 @@ public class StartPoint extends BaseEntity {
     }
 
     @Builder
-    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, boolean isUser, boolean isTransit) {
+    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, boolean isUser) {
         this.event = event;
         this.user = user;
         this.name = name;
@@ -63,7 +63,7 @@ public class StartPoint extends BaseEntity {
         this.location = location;
         this.nonUserName = nonUserName;
         this.isUser = isUser;
-        this.isTransit = isTransit;
+        this.isTransit = true;
     }
 
     public boolean getIsUser() {

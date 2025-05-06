@@ -1,9 +1,7 @@
 package com.meetup.server.subway.infrastructure.csv.mapping;
 
 import com.opencsv.bean.CsvBindByName;
-import lombok.*;
-
-import java.math.BigDecimal;
+import lombok.Getter;
 
 @Getter
 public class SubwayCsvMapping {
@@ -18,8 +16,8 @@ public class SubwayCsvMapping {
     private String name;
 
     @CsvBindByName(column = "경도")
-    private BigDecimal longitude;
+    private double longitude;
 
     @CsvBindByName(column = "위도")
-    private BigDecimal latitude;
+    private double latitude;
 }

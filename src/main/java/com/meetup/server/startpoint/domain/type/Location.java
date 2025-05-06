@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Embeddable
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,12 +14,12 @@ import java.math.BigDecimal;
 public class Location {
 
     @Column(name = "road_longitude", nullable = false, columnDefinition = "NUMERIC(9,6)")
-    private BigDecimal roadLongitude;   //경도
+    private double roadLongitude;   //경도
 
     @Column(name = "road_latitude", nullable = false, columnDefinition = "NUMERIC(9,6)")
-    private BigDecimal roadLatitude;    //위도
+    private double roadLatitude;    //위도
 
-    public static Location of(BigDecimal longitude, BigDecimal latitude) {
+    public static Location of(double longitude, double latitude) {
         return new Location(longitude, latitude);
     }
 }

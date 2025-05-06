@@ -11,36 +11,45 @@ import java.util.Optional;
 @Builder
 public record TransitRouteResponse(
         int trafficType,    //1: 지하철, 2: 버스, 3: 도보
+        double distance,
         String laneName,  //지하철 노선명
         String startBoardName,
         String endBoardName,
         int stationCount,
         PassStopList passStopList,
+        String startExitNo,
+        String endExitNo,
         int sectionTime //이동 소요 시간
 ) {
-    public static List<TransitRouteResponse> of(OdsayTransitRouteSearchResponse response) {
-        return response.data().path().stream()
-                .flatMap(path -> path.subPath().stream())
-                .filter(subPath -> subPath.trafficType() != 3)
+    public static List<TransitRouteResponse> from(OdsayTransitRouteSearchResponse response) {
+
+        return response.data().path().getFirst().subPath().stream()
                 .map(subPath -> {
                     String laneName = Optional.ofNullable(subPath.lane())
                             .flatMap(lanes -> lanes.stream().findFirst())
                             .map(lane -> switch (subPath.trafficType()) {
                                 case 1 -> lane.name();   // 지하철
                                 case 2 -> lane.busNo();  // 버스
+                                case 3 -> lane.name();   // 도보
                                 default -> null;
                             })
                             .orElse(null);
 
-                    List<Stations> passStopList = convertToDomainStations(subPath.passStopList().stations());
+                    List<Stations> passStopList = convertToDomainStations(
+                            Optional.ofNullable(subPath.passStopList())
+                                    .map(OdsayTransitRouteSearchResponse.TransitData.PassStopList::stations)
+                                    .orElse(List.of()));
 
                     return TransitRouteResponse.builder()
                             .trafficType(subPath.trafficType())
+                            .distance(subPath.distance())
                             .laneName(laneName)
                             .startBoardName(subPath.startName())
                             .endBoardName(subPath.endName())
                             .stationCount(subPath.stationCount() != null ? subPath.stationCount() : 0)
                             .passStopList(new PassStopList(passStopList))
+                            .startExitNo(subPath.startExitNo())
+                            .endExitNo(subPath.endExitNo())
                             .sectionTime(subPath.sectionTime())
                             .build();
                 })
@@ -49,6 +58,9 @@ public record TransitRouteResponse(
     }
 
     private static List<Stations> convertToDomainStations(List<OdsayTransitRouteSearchResponse.TransitData.Station> odsayStations) {
+        if (odsayStations == null || odsayStations.isEmpty()) {
+            return List.of();
+        }
         return odsayStations.stream()
                 .map(station -> new Stations(
                         station.index(),
@@ -57,5 +69,9 @@ public record TransitRouteResponse(
                         station.y()
                 ))
                 .toList();
+    }
+
+    private static Object convertToDomainWalk() {
+        return null;
     }
 }

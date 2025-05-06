@@ -5,8 +5,6 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-
 public record StartPointRequest(
         @Schema(description = "사용자명", example = "안연아바보")
         String username,
@@ -26,11 +24,11 @@ public record StartPointRequest(
         @DecimalMin(value = "-180.0", message = "경도는 -180.0보다 크거나 같아야 합니다.")
         @DecimalMax(value = "180.0", message = "경도는 180.0보다 작거나 같아야 합니다.")
         @Schema(description = "경도", example = "127.043999")
-        BigDecimal longitude,
+        double longitude,
 
         @DecimalMin(value = "-90.0", message = "위도는 -90.0보다 크거나 같아야 합니다.")
         @DecimalMax(value = "90.0", message = "위도는 90.0보다 작거나 같아야 합니다.")
         @Schema(description = "위도", example = "37.510297")
-        BigDecimal latitude
+        double latitude
 ) {
 }
