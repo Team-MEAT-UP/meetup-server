@@ -26,13 +26,13 @@ public class SubwayConnection extends BaseEntity {
     private Subway toSubway;
 
     @Column(name = "subway_line", nullable = false)
-    private Integer line;
+    private int line;
 
     @Column(name = "section_time_sec", nullable = false)
-    private Integer sectionTimeSec;
+    private int sectionTimeSec;
 
     @Builder
-    public SubwayConnection(Subway fromSubway, Subway toSubway, Integer line, Integer sectionTimeSec) {
+    public SubwayConnection(Subway fromSubway, Subway toSubway, int line, int sectionTimeSec) {
         this.fromSubway = fromSubway;
         this.toSubway = toSubway;
         this.line = line;
