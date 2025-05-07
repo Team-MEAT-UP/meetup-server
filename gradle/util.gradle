@@ -1,5 +1,5 @@
 dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'com.opencsv:opencsv:5.4'
+    implementation 'com.opencsv:opencsv:5.10'
 }

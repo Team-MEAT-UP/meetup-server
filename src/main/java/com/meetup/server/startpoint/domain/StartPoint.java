@@ -74,8 +74,4 @@ public class StartPoint extends BaseEntity {
     public boolean getIsUser() {
         return isUser;
     }
-
-    public boolean getIsTransit() {
-        return isTransit;
-    }
 }

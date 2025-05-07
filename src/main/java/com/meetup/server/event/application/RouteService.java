@@ -2,16 +2,15 @@ package com.meetup.server.event.application;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.event.dto.response.MeetingPoint;
+import com.meetup.server.event.dto.response.MiddlePointResultResponse;
 import com.meetup.server.event.dto.response.RouteResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
-import com.meetup.server.event.persistence.EventRepository;
 import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
 import com.meetup.server.startpoint.application.RouteFacadeService;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
 import com.meetup.server.startpoint.exception.StartPointException;
-import com.meetup.server.startpoint.persistence.StartPointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,21 +24,16 @@ import java.util.UUID;
 public class RouteService {
 
     private final RouteFacadeService routeFacadeService;
-    private final StartPointRepository startPointRepository;
-    private final EventRepository eventRepository;
 
     public RouteResponseList getAllRouteDetails(
-            UUID eventId,
+            MiddlePointResultResponse middlePointResultResponse,
             UUID startPointId
 ) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new StartPointException(StartPointErrorType.PLACE_NOT_FOUND));
-
-        List<StartPoint> startPointList = startPointRepository.findAllByEvent(event);
+        List<StartPoint> startPointList = middlePointResultResponse.startPoints();
 
         boolean isTransit = getIsTransit(startPointList, startPointId);
-        double endX = getEndX(event);
-        double endY = getEndY(event);
+        double endX = getEndX(middlePointResultResponse.event());
+        double endY = getEndY(middlePointResultResponse.event());
 
 
         List<RouteResponse> routeList = startPointList.stream()
@@ -102,7 +96,7 @@ public class RouteService {
     private boolean getIsTransit(List<StartPoint> startPointList, UUID startPointId) {
         for (StartPoint startPoint : startPointList) {
             if (startPoint.getStartPointId().equals(startPointId)) {
-                return startPoint.getIsTransit();
+                return startPoint.isTransit();
             }
         }
         return true;    //default

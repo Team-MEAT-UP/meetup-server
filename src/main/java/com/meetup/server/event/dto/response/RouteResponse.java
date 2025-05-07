@@ -46,15 +46,16 @@ public record RouteResponse(
                 .build();
     }
 
+    private static final Pattern START_POINT_PATTERN = Pattern.compile("(\\S+(구|군))\\s+(\\S+(동|읍))");
+
     private static String convertStartPointName(String address) {
         if (address == null || address.isBlank()) return "";
 
-        Pattern pattern = Pattern.compile("(\\S+(구|군))\\s+(\\S+(동|읍))");
-        Matcher matcher = pattern.matcher(address);
-
+        Matcher matcher = START_POINT_PATTERN.matcher(address);
         if (matcher.find()) {
             return matcher.group(1) + " " + matcher.group(3);
         }
         return "";
     }
+
 }

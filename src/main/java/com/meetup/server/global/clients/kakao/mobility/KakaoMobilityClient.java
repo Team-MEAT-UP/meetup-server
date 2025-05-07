@@ -13,9 +13,6 @@ public class KakaoMobilityClient {
     private final WebClient kakaoMobilityWebClient;
 
     public KakaoMobilityResponse sendRequest(KakaoMobilityRequest request) {
-//        String origin = request.origin().y() + "," + request.origin().x();
-//        String destination = request.destination().y() + "," + request.destination().x();
-
         return kakaoMobilityWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder

@@ -1,5 +1,6 @@
 package com.meetup.server.event.application;
 
+import com.meetup.server.event.dto.response.MiddlePointResultResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class EventMapFacadeService {
     private final RouteService routeService;
 
     public RouteResponseList getEventMap(UUID eventId, UUID startPointId) {
-        middlePointService.getMiddlePoint(eventId);
-        return routeService.getAllRouteDetails(eventId, startPointId);
+        MiddlePointResultResponse result = middlePointService.getMiddlePoint(eventId);
+        return routeService.getAllRouteDetails(result, startPointId);
     }
 }

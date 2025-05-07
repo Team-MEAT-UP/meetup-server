@@ -1,6 +1,7 @@
 package com.meetup.server.event.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.meetup.server.event.domain.type.TrafficType;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
 import com.meetup.server.subway.dto.response.PassStopList;
 import com.meetup.server.subway.dto.response.Stations;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 public record TransitRouteResponse(
-        int trafficType,    //1: 지하철, 2: 버스, 3: 도보
+        TrafficType trafficType,    //1: 지하철, 2: 버스, 3: 도보
         String startExitNo,
         String endExitNo,
         double distance,
@@ -43,7 +44,7 @@ public record TransitRouteResponse(
                                     .orElse(List.of()));
 
                     return TransitRouteResponse.builder()
-                            .trafficType(subPath.trafficType())
+                            .trafficType(TrafficType.fromCode(subPath.trafficType()))
                             .distance(subPath.distance())
                             .laneName(laneName)
                             .startBoardName(subPath.startName())
