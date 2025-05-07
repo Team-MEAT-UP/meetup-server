@@ -34,7 +34,7 @@ public record RouteResponse(
                 .isTransit(isTransit)
                 .id(startPoint.getStartPointId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
-                .profileImage(startPoint.getIsTransit() ? user.getProfileImage() : null)
+                .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
                 .startName(convertStartPointName(startPoint.getAddress().getAddress()))
                 .startLongitude(startPoint.getLocation().getRoadLongitude())
                 .startLatitude(startPoint.getLocation().getRoadLatitude())
