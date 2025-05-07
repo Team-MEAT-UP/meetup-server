@@ -9,9 +9,11 @@ import com.meetup.server.global.clients.google.place.search.GoogleSearchTextResp
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ActiveProfiles("h2")
 @SpringBootTest
 class GooglePlaceClientTest {
 

@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import java.util.UUID;
 
@@ -43,18 +44,22 @@ public class StartPoint extends BaseEntity {
     @Embedded
     private Location location;
 
+    @Column(columnDefinition = "geography(Point, 4326)")
+    private Point point;
+
     @PrePersist
     public void prePersist() {
         this.startPointId = UuidCreator.getTimeOrderedEpoch();
     }
 
     @Builder
-    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName) {
+    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, Point point) {
         this.event = event;
         this.user = user;
         this.name = name;
         this.address = address;
         this.location = location;
         this.nonUserName = nonUserName;
+        this.point = point;
     }
 }

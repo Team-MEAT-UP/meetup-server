@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "subway")
@@ -30,11 +31,15 @@ public class Subway extends BaseEntity {
     @Embedded
     private Location location;
 
+    @Column(columnDefinition = "geography(Point, 4326)")
+    private Point point;
+
     @Builder
-    public Subway(String name, int code, int line, Location location) {
+    public Subway(String name, int code, int line, Location location, Point point) {
         this.name = name;
         this.code = code;
         this.line = line;
         this.location = location;
+        this.point = point;
     }
 }

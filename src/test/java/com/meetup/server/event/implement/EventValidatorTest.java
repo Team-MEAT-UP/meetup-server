@@ -7,17 +7,16 @@ import com.meetup.server.fixture.EventFixture;
 import com.meetup.server.fixture.StartPointFixture;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.persistence.StartPointRepository;
+import com.meetup.server.support.PostgisContainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-class EventValidatorTest {
+class EventValidatorTest extends PostgisContainer {
 
     private static final int MAX_START_POINTS = 8;
 
