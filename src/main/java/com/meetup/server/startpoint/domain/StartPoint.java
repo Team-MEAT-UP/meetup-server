@@ -35,6 +35,9 @@ public class StartPoint extends BaseEntity {
     @Column(name = "start_point_name", nullable = false)
     private String name;
 
+    @Column(name = "non_user_name", length = 255, nullable = true)
+    private String nonUserName;
+
     @Embedded
     private Address address;
 
@@ -50,12 +53,13 @@ public class StartPoint extends BaseEntity {
     }
 
     @Builder
-    public StartPoint(Event event, User user, String name, Address address, Location location, Point point) {
+    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, Point point) {
         this.event = event;
         this.user = user;
         this.name = name;
         this.address = address;
         this.location = location;
+        this.nonUserName = nonUserName;
         this.point = point;
     }
 }
