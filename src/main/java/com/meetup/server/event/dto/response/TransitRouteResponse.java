@@ -2,8 +2,8 @@ package com.meetup.server.event.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
-import com.meetup.server.subway.dto.repsonse.PassStopList;
-import com.meetup.server.subway.dto.repsonse.Stations;
+import com.meetup.server.subway.dto.response.PassStopList;
+import com.meetup.server.subway.dto.response.Stations;
 import lombok.Builder;
 
 import java.util.List;

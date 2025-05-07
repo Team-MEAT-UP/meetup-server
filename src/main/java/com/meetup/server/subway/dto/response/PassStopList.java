@@ -1,4 +1,4 @@
-package com.meetup.server.subway.dto.repsonse;
+package com.meetup.server.subway.dto.response;
 
 import java.util.List;
 

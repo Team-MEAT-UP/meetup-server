@@ -1,4 +1,4 @@
-package com.meetup.server.subway.dto.repsonse;
+package com.meetup.server.subway.dto.response;
 
 public record Stations(
         int index,  //순서
