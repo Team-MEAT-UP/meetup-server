@@ -15,7 +15,6 @@ import com.meetup.server.startpoint.persistence.StartPointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,11 +28,10 @@ public class RouteService {
     private final StartPointRepository startPointRepository;
     private final EventRepository eventRepository;
 
-    @Transactional
     public RouteResponseList getAllRouteDetails(
             UUID eventId,
             UUID startPointId
-    ) {
+) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new StartPointException(StartPointErrorType.PLACE_NOT_FOUND));
 

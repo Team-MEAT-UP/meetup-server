@@ -41,7 +41,7 @@ public record DrivingRouteResponse(
                 .toList();
     }
 
-    public static int durationConverter(int duration) {
+    private static int durationConverter(int duration) {
         return duration / 60;
     }
 }
