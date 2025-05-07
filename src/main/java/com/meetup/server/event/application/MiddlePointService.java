@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class MiddlePointService {
     private final EventValidator eventValidator;
     private final EventRepository eventRepository;
 
+    @Transactional
     public MiddlePointResultResponse getMiddlePoint(UUID eventId) {
         Event event = eventReader.read(eventId);
         List<StartPoint> startPoints = startPointReader.readAllByEvent(event);
