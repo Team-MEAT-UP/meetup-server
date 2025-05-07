@@ -31,7 +31,6 @@ public class RouteService {
 ) {
         List<StartPoint> startPointList = middlePointResultResponse.startPoints();
 
-        boolean isTransit = getIsTransit(startPointList, startPointId);
         double endX = getEndX(middlePointResultResponse.event());
         double endY = getEndY(middlePointResultResponse.event());
 
@@ -43,7 +42,7 @@ public class RouteService {
                         getStartY(startPoint),
                         String.valueOf(endX),
                         String.valueOf(endY),
-                        isTransit
+                        startPointId
                 ))
                 .toList();
 
@@ -53,7 +52,7 @@ public class RouteService {
     private RouteResponse fetchPerRouteDetails(
             StartPoint startPoint,
             String startX, String startY, String endX, String endY,
-            boolean isTransit
+            UUID startPointId
     ) {
         OdsayTransitRouteSearchResponse transitRoute = routeFacadeService.getTransitRoute(startX, startY, endX, endY);
         KakaoMobilityResponse drivingRoute = routeFacadeService.getDrivingRoute(startX, startY, endX, endY);
@@ -65,7 +64,7 @@ public class RouteService {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
 
-        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, isTransit);
+        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
     }
 
     private double getEndX(Event event) {
@@ -93,12 +92,10 @@ public class RouteService {
         return null;
     }
 
-    private boolean getIsTransit(List<StartPoint> startPointList, UUID startPointId) {
-        for (StartPoint startPoint : startPointList) {
-            if (startPoint.getStartPointId().equals(startPointId)) {
-                return startPoint.isTransit();
-            }
+    private boolean getIsTransit(StartPoint startPoint, UUID startPointId) {
+        if (startPoint.getStartPointId().equals(startPointId)) {
+            return startPoint.isTransit();
         }
-        return true;    //default
+        return true;    // default 값
     }
 }

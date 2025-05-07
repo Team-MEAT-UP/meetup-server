@@ -61,9 +61,6 @@ public class MiddlePointService {
     }
 
     private void saveMiddlePoint(Event event, Subway subway) {
-        eventRepository.save(event.builder()
-                .subway(subway)
-                .build()
-        );
+        event.updateSubway(subway);
     }
 }
