@@ -16,8 +16,9 @@ public class EventMapFacadeService {
     private final MiddlePointService middlePointService;
     private final RouteService routeService;
 
-    public RouteResponseList getEventMap(UUID eventId, UUID startPointId) {
+
+    public RouteResponseList getEventMap(UUID eventId, UUID startPointId, boolean isTransit) {
         MiddlePointResultResponse result = middlePointService.getMiddlePoint(eventId);
-        return routeService.getAllRouteDetails(result, startPointId);
+        return routeService.getAllRouteDetails(result, startPointId, isTransit);
     }
 }

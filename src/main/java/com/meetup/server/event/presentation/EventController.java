@@ -32,8 +32,10 @@ public class EventController {
     @GetMapping
     public ApiResponse<RouteResponseList> getEventMap(
             @RequestHeader UUID startPointId,
-            @RequestParam UUID eventId
+            @RequestParam UUID eventId,
+            @RequestParam boolean isTransit
     ) {
-        return ApiResponse.success(eventService.getEventMap(eventId, startPointId));
+        RouteResponseList response = eventService.getEventMap(eventId, startPointId, isTransit);
+        return ApiResponse.success(response);
     }
 }

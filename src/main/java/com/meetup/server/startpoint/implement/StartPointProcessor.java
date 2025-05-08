@@ -34,4 +34,9 @@ public class StartPointProcessor {
 
         return startPointRepository.save(startPoint);
     }
+
+    public void updateIsTransit(StartPoint startPoint, boolean isTransit) {
+        startPoint.updateIsTransit(isTransit);
+        startPointRepository.save(startPoint);
+    }
 }

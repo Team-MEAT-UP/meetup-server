@@ -8,6 +8,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -18,8 +20,13 @@ public class RouteCacheService {
     @Value("${spring.redis.cache-name}")
     private String cacheName;
 
+    public String generateEventCacheKey(UUID eventId) {
+        return eventId.toString();
+    }
+
     public <T> T getCacheData(String cacheKey, Class<T> type) {
         Cache cache = cacheManager.getCache(cacheName);
+
         if (cache != null) {
             return cache.get(cacheKey, type);
         }
@@ -30,6 +37,7 @@ public class RouteCacheService {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             cache.put(cacheKey, data);
+            log.info("Cache key: {}", cacheKey);
         }
     }
 

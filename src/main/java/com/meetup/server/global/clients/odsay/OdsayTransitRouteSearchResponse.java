@@ -82,11 +82,11 @@ public record OdsayTransitRouteSearchResponse(
                 String endLocalStationID,
                 String endArsID,
                 String startExitNo,
-                Double startExitX,
-                Double startExitY,
+                String startExitX,
+                String startExitY,
                 String endExitNo,
-                Double endExitX,
-                Double endExitY,
+                String endExitX,
+                String endExitY,
                 PassStopList passStopList
         ) {
         }
