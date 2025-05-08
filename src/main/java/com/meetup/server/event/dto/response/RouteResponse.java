@@ -46,6 +46,21 @@ public record RouteResponse(
                 .build();
     }
 
+    public RouteResponse updateIsTransit(boolean isTransit) {
+        return RouteResponse.builder()
+                .isTransit(isTransit)
+                .id(this.id)
+                .nickname(this.nickname)
+                .profileImage(this.profileImage)
+                .startName(this.startName)
+                .startLongitude(this.startLongitude)
+                .startLatitude(this.startLatitude)
+                .transitRoute(this.transitRoute)
+                .drivingRoute(this.drivingRoute)
+                .totalTime(this.totalTime)
+                .build();
+    }
+
     private static final Pattern START_POINT_PATTERN = Pattern.compile("(\\S+(구|군))\\s+(\\S+(동|읍))");
 
     private static String convertStartPointName(String address) {

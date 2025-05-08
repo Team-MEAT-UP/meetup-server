@@ -59,6 +59,24 @@ public class RouteService {
             String startX, String startY, String endX, String endY,
             UUID startPointId
     ) {
+        RouteResponse cachedRouteResponse = routeCacheService.getCacheData(
+                startPoint.getStartPointId().toString(), RouteResponse.class
+        );
+        log.info("cachekey: {}", startPoint.getStartPointId().toString());
+
+        boolean currentIsTransit = getIsTransit(startPoint, startPointId);
+        log.info("currentIsTransit: {}", currentIsTransit);
+
+        if (cachedRouteResponse != null && cachedRouteResponse.isTransit() == currentIsTransit) {
+            log.info("Cache hit : {}", startPoint.getStartPointId());
+            return cachedRouteResponse;
+        }
+        if (cachedRouteResponse != null && cachedRouteResponse.isTransit() != currentIsTransit) {
+            log.info("Cache found AND Cache IsTransit mismatched : {}", startPoint.getStartPointId());
+            return routeCacheService.updateCacheOfIsTransit(startPoint.getStartPointId().toString(), currentIsTransit);
+        }
+        log.info("Cache miss");
+
         OdsayTransitRouteSearchResponse transitRoute = routeFacadeService.getTransitRoute(startX, startY, endX, endY);
         KakaoMobilityResponse drivingRoute = routeFacadeService.getDrivingRoute(startX, startY, endX, endY);
 
@@ -68,8 +86,10 @@ public class RouteService {
         if (drivingRoute == null) {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
+        RouteResponse routeResponse = RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
+        routeCacheService.putCacheData(startPoint.getStartPointId().toString(), routeResponse);
 
-        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
+        return routeResponse;
     }
 
     private String getEndStationName(Event event) {
