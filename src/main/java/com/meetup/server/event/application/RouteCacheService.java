@@ -26,6 +26,7 @@ public class RouteCacheService {
 
     public <T> T getCacheData(String cacheKey, Class<T> type) {
         Cache cache = cacheManager.getCache(cacheName);
+
         if (cache != null) {
             return cache.get(cacheKey, type);
         }
@@ -36,6 +37,7 @@ public class RouteCacheService {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             cache.put(cacheKey, data);
+            log.info("Cache key: {}", cacheKey);
         }
     }
 

@@ -17,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -75,13 +77,16 @@ public class RouteService {
                         getStartY(startPoint),
                         String.valueOf(endX),
                         String.valueOf(endY),
-                        startPointId
+                        startPoint.getStartPointId(),
+                        isTransitMap.getOrDefault(startPoint.getStartPointId(), true)
                 ))
                 .toList();
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        RouteResponseList responseList = RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        routeCacheService.putCacheData(eventCacheKey, responseList);
+        return responseList;
     }
 
     private RouteResponse fetchPerRouteDetails(
