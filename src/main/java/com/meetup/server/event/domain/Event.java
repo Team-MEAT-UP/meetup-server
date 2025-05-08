@@ -40,4 +40,8 @@ public class Event extends BaseEntity {
         this.subway = subway;
         this.recommendPlace = recommendPlace;
     }
+
+    public void updateSubway(Subway subway) {
+        this.subway = subway;
+    }
 }

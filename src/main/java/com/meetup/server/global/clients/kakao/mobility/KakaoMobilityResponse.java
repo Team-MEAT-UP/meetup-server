@@ -3,23 +3,25 @@ package com.meetup.server.global.clients.kakao.mobility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record KakaoMobilityResponse(
         @JsonProperty("trans_id") String transId,
-        Route[] routes
+        List<Route> routes
 ) {
     public record Route(
             @JsonProperty("result_code") int resultCode,
             @JsonProperty("result_msg") String resultMsg,
             Summary summary,
-            Section[] sections
+            List<Section> sections
     ) {
     }
 
     public record Summary(
             Point origin,
             Point destination,
-            Point[] waypoints,
+            List<Point> waypoints,
             String priority,
             Bound bound,
             Fare fare,
@@ -53,8 +55,8 @@ public record KakaoMobilityResponse(
             int distance,
             int duration,
             Bound bound,
-            Road[] roads,
-            Guide[] guides
+            List<Road> roads,
+            List<Guide> guides
     ) {
     }
 

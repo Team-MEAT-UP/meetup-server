@@ -3,6 +3,8 @@ package com.meetup.server.global.clients.odsay;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record OdsayTransitRouteSearchResponse(
         @JsonProperty("result") TransitData data
@@ -16,12 +18,12 @@ public record OdsayTransitRouteSearchResponse(
             double pointDistance,
             int startRadius,
             int endRadius,
-            Path[] path
+            List<Path> path
     ) {
         public record Path(
                 int pathType,
                 Info info,
-                SubPath[] subPath
+                List<SubPath> subPath
         ) {
         }
 
@@ -54,7 +56,7 @@ public record OdsayTransitRouteSearchResponse(
                 double distance,
                 int sectionTime,
                 Integer stationCount,
-                Lane[] lane,
+                List<Lane> lane,
                 int intervalTime,
                 String startName,
                 String startNameKor,
@@ -107,7 +109,7 @@ public record OdsayTransitRouteSearchResponse(
         }
 
         public record PassStopList(
-                Station[] stations
+                List<Station> stations
         ) {
         }
 
