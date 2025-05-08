@@ -31,9 +31,9 @@ public class RouteService {
 ) {
         List<StartPoint> startPointList = middlePointResultResponse.startPoints();
 
+        String endStationName = getEndStationName(middlePointResultResponse.event());
         double endX = getEndX(middlePointResultResponse.event());
         double endY = getEndY(middlePointResultResponse.event());
-
 
         List<RouteResponse> routeList = startPointList.stream()
                 .map(startPoint -> fetchPerRouteDetails(
@@ -46,7 +46,7 @@ public class RouteService {
                 ))
                 .toList();
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY));
+        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY));
     }
 
     private RouteResponse fetchPerRouteDetails(
@@ -67,6 +67,10 @@ public class RouteService {
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
     }
 
+    private String getEndStationName(Event event) {
+        return event.getSubway().getName();
+    }
+
     private double getEndX(Event event) {
         return event.getSubway().getLocation().getRoadLongitude();
     }
@@ -81,15 +85,6 @@ public class RouteService {
 
     private String getStartY(StartPoint startPoint) {
         return String.valueOf(startPoint.getLocation().getRoadLatitude());
-    }
-
-    private String getStartPointName(List<StartPoint> startPointList, UUID startPointId) {
-        for (StartPoint startPoint : startPointList) {
-            if (startPoint.getStartPointId().equals(startPointId)) {
-                return startPoint.getName();
-            }
-        }
-        return null;
     }
 
     private boolean getIsTransit(StartPoint startPoint, UUID startPointId) {
