@@ -6,7 +6,6 @@ import com.meetup.server.event.exception.EventErrorType;
 import com.meetup.server.event.exception.EventException;
 import com.meetup.server.event.implement.EventReader;
 import com.meetup.server.event.implement.EventValidator;
-import com.meetup.server.event.persistence.EventRepository;
 import com.meetup.server.global.util.CoordinateUtil;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.implement.StartPointReader;
@@ -34,7 +33,6 @@ public class MiddlePointService {
     private final SubwayProcessor subwayProcessor;
     private final SubwayReader subwayReader;
     private final EventValidator eventValidator;
-    private final EventRepository eventRepository;
 
     @Transactional
     public MiddlePointResultResponse getMiddlePoint(UUID eventId) {
