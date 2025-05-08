@@ -1,5 +1,6 @@
 package com.meetup.server.event.dto.response;
 
+import com.meetup.server.parkinglot.dto.ClosestParkingLot;
 import lombok.Builder;
 
 import java.util.List;
@@ -9,16 +10,17 @@ public record RouteResponseList(
         int peopleCount,
         int averageTime,
         MeetingPoint meetingPoint,
-        List<RouteResponse> routeResponse
+        List<RouteResponse> routeResponse,
+        ParkingLotResponse parkingLot
 ) {
 
-
-    public static RouteResponseList of(List<RouteResponse> routeResponse, MeetingPoint meetingPoint) {
+    public static RouteResponseList of(List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
         return RouteResponseList.builder()
                 .averageTime(calculateAverageTime(routeResponse))
                 .peopleCount(routeResponse.size())
                 .meetingPoint(meetingPoint)
                 .routeResponse(routeResponse)
+                .parkingLot(ParkingLotResponse.from(closestParkingLot))
                 .build();
     }
 

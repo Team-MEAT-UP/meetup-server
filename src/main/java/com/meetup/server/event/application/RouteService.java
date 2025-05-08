@@ -7,6 +7,8 @@ import com.meetup.server.event.dto.response.RouteResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
 import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
+import com.meetup.server.parkinglot.dto.ClosestParkingLot;
+import com.meetup.server.parkinglot.implement.ParkingLotFinder;
 import com.meetup.server.startpoint.application.RouteFacadeService;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class RouteService {
 
     private final RouteFacadeService routeFacadeService;
+    private final ParkingLotFinder parkingLotFinder;
 
     public RouteResponseList getAllRouteDetails(
             MiddlePointResultResponse middlePointResultResponse,
@@ -33,7 +36,6 @@ public class RouteService {
 
         double endX = getEndX(middlePointResultResponse.event());
         double endY = getEndY(middlePointResultResponse.event());
-
 
         List<RouteResponse> routeList = startPointList.stream()
                 .map(startPoint -> fetchPerRouteDetails(
@@ -46,7 +48,9 @@ public class RouteService {
                 ))
                 .toList();
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY));
+        ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
+
+        return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY), closestParkingLot);
     }
 
     private RouteResponse fetchPerRouteDetails(
