@@ -16,7 +16,7 @@ import java.util.Collections;
                 description = "SPOT API 명세서",
                 version = "v1"
         ),
-        servers = @Server(url = "/", description = "Default Server URL")
+        servers = @Server(url = "${springdoc.server-url}", description = "Default Server URL")
 )
 
 @Configuration
