@@ -27,6 +27,7 @@ public class RouteService {
 
     private final RouteFacadeService routeFacadeService;
     private final ParkingLotFinder parkingLotFinder;
+    private final RouteCacheService routeCacheService;
 
     public RouteResponseList getAllRouteDetails(
             MiddlePointResultResponse middlePointResultResponse,
