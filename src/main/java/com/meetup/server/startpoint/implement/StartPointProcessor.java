@@ -28,6 +28,8 @@ public class StartPointProcessor {
                 .address(Address.of(startPointRequest.address(), startPointRequest.roadAddress()))
                 .location(Location.of(startPointRequest.longitude(), startPointRequest.latitude()))
                 .point(CoordinateUtil.createPoint(startPointRequest.longitude(), startPointRequest.latitude()))
+                .isUser(user != null)
+                .nonUserName(startPointRequest.username())
                 .build();
 
         return startPointRepository.save(startPoint);
