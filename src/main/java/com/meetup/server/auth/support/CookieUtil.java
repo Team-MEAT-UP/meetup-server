@@ -16,11 +16,11 @@ public class CookieUtil {
 
     private void setCommonCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
-                .httpOnly(true)
-                .secure(true)
+                .httpOnly(cookieProperties.httpOnly())
+                .secure(cookieProperties.secure())
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite("Strict")
+                .sameSite(cookieProperties.sameSite())
                 .build();
 
         response.addHeader(cookieProperties.setCookie(), cookie.toString());

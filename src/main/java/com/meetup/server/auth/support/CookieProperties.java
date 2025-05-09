@@ -8,6 +8,9 @@ public record CookieProperties(
         String refreshToken,
         String setCookie,
         int accessTokenMaxAge,
-        int refreshTokenMaxAge
+        int refreshTokenMaxAge,
+        boolean httpOnly,
+        boolean secure,
+        String sameSite
 ) {
 }
