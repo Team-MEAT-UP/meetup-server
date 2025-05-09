@@ -55,4 +55,18 @@ public class CookieUtil {
 
         return null;
     }
+
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(cookieProperties.accessToken())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
 }
