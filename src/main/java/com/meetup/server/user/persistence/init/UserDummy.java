@@ -35,7 +35,8 @@ public class UserDummy implements ApplicationRunner {
                     .role(Role.USER)
                     .socialId("test1")
                     .profileImage("https://example.com/test1.jpg")
-                    .agreement(false)
+                    .personalInfoAgreement(true)
+                    .marketingAgreement(true)
                     .build();
 
             User DUMMY_USER2 = User.builder()
@@ -44,7 +45,8 @@ public class UserDummy implements ApplicationRunner {
                     .role(Role.USER)
                     .socialId("test2")
                     .profileImage("https://example.com/test2.jpg")
-                    .agreement(true)
+                    .personalInfoAgreement(true)
+                    .marketingAgreement(true)
                     .build();
 
             User DUMMY_USER3 = User.builder()
@@ -53,7 +55,8 @@ public class UserDummy implements ApplicationRunner {
                     .role(Role.USER)
                     .socialId("test3")
                     .profileImage("https://example.com/test3.jpg")
-                    .agreement(true)
+                    .personalInfoAgreement(true)
+                    .marketingAgreement(false)
                     .build();
 
             userList.add(DUMMY_USER1);

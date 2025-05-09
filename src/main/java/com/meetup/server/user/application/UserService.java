@@ -30,4 +30,10 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorType.USER_NOT_FOUND));
     }
+
+    @Transactional
+    public void saveUserAgreement(Long userId,boolean personalInfoAgreement, boolean marketingAgreement) {
+        User user = getUserById(userId);
+        user.updateAgreement(personalInfoAgreement, marketingAgreement);
+    }
 }
