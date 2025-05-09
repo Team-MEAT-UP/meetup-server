@@ -16,11 +16,11 @@ public class CookieUtil {
 
     private void setCommonCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
-                .httpOnly(true)
-                .secure(true)
+                .httpOnly(cookieProperties.httpOnly())
+                .secure(cookieProperties.secure())
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite("Strict")
+                .sameSite(cookieProperties.sameSite())
                 .build();
 
         response.addHeader(cookieProperties.setCookie(), cookie.toString());
@@ -48,6 +48,20 @@ public class CookieUtil {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(cookieProperties.refreshToken())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(cookieProperties.accessToken())) {
                     return cookie.getValue();
                 }
             }

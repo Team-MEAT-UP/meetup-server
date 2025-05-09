@@ -2,15 +2,14 @@ package com.meetup.server.user.presentation;
 
 import com.meetup.server.global.support.response.ApiResponse;
 import com.meetup.server.user.application.UserService;
+import com.meetup.server.user.dto.request.UserAgreementRequest;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Tag(name = "User API", description = "사용자 API")
@@ -28,5 +27,15 @@ public class UserController {
     ) {
         UserProfileInfoResponse response = userService.getUserProfileInfo(userId);
         return ApiResponse.success(response);
+    }
+
+    @Operation(summary = "유저 약관 동의 저장", description = "유저의 개인정보 이용 동의와 마케팅 이용 동의를 저장합니다")
+    @PostMapping("/agreement")
+    public ApiResponse<?> saveUserAgreement(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody UserAgreementRequest request
+    ) {
+        userService.saveUserAgreement(userId, request.isPersonalInfoAgreement(), request.isMarketingAgreement());
+        return ApiResponse.success();
     }
 }

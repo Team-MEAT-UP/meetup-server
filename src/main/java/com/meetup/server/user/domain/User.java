@@ -30,21 +30,29 @@ public class User extends BaseEntity {
     @Column(name = "email", length = 255, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "agreement", nullable = false)
-    private boolean agreement;
+    @Column(name = "personal_info_agreement", nullable = false)
+    private boolean personalInfoAgreement;
+
+    @Column(name = "marketing_agreement", nullable = true)
+    private boolean marketingAgreement;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 10, nullable = false)
     private Role role;
 
-
     @Builder
-    public User(String nickname, String profileImage, String email, String socialId, Role role, boolean agreement) {
+    public User(String nickname, String profileImage, String email, String socialId, Role role, boolean personalInfoAgreement, boolean marketingAgreement) {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;
         this.socialId = socialId;
-        this.agreement = agreement;
         this.role = role;
+        this.personalInfoAgreement = personalInfoAgreement;
+        this.marketingAgreement = marketingAgreement;
+    }
+
+    public void updateAgreement(boolean personalInfoAgreement, boolean marketingAgreement) {
+        this.personalInfoAgreement = personalInfoAgreement;
+        this.marketingAgreement = marketingAgreement;
     }
 }

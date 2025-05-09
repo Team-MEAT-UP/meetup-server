@@ -31,9 +31,10 @@ public class RouteService {
     public RouteResponseList getAllRouteDetails(
             MiddlePointResultResponse middlePointResultResponse,
             UUID startPointId
-) {
+    ) {
         List<StartPoint> startPointList = middlePointResultResponse.startPoints();
 
+        String endStationName = getEndStationName(middlePointResultResponse.event());
         double endX = getEndX(middlePointResultResponse.event());
         double endY = getEndY(middlePointResultResponse.event());
 
@@ -50,7 +51,7 @@ public class RouteService {
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(getStartPointName(startPointList, startPointId), endX, endY), closestParkingLot);
+        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
     }
 
     private RouteResponse fetchPerRouteDetails(
@@ -71,6 +72,10 @@ public class RouteService {
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
     }
 
+    private String getEndStationName(Event event) {
+        return event.getSubway().getName();
+    }
+
     private double getEndX(Event event) {
         return event.getSubway().getLocation().getRoadLongitude();
     }
@@ -85,15 +90,6 @@ public class RouteService {
 
     private String getStartY(StartPoint startPoint) {
         return String.valueOf(startPoint.getLocation().getRoadLatitude());
-    }
-
-    private String getStartPointName(List<StartPoint> startPointList, UUID startPointId) {
-        for (StartPoint startPoint : startPointList) {
-            if (startPoint.getStartPointId().equals(startPointId)) {
-                return startPoint.getName();
-            }
-        }
-        return null;
     }
 
     private boolean getIsTransit(StartPoint startPoint, UUID startPointId) {
