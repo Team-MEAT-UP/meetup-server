@@ -1,8 +1,11 @@
 package com.meetup.server.auth.presentation.filter;
 
+import com.meetup.server.auth.application.AuthService;
+import com.meetup.server.auth.dto.response.ReissueTokenResponse;
 import com.meetup.server.auth.support.AuthenticationUtil;
 import com.meetup.server.auth.support.CookieUtil;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
+import com.meetup.server.user.exception.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationUtil authenticationUtil;
     private final CookieUtil cookieUtil;
+    private final AuthService authService;
 
     @Override
     protected void doFilterInternal(
@@ -37,8 +41,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
             authenticationUtil.setAuthenticationFromRequest(request, token);
+        } else {
+            reAuthenticateWithRefreshToken(request, response);
         }
 
         filterChain.doFilter(request, response);
     }
+
+    private void reAuthenticateWithRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = cookieUtil.getRefreshTokenFromCookie(request);
+        if (refreshToken != null) {
+            try {
+                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(response, refreshToken);
+                cookieUtil.setAccessTokenCookie(response, reissueTokenResponse.accessToken());
+                authenticationUtil.setAuthenticationFromRequest(request, reissueTokenResponse.accessToken());
+            } catch (UserException e) {
+                log.error("Token is invalid, user check failed: {}", e.getMessage());
+                cookieUtil.deleteAccessTokenCookie(response);
+                cookieUtil.deleteRefreshTokenCookie(response);
+            }
+        }
+    }
+
 }
