@@ -1,6 +1,7 @@
 package com.meetup.server.auth.presentation.filter;
 
 import com.meetup.server.auth.support.AuthenticationUtil;
+import com.meetup.server.auth.support.CookieUtil;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,9 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationUtil authenticationUtil;
-
-    private static final String HEADER_AUTHORIZATION = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
+    private final CookieUtil cookieUtil;
 
     @Override
     protected void doFilterInternal(
@@ -33,21 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-        String token = getAccessToken(authorizationHeader);
+        String token = cookieUtil.getAccessTokenFromCookie(request);
+        log.info("Success Access Token With Cookie");
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
             authenticationUtil.setAuthenticationFromRequest(request, token);
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String getAccessToken(String authorizationHeader) {
-        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            return authorizationHeader.substring(TOKEN_PREFIX.length());
-        }
-
-        return null;
     }
 }
