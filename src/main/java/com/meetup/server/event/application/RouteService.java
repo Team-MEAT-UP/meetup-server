@@ -7,6 +7,8 @@ import com.meetup.server.event.dto.response.RouteResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
 import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
+import com.meetup.server.parkinglot.dto.ClosestParkingLot;
+import com.meetup.server.parkinglot.implement.ParkingLotFinder;
 import com.meetup.server.startpoint.application.RouteFacadeService;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
@@ -24,11 +26,12 @@ import java.util.UUID;
 public class RouteService {
 
     private final RouteFacadeService routeFacadeService;
+    private final ParkingLotFinder parkingLotFinder;
 
     public RouteResponseList getAllRouteDetails(
             MiddlePointResultResponse middlePointResultResponse,
             UUID startPointId
-) {
+    ) {
         List<StartPoint> startPointList = middlePointResultResponse.startPoints();
 
         String endStationName = getEndStationName(middlePointResultResponse.event());
@@ -46,7 +49,9 @@ public class RouteService {
                 ))
                 .toList();
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY));
+        ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
+
+        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
     }
 
     private RouteResponse fetchPerRouteDetails(
