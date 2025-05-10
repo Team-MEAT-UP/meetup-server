@@ -32,7 +32,9 @@ public class SecurityConfig {
     private final ResponseContextFilter responseContextFilter;
 
     private final String[] BLACK_LIST = {
-            "/users/**"
+            "/historys/**",
+            "/users/**",
+            "/auth/**",
     };
 
     @Bean
