@@ -8,6 +8,7 @@ public record UserProfileInfoResponse(
         Long userId,
         String nickname,
         String profileImageUrl,
+        String email,
         boolean personalInfoAgreement,
         boolean marketingAgreement
 ) {
@@ -17,6 +18,7 @@ public record UserProfileInfoResponse(
                 .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImage())
+                .email(user.getEmail())
                 .personalInfoAgreement(user.isPersonalInfoAgreement())
                 .marketingAgreement(user.isMarketingAgreement())
                 .build();
