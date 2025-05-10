@@ -29,11 +29,8 @@ public class EventController {
     }
 
     @Operation(summary = "지도 조회 API", description = "모임의 중간 지점 계산 및 모임 참여자의 경로 조회를 진행합니다")
-    @GetMapping
-    public ApiResponse<RouteResponseList> getEventMap(
-            @RequestHeader UUID startPointId,
-            @RequestParam UUID eventId
-    ) {
+    @GetMapping("/{eventId}")
+    public ApiResponse<RouteResponseList> getEventMap(@PathVariable UUID eventId, @RequestParam(required = false) UUID startPointId) {
         return ApiResponse.success(eventService.getEventMap(eventId, startPointId));
     }
 }

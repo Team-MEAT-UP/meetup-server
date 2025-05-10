@@ -18,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,7 +49,9 @@ public class RouteService {
                         String.valueOf(endY),
                         startPointId
                 ))
-                .toList();
+                .collect(Collectors.toList());
+
+        prioritizeMyRoute(startPointId, routeList);
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
 
@@ -69,7 +73,7 @@ public class RouteService {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
 
-        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
+        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsMe(startPoint, startPointId));
     }
 
     private String getEndStationName(Event event) {
@@ -92,10 +96,20 @@ public class RouteService {
         return String.valueOf(startPoint.getLocation().getRoadLatitude());
     }
 
-    private boolean getIsTransit(StartPoint startPoint, UUID startPointId) {
-        if (startPoint.getStartPointId().equals(startPointId)) {
-            return startPoint.isTransit();
+    private boolean getIsMe(StartPoint startPoint, UUID startPointId) {
+        return startPoint.getStartPointId().equals(startPointId);
+    }
+
+    private void prioritizeMyRoute(UUID startPointId, List<RouteResponse> routeList) {
+        if (startPointId != null) {
+            Optional<RouteResponse> myRoute = routeList.stream()
+                    .filter(RouteResponse::isMe)
+                    .findFirst();
+
+            myRoute.ifPresent(route -> {
+                routeList.remove(route);
+                routeList.addFirst(route);
+            });
         }
-        return true;    // default 값
     }
 }

@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 @Builder
 public record RouteResponse(
         boolean isTransit,  // true: 대중교통, false: 자동차
+        boolean isMe,
         UUID id,
         String nickname,
         String profileImage,
@@ -29,9 +30,10 @@ public record RouteResponse(
                                    User user,
                                    OdsayTransitRouteSearchResponse transitResponse,
                                    KakaoMobilityResponse drivingResponse,
-                                   boolean isTransit) {
+                                   boolean isMe) {
         return RouteResponse.builder()
-                .isTransit(isTransit)
+                .isTransit(startPoint.isTransit())
+                .isMe(isMe)
                 .id(startPoint.getStartPointId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
                 .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
@@ -40,7 +42,7 @@ public record RouteResponse(
                 .startLatitude(startPoint.getLocation().getRoadLatitude())
                 .transitRoute(TransitRouteResponse.from(transitResponse))
                 .drivingRoute(DrivingRouteResponse.from(drivingResponse))
-                .totalTime(isTransit ?
+                .totalTime(startPoint.isTransit() ?
                         transitResponse.data().path().getFirst().info().totalTime()
                         : drivingResponse.routes().getFirst().summary().duration())
                 .build();
