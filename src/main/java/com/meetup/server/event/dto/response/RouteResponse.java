@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 @Builder
 public record RouteResponse(
         boolean isTransit,  // true: 대중교통, false: 자동차
-        UUID id,
+        UUID startPointId,
         String nickname,
         String profileImage,
         String startName,  //출발지 주소
@@ -32,7 +32,7 @@ public record RouteResponse(
                                    boolean isTransit) {
         return RouteResponse.builder()
                 .isTransit(isTransit)
-                .id(startPoint.getStartPointId())
+                .startPointId(startPoint.getStartPointId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
                 .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
                 .startName(convertStartPointName(startPoint.getAddress().getAddress()))
@@ -43,6 +43,22 @@ public record RouteResponse(
                 .totalTime(isTransit ?
                         transitResponse.data().path().getFirst().info().totalTime()
                         : drivingResponse.routes().getFirst().summary().duration())
+                .build();
+    }
+
+    public RouteResponse updateIsTransit(boolean isTransit) {
+
+        return RouteResponse.builder()
+                .isTransit(isTransit)
+                .startPointId(this.startPointId)
+                .nickname(this.nickname)
+                .profileImage(this.profileImage)
+                .startName(this.startName)
+                .startLongitude(this.startLongitude)
+                .startLatitude(this.startLatitude)
+                .transitRoute(this.transitRoute)
+                .drivingRoute(this.drivingRoute)
+                .totalTime(this.totalTime)
                 .build();
     }
 

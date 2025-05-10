@@ -17,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -27,16 +29,46 @@ public class RouteService {
 
     private final RouteFacadeService routeFacadeService;
     private final ParkingLotFinder parkingLotFinder;
+    private final RouteCacheService routeCacheService;
 
     public RouteResponseList getAllRouteDetails(
             MiddlePointResultResponse middlePointResultResponse,
-            UUID startPointId
+            UUID startPointId,
+            boolean isTransit
     ) {
         List<StartPoint> startPointList = middlePointResultResponse.startPoints();
+        Map<UUID, Boolean> isTransitMap = buildIsTransitMap(startPointList, startPointId, isTransit);
 
         String endStationName = getEndStationName(middlePointResultResponse.event());
         double endX = getEndX(middlePointResultResponse.event());
         double endY = getEndY(middlePointResultResponse.event());
+
+        String eventCacheKey = routeCacheService.generateEventCacheKey(middlePointResultResponse.event().getEventId());
+        log.info("Event Cache Key : {}", eventCacheKey);
+
+        RouteResponseList cachedRouteResponseList = routeCacheService.getCacheData(eventCacheKey, RouteResponseList.class);
+
+        if (cachedRouteResponseList != null) {
+
+            List<RouteResponse> newRoutes = startPointList.stream()
+                    .map(startPoint -> fetchPerRouteDetails(
+                            startPoint,
+                            getStartX(startPoint),
+                            getStartY(startPoint),
+                            String.valueOf(endX),
+                            String.valueOf(endY),
+                            startPoint.getStartPointId(),
+                            isTransitMap.getOrDefault(startPoint.getStartPointId(), true)
+                    ))
+                    .toList();
+
+            if (!isCacheInvalid(cachedRouteResponseList.routeResponse(), newRoutes)) {
+                log.info("Event Cache HIT");
+                return cachedRouteResponseList;
+            }
+
+            log.info("Event Cache HIT AND Cache IsTransit MISMATCHED");
+        }
 
         List<RouteResponse> routeList = startPointList.stream()
                 .map(startPoint -> fetchPerRouteDetails(
@@ -45,20 +77,45 @@ public class RouteService {
                         getStartY(startPoint),
                         String.valueOf(endX),
                         String.valueOf(endY),
-                        startPointId
+                        startPoint.getStartPointId(),
+                        isTransitMap.getOrDefault(startPoint.getStartPointId(), true)
                 ))
                 .toList();
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(middlePointResultResponse.event().getSubway().getPoint());
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        RouteResponseList responseList = RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        routeCacheService.putCacheData(eventCacheKey, responseList);
+        return responseList;
     }
 
     private RouteResponse fetchPerRouteDetails(
             StartPoint startPoint,
             String startX, String startY, String endX, String endY,
-            UUID startPointId
+            UUID startPointId,
+            boolean newIsTransit
     ) {
+        try {
+            String cacheKey = generateCacheKeyForStartPoint(startPointId);
+            RouteResponse cachedRouteResponse = routeCacheService.getCacheData(
+                    cacheKey, RouteResponse.class
+            );
+            log.info("StartPoint Cache Key: {}", cacheKey);
+
+            if (cachedRouteResponse != null) {
+                if (cachedRouteResponse.isTransit() == newIsTransit) {
+                    log.info("StartPoint Cache HIT : {}", startPoint.getStartPointId());
+                    return cachedRouteResponse;
+                } else {
+                    log.info("StartPoint Cache HIT AND Cache IsTransit MISMATCHED : {}", startPoint.getStartPointId());
+                    return routeCacheService.updateCacheOfIsTransit(startPoint.getStartPointId().toString(), newIsTransit);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("StartPoint Cache Failed: {}", e.getMessage());
+        }
+        log.info("StartPoint Cache MISS");
+
         OdsayTransitRouteSearchResponse transitRoute = routeFacadeService.getTransitRoute(startX, startY, endX, endY);
         KakaoMobilityResponse drivingRoute = routeFacadeService.getDrivingRoute(startX, startY, endX, endY);
 
@@ -69,11 +126,23 @@ public class RouteService {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
 
-        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsTransit(startPoint, startPointId));
+        RouteResponse routeResponse = RouteResponse.of(
+                startPoint,
+                startPoint.getUser(),
+                transitRoute, drivingRoute,
+                newIsTransit
+        );
+
+        routeCacheService.putCacheData(generateCacheKeyForStartPoint(startPoint.getStartPointId()), routeResponse);
+        return routeResponse;
     }
 
     private String getEndStationName(Event event) {
         return event.getSubway().getName();
+    }
+
+    private String generateCacheKeyForStartPoint(UUID startPointId) {
+        return startPointId.toString();
     }
 
     private double getEndX(Event event) {
@@ -92,10 +161,32 @@ public class RouteService {
         return String.valueOf(startPoint.getLocation().getRoadLatitude());
     }
 
-    private boolean getIsTransit(StartPoint startPoint, UUID startPointId) {
-        if (startPoint.getStartPointId().equals(startPointId)) {
-            return startPoint.isTransit();
+    private String getStartPointName(List<StartPoint> startPointList, UUID startPointId) {
+        for (StartPoint startPoint : startPointList) {
+            if (startPoint.getStartPointId().equals(startPointId)) {
+                return startPoint.getName();
+            }
         }
-        return true;    // default 값
+        return null;
+    }
+
+    private Map<UUID, Boolean> buildIsTransitMap(List<StartPoint> startPointList, UUID startPointId, boolean newIsTransit) {
+        Map<UUID, Boolean> isTransitMap = new HashMap<>();
+
+        for (StartPoint startPoint : startPointList) {
+            UUID mapKey = startPoint.getStartPointId();
+            boolean isTransitValue = startPoint.getStartPointId().equals(startPointId) ? newIsTransit : startPoint.isTransit();
+            isTransitMap.put(mapKey, isTransitValue);
+        }
+
+        return isTransitMap;
+    }
+
+    private boolean isCacheInvalid(List<RouteResponse> cachedRouteResponse, List<RouteResponse> current) {
+        if (cachedRouteResponse.size() != current.size()) return true;
+        for (int i = 0; i < cachedRouteResponse.size(); i++) {
+            if (!cachedRouteResponse.get(i).equals(current.get(i))) return true;
+        }
+        return false;
     }
 }

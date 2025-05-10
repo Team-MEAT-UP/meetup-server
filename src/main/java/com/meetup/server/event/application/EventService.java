@@ -7,6 +7,7 @@ import com.meetup.server.event.implement.EventProcessor;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.dto.request.StartPointRequest;
 import com.meetup.server.startpoint.implement.StartPointProcessor;
+import com.meetup.server.startpoint.implement.StartPointReader;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.implement.UserReader;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class EventService {
     private final EventProcessor eventProcessor;
     private final StartPointProcessor startPointProcessor;
     private final EventMapFacadeService eventMapFacadeService;
+    private final StartPointReader startPointReader;
 
     @Transactional
     public EventStartPointResponse createEvent(Long userId, StartPointRequest startPointRequest) {
@@ -41,7 +43,9 @@ public class EventService {
     }
 
     @Transactional
-    public RouteResponseList getEventMap(UUID eventId, UUID startPointId) {
-        return eventMapFacadeService.getEventMap(eventId, startPointId);
+    public RouteResponseList getEventMap(UUID eventId, UUID startPointId, boolean isTransit) {
+        StartPoint startPoint = startPointReader.readById(startPointId);
+        startPointProcessor.updateIsTransit(startPoint, isTransit);
+        return eventMapFacadeService.getEventMap(eventId, startPointId, isTransit);
     }
 }
