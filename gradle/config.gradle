@@ -1,0 +1,11 @@
+tasks.register('copyConfig', Copy) {
+    copy {
+        from 'config'
+        include '*.yml'
+        into "src/main/resources"
+    }
+}
+
+tasks.named('processResources') {
+    dependsOn 'copyConfig'
+}

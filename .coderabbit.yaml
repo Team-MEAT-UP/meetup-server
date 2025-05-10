@@ -1,0 +1,24 @@
+language: ko-KR
+
+enable_free_tier: true
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: '@coderabbitai 요약'
+  auto_title_placeholder: '@coderabbitai'
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  abort_on_close: true
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+chat:
+  auto_reply: true
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
