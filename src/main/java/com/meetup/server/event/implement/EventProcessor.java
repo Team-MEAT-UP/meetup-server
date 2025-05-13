@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -41,4 +42,17 @@ public class EventProcessor {
         routeResponseList.updateRouteResponse(routes);
     }
 
+    public void prioritizeMyRoute(UUID startPointId, List<RouteResponse> routeList) {
+        if (startPointId != null) {
+            Optional<RouteResponse> myRoute = routeList.stream()
+                    .filter(route -> startPointId.equals(route.getId()))
+                    .findFirst();
+
+            myRoute.ifPresent(route -> {
+                route.updateIsMe(true);
+                routeList.remove(route);
+                routeList.addFirst(route);
+            });
+        }
+    }
 }
