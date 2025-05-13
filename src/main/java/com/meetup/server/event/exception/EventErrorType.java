@@ -15,6 +15,7 @@ public enum EventErrorType implements ErrorType {
     NO_INTERMEDIATE_SUBWAYS_FOUND(HttpStatus.NOT_FOUND, "중간 지점 근처에 지하철역을 찾을 수 없습니다."),
     PATH_CALCULATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "중간 지점 경로 계산에 실패했습니다."),
     NOT_FOUND_ROUTE_INFO(HttpStatus.NOT_FOUND, "경로 조회에 실패했습니다."),
+    CACHE_NOT_FOUND(HttpStatus.NOT_FOUND, "캐시가 존재하지 않습니다.")
     ;
 
     private final HttpStatus status;

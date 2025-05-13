@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,8 +20,7 @@ public class RouteDetailService {
 
     public RouteResponse fetchPerRouteDetails(
             StartPoint startPoint,
-            String startX, String startY, String endX, String endY,
-            UUID startPointId
+            String startX, String startY, String endX, String endY
     ) {
         OdsayTransitRouteSearchResponse transitRoute = routeFacadeService.getTransitRoute(startX, startY, endX, endY);
         KakaoMobilityResponse drivingRoute = routeFacadeService.getDrivingRoute(startX, startY, endX, endY);
@@ -35,10 +32,7 @@ public class RouteDetailService {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
 
-        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, getIsMe(startPoint, startPointId));
+        return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute);
     }
 
-    private boolean getIsMe(StartPoint startPoint, UUID startPointId) {
-        return startPoint.getStartPointId().equals(startPointId);
-    }
 }

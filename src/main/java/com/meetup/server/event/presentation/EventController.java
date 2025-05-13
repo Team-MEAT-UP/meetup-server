@@ -1,5 +1,6 @@
 package com.meetup.server.event.presentation;
 
+import com.meetup.server.event.application.EventCacheService;
 import com.meetup.server.event.application.EventService;
 import com.meetup.server.event.dto.response.EventStartPointResponse;
 import com.meetup.server.event.dto.response.RouteResponseList;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class EventController {
 
     private final EventService eventService;
+    private final EventCacheService eventCacheService;
 
     @Operation(summary = "모임 생성 API", description = "모임 생성자의 출발지를 입력받아 모임을 생성합니다")
     @PostMapping
@@ -32,5 +34,12 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ApiResponse<RouteResponseList> getEventMap(@PathVariable UUID eventId, @RequestParam(required = false) UUID startPointId) {
         return ApiResponse.success(eventService.getEventMap(eventId, startPointId));
+    }
+
+    @Operation(summary = "대중교통 선택 API", description = "본인의 대중교통, 자가용 선택 여부를 설정합니다")
+    @PatchMapping("/{eventId}")
+    public ApiResponse<?> updateTransit(@PathVariable UUID eventId, @RequestParam UUID startPointId, @RequestParam boolean isTransit) {
+        eventCacheService.updateTransit(eventId, startPointId, isTransit);
+        return ApiResponse.success();
     }
 }

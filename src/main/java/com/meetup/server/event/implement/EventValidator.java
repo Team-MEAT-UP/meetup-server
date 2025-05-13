@@ -7,6 +7,7 @@ import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.persistence.StartPointRepository;
 import com.meetup.server.subway.domain.Subway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.Cache;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -45,6 +46,12 @@ public class EventValidator {
     public void validateNearbySubwaysExist(List<Subway> nearBySubways) {
         if (nearBySubways.isEmpty()) {
             throw new EventException(EventErrorType.NO_INTERMEDIATE_SUBWAYS_FOUND);
+        }
+    }
+
+    public void validateEventCacheExist(Cache.ValueWrapper eventCache) {
+        if (eventCache == null) {
+            throw new EventException(EventErrorType.CACHE_NOT_FOUND);
         }
     }
 }
