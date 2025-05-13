@@ -16,6 +16,7 @@ import com.meetup.server.user.domain.User;
 import com.meetup.server.user.implement.UserReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,7 @@ public class StartPointService {
     }
 
     @Transactional
+    @CacheEvict(value = "routeDetails", key = "#eventId")
     public EventStartPointResponse createStartPoint(UUID eventId, Long userId, StartPointRequest startPointRequest) {
         Event event = eventReader.read(eventId);
 
