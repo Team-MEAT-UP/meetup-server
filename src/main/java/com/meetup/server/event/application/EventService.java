@@ -25,7 +25,7 @@ public class EventService {
     private final UserReader userReader;
     private final EventProcessor eventProcessor;
     private final StartPointProcessor startPointProcessor;
-    private final EventMapFacadeService eventMapFacadeService;
+    private final EventCacheService eventCacheService;
 
     @Transactional
     public EventStartPointResponse createEvent(Long userId, StartPointRequest startPointRequest) {
@@ -42,6 +42,8 @@ public class EventService {
 
     @Transactional
     public RouteResponseList getEventMap(UUID eventId, UUID startPointId) {
-        return eventMapFacadeService.getEventMap(eventId, startPointId);
+        RouteResponseList eventMap = eventCacheService.getEventMap(eventId);
+        eventProcessor.prioritizeMyRoute(startPointId, eventMap.getRouteResponse());
+        return eventMap;
     }
 }

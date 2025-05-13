@@ -1,18 +1,24 @@
 package com.meetup.server.event.dto.response;
 
 import com.meetup.server.parkinglot.dto.ClosestParkingLot;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Getter
 @Builder
-public record RouteResponseList(
-        int peopleCount,
-        int averageTime,
-        MeetingPoint meetingPoint,
-        List<RouteResponse> routeResponse,
-        ParkingLotResponse parkingLot
-) {
+@NoArgsConstructor
+@AllArgsConstructor
+public class RouteResponseList {
+
+    private int peopleCount;
+    private int averageTime;
+    private MeetingPoint meetingPoint;
+    private List<RouteResponse> routeResponse;
+    private ParkingLotResponse parkingLot;
 
     public static RouteResponseList of(List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
         return RouteResponseList.builder()
@@ -26,7 +32,12 @@ public record RouteResponseList(
 
     private static int calculateAverageTime(List<RouteResponse> routeResponse) {
         return routeResponse.stream()
-                .mapToInt(RouteResponse::totalTime)
+                .mapToInt(RouteResponse::getTotalTime)
                 .sum() / routeResponse.size();
+    }
+
+    public void updateRouteResponse(List<RouteResponse> routeResponse) {
+        this.averageTime = calculateAverageTime(routeResponse);
+        this.routeResponse = routeResponse;
     }
 }
