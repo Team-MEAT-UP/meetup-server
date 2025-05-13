@@ -9,7 +9,7 @@ import com.meetup.server.fixture.UserFixture;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.dto.request.StartPointRequest;
 import com.meetup.server.startpoint.persistence.StartPointRepository;
-import com.meetup.server.support.PostgisContainer;
+import com.meetup.server.support.IntegrationTestContainer;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class StartPointServiceTest extends PostgisContainer {
+class StartPointServiceTest extends IntegrationTestContainer {
 
     @Autowired
     private StartPointService startPointService;
