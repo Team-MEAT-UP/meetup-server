@@ -11,6 +11,7 @@ import com.meetup.server.startpoint.dto.request.StartPointRequest;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
 import com.meetup.server.startpoint.exception.StartPointException;
 import com.meetup.server.startpoint.implement.StartPointProcessor;
+import com.meetup.server.startpoint.implement.StartPointReader;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.implement.UserReader;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class StartPointService {
     private final StartPointProcessor startPointProcessor;
     private final EventReader eventReader;
     private final UserReader userReader;
+    private final StartPointReader startPointReader;
 
     public KakaoLocalResponse searchStartPoint(String textQuery) {
 
@@ -50,11 +53,29 @@ public class StartPointService {
         Event event = eventReader.read(eventId);
 
         Optional<User> optionalUser = userReader.readUserIfExists(userId);
+        List<StartPoint> startPointList = startPointReader.readAllByEvent(event);
+
+        if (userId != null && validateAlreadyHasStartPoint(userId, startPointList)) {
+            StartPoint startPoint = startPointProcessor.save(
+                    event,
+                    null,
+                    startPointRequest
+            );
+            return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
+        }
+
         StartPoint startPoint = startPointProcessor.save(
                 event,
                 optionalUser.orElse(null),
                 startPointRequest
         );
         return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
+    }
+
+    private boolean validateAlreadyHasStartPoint(Long userId, List<StartPoint> startPointList) {
+        return startPointList
+                .stream()
+                .filter(StartPoint::getIsUser)
+                .anyMatch(startPoint -> startPoint.getUser().getUserId().equals(userId));
     }
 }
