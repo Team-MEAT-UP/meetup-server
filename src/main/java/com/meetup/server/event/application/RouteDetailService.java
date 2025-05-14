@@ -34,5 +34,4 @@ public class RouteDetailService {
 
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute);
     }
-
 }

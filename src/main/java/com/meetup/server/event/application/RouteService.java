@@ -8,6 +8,7 @@ import com.meetup.server.event.implement.EventLocationInfoFinder;
 import com.meetup.server.parkinglot.dto.ClosestParkingLot;
 import com.meetup.server.parkinglot.implement.ParkingLotFinder;
 import com.meetup.server.startpoint.domain.StartPoint;
+import com.meetup.server.startpoint.implement.StartPointReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class RouteService {
     private final ParkingLotFinder parkingLotFinder;
     private final RouteDetailService routeDetailService;
     private final EventLocationInfoFinder eventLocationInfoFinder;
+    private final StartPointReader startPointReader;
 
     public RouteResponseList getAllRouteDetails(Event event, List<StartPoint> startPointList) {
 
@@ -42,7 +44,7 @@ public class RouteService {
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(event.getSubway().getPoint());
 
-        return RouteResponseList.of(routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        String eventMaker = startPointReader.readName(event.getEventId());
+        return RouteResponseList.of(eventMaker, routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
     }
-
 }
