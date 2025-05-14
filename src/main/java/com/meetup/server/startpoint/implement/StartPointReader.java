@@ -25,4 +25,8 @@ public class StartPointReader {
         return startPointRepository.findById(startPointId)
                 .orElseThrow(() -> new StartPointException(StartPointErrorType.PLACE_NOT_FOUND));
     }
+
+    public String readName(UUID eventId) {
+        return startPointRepository.findTopByEventIdOrderByCreatedAtAsc(eventId).getNonUserName();
+    }
 }

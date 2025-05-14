@@ -23,7 +23,7 @@ public class EventCacheService {
     private final EventReader eventReader;
     private final EventProcessor eventProcessor;
 
-    @Cacheable(value = "routeDetails", key = "#eventId")
+    @Cacheable(value = "routeDetails", key = "#eventId", unless = "#result == null")
     public RouteResponseList getEventMap(UUID eventId) {
         MiddlePointResultResponse result = middlePointService.getMiddlePoint(eventId);
         return routeService.getAllRouteDetails(result.event(), result.startPoints());
@@ -36,5 +36,4 @@ public class EventCacheService {
         eventProcessor.updateTransitForStartPoint(routeResponseList, startPointId, isTransit);
         return routeResponseList;
     }
-
 }

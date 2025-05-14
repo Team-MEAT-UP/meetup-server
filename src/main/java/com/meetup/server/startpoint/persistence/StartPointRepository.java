@@ -15,4 +15,13 @@ public interface StartPointRepository extends JpaRepository<StartPoint, UUID> {
 
     @Query("SELECT DISTINCT s FROM StartPoint s JOIN FETCH s.event WHERE s.event = :event")
     List<StartPoint> findAllByEvent(@Param("event") Event event);
+
+    @Query("""
+                SELECT s
+                FROM StartPoint s
+                WHERE s.event.eventId = :eventId
+                ORDER BY s.createdAt ASC
+                LIMIT 1
+            """)
+    StartPoint findTopByEventIdOrderByCreatedAtAsc(@Param("eventId") UUID eventId);
 }

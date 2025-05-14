@@ -14,14 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 public class RouteResponseList {
 
+    private String eventMaker;
     private int peopleCount;
     private int averageTime;
     private MeetingPoint meetingPoint;
     private List<RouteResponse> routeResponse;
     private ParkingLotResponse parkingLot;
 
-    public static RouteResponseList of(List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
+    public static RouteResponseList of(String eventMaker, List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
         return RouteResponseList.builder()
+                .eventMaker(eventMaker)
                 .averageTime(calculateAverageTime(routeResponse))
                 .peopleCount(routeResponse.size())
                 .meetingPoint(meetingPoint)
