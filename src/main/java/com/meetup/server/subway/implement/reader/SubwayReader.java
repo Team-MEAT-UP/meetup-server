@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -13,6 +14,8 @@ import java.util.List;
 public class SubwayReader {
 
     private static final double NEAREST_SUBWAY_RADIUS_M = 1500;
+    private static final double MAX_SEARCH_RADIUS_M = 5000;
+    private static final double RADIUS_INCREMENT_M = 500;
 
     private final SubwayRepository subwayRepository;
 
@@ -29,6 +32,20 @@ public class SubwayReader {
     }
 
     public List<Subway> readNearbySubways(Point centerPoint) {
-        return readAllWithinRadius(centerPoint, NEAREST_SUBWAY_RADIUS_M);
+        double radius = NEAREST_SUBWAY_RADIUS_M;
+
+        List<Subway> nearbySubways = new ArrayList<>();
+
+        while (radius <= MAX_SEARCH_RADIUS_M) {
+            nearbySubways = readAllWithinRadius(centerPoint, radius);
+
+            if (!nearbySubways.isEmpty()) {
+                break;
+            }
+
+            radius += RADIUS_INCREMENT_M;
+        }
+
+        return nearbySubways;
     }
 }
