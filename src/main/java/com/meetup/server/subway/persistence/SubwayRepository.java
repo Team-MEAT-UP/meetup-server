@@ -17,13 +17,15 @@ public interface SubwayRepository extends JpaRepository<Subway, Integer> {
 
     Optional<Subway> findByCode(Integer code);
 
-    @Query("""
-                SELECT s
-                FROM Subway s
-                WHERE st_distance(s.point, :startPoint) = (
-                    SELECT MIN(st_distance(s2.point, :startPoint))
-                    FROM Subway s2)
-            """)
+    @Query(value = """
+                SELECT s.*
+                FROM subway s
+                WHERE ST_Distance(s.point, :startPoint) = (
+                    SELECT MIN(ST_Distance(s2.point, :startPoint))
+                    FROM subway s2
+                )
+                LIMIT 1
+            """, nativeQuery = true)
     Subway findClosestSubway(@Param("startPoint") Point startPoint);
 
     @Query("""
