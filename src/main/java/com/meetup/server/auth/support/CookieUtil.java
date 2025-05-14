@@ -19,6 +19,7 @@ public class CookieUtil {
                 .httpOnly(cookieProperties.httpOnly())
                 .secure(cookieProperties.secure())
                 .path("/")
+                .domain(".pickspot.co.kr")
                 .maxAge(maxAge)
                 .sameSite(cookieProperties.sameSite())
                 .build();
