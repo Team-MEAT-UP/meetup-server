@@ -40,6 +40,19 @@ public class RouteResponse {
                                    User user,
                                    OdsayTransitRouteSearchResponse transitResponse,
                                    KakaoMobilityResponse drivingResponse) {
+
+        List<DrivingRouteResponse> drivingRouteResponseList = DrivingRouteResponse.from(drivingResponse);
+
+        int driveTime = 0;
+        if (drivingRouteResponseList != null && !drivingRouteResponseList.isEmpty() && drivingRouteResponseList.get(0) != null) {
+            driveTime = drivingRouteResponseList.get(0).duration();
+        }
+
+        int transitTotalTime = 0;
+        if (transitResponse != null && transitResponse.data() != null && transitResponse.data().path() != null && !transitResponse.data().path().isEmpty()) {
+            transitTotalTime = transitResponse.data().path().getFirst().info().totalTime();
+        }
+
         return RouteResponse.builder()
                 .isTransit(startPoint.isTransit())
                 .isMe(false)
@@ -54,8 +67,8 @@ public class RouteResponse {
                 .totalTime(startPoint.isTransit() ?
                         transitResponse.data().path().getFirst().info().totalTime()
                         : DrivingRouteResponse.from(drivingResponse).getFirst().duration())
-                .transitTime(transitResponse.data().path().getFirst().info().totalTime())
-                .driveTime(DrivingRouteResponse.from(drivingResponse).getFirst().duration())
+                .transitTime(transitTotalTime)
+                .driveTime(driveTime)
                 .build();
     }
 
