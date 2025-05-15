@@ -6,6 +6,7 @@ import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchClient;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchRequest;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
+import com.meetup.server.startpoint.domain.type.KakaoMobilityResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,6 @@ public class RouteFacadeService {
                 KakaoMobilityRequest.builder()
                         .origin(startX + "," + startY)
                         .destination(endX + "," + endY)
-                        .opt("0")
                         .build()
 
         );
@@ -46,7 +46,7 @@ public class RouteFacadeService {
 
         if (response.routes() != null) {
             for (KakaoMobilityResponse.Route route : response.routes()) {
-                if (route.resultCode() == 0) {
+                if (KakaoMobilityResultCode.SUCCESS.matches(route.resultCode())) {
                     return new KakaoMobilityResponse(response.transId(), List.of(route));
                 }
             }
