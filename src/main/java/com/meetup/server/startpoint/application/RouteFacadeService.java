@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,10 +38,20 @@ public class RouteFacadeService {
                 KakaoMobilityRequest.builder()
                         .origin(startX + "," + startY)
                         .destination(endX + "," + endY)
+                        .opt("0")
                         .build()
 
         );
         log.info("response: {}", response);
+
+        if (response.routes() != null) {
+            for (KakaoMobilityResponse.Route route : response.routes()) {
+                if (route.resultCode() == 0) {
+                    return new KakaoMobilityResponse(response.transId(), List.of(route));
+                }
+            }
+        }
+
         return response;
     }
 }

@@ -15,6 +15,7 @@ public record KakaoMobilityRequest(
         Integer carType,
         String carFuel,
         Boolean carHiPass,
-        Boolean summary
+        Boolean summary,
+        String opt
 ) {
 }

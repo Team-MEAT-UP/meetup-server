@@ -28,6 +28,7 @@ public class KakaoMobilityClient {
                         .queryParamIfPresent("car_fuel", Optional.ofNullable(request.carFuel()))
                         .queryParamIfPresent("car_hipass", Optional.ofNullable(request.carHiPass()))
                         .queryParamIfPresent("summary", Optional.ofNullable(request.summary()))
+                        .queryParamIfPresent("opt", Optional.ofNullable(request.opt()))
                         .build())
                 .retrieve()
                 .bodyToMono(KakaoMobilityResponse.class)
