@@ -1,39 +1,55 @@
 package com.meetup.server.global.clients.kakao.local;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Getter;
 
-public record KakaoLocalResponse(
-        @JsonProperty("meta") KakaoSearchMeta kakaoSearchMeta,
-        @JsonProperty("documents") KakaoSearchResponse[] kakaoSearchResponses
-) {
+import java.util.List;
 
-    public record KakaoSearchMeta(
-            @JsonProperty("total_count") Integer totalCount,
-            @JsonProperty("pageable_count") Integer pageableCount,
-            @JsonProperty("is_end") Boolean isEnd,
-            @JsonProperty("same_name") SameName sameName
-    ) {
-        public record SameName(
-                String[] region,
-                String keyword,
-                @JsonProperty("selected_region") String selectedRegion
-        ) {
+@Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class KakaoLocalResponse {
+    @JsonProperty("meta")
+    private KakaoSearchMeta kakaoSearchMeta;
+    @JsonProperty("documents")
+    private List<KakaoSearchResponse> kakaoSearchResponses;
+
+    @Getter
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class KakaoSearchMeta {
+        private Integer totalCount;
+        private Integer pageableCount;
+        private Boolean isEnd;
+        private SameName sameName;
+
+        @Getter
+        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+        public static class SameName {
+            private List<String> region;
+            private String keyword;
+            private String selectedRegion;
         }
     }
 
-    public record KakaoSearchResponse(
-            String id,
-            @JsonProperty("place_name") String placeName,
-            @JsonProperty("category_name") String categoryName,
-            @JsonProperty("category_group_code") String categoryGroupCode,
-            @JsonProperty("category_group_name") String categoryGroupName,
-            String phone,
-            @JsonProperty("address_name") String addressName,
-            @JsonProperty("road_address_name") String roadAddressName,
-            String x,
-            String y,
-            @JsonProperty("place_url") String placeUrl,
-            String distance
-    ) {
+    @Getter
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class KakaoSearchResponse {
+        private String id;
+        private String placeName;
+        private String categoryName;
+        private String categoryGroupCode;
+        private String categoryGroupName;
+        private String phone;
+        private String addressName;
+        private String roadAddressName;
+        private String x;
+        private String y;
+        private String placeUrl;
+        private String distance;
+    }
+
+    public void updateKakaoSearchResponse(List<KakaoSearchResponse> kakaoSearchResponses) {
+        this.kakaoSearchResponses = kakaoSearchResponses;
     }
 }
