@@ -34,11 +34,10 @@ public class RouteResponseList {
 
     private static int calculateAverageTime(List<RouteResponse> routeResponse) {
         return routeResponse.stream()
-                .mapToInt(route -> route.getTransitRoute().stream()
-                        .mapToInt(TransitRouteResponse::sectionTime)
-                        .sum())
+                .mapToInt(RouteResponse::getTotalTime)
                 .sum() / routeResponse.size();
     }
+
     public void updateRouteResponse(List<RouteResponse> routeResponse) {
         this.averageTime = calculateAverageTime(routeResponse);
         this.routeResponse = routeResponse;
