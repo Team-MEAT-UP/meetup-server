@@ -3,15 +3,12 @@ package com.meetup.server.startpoint.application;
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.event.dto.response.EventStartPointResponse;
 import com.meetup.server.event.implement.EventReader;
-import com.meetup.server.global.clients.kakao.local.KakaoLocalKeywordClient;
-import com.meetup.server.global.clients.kakao.local.KakaoLocalRequest;
 import com.meetup.server.global.clients.kakao.local.KakaoLocalResponse;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.dto.request.StartPointRequest;
-import com.meetup.server.startpoint.exception.StartPointErrorType;
-import com.meetup.server.startpoint.exception.StartPointException;
 import com.meetup.server.startpoint.implement.StartPointProcessor;
 import com.meetup.server.startpoint.implement.StartPointReader;
+import com.meetup.server.startpoint.implement.StartPointSearcher;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.implement.UserReader;
 import lombok.RequiredArgsConstructor;
@@ -29,24 +26,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StartPointService {
 
-    private final KakaoLocalKeywordClient kakaoLocalKeywordClient;
+    private final StartPointReader startPointReader;
     private final StartPointProcessor startPointProcessor;
+    private final StartPointSearcher startPointSearcher;
     private final EventReader eventReader;
     private final UserReader userReader;
-    private final StartPointReader startPointReader;
 
     public KakaoLocalResponse searchStartPoint(String textQuery) {
-
-        KakaoLocalResponse response = kakaoLocalKeywordClient.sendRequest(
-                KakaoLocalRequest.builder()
-                        .query(textQuery)
-                        .build()
-        );
-
-        if (response == null) {
-            throw new StartPointException(StartPointErrorType.PLACE_NOT_FOUND);
-        }
-        return response;
+        return startPointSearcher.search(textQuery);
     }
 
     @Transactional
