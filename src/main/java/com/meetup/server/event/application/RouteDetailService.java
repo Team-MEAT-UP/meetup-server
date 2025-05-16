@@ -8,7 +8,7 @@ import com.meetup.server.startpoint.application.RouteFacadeService;
 import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
 import com.meetup.server.startpoint.exception.StartPointException;
-import com.meetup.server.startpoint.implement.RouteValidator;
+import com.meetup.server.startpoint.util.RouteExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class RouteDetailService {
 
     private final RouteFacadeService routeFacadeService;
-    private final RouteValidator routeValidator;
 
     public RouteResponse fetchPerRouteDetails(
             StartPoint startPoint,
@@ -35,8 +34,8 @@ public class RouteDetailService {
             throw new StartPointException(StartPointErrorType.KAKAO_ERROR);
         }
 
-        int transitTotalTime = routeValidator.extractValidTransitTotalTime(transitRoute);
-        int drivingTotalTime = routeValidator.extractValidDrivingTotalTime(DrivingRouteResponse.from(drivingRoute));
+        int transitTotalTime = RouteExtractor.extractValidTransitTotalTime(transitRoute);
+        int drivingTotalTime = RouteExtractor.extractValidDrivingTotalTime(DrivingRouteResponse.from(drivingRoute));
 
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, transitTotalTime, drivingTotalTime);
     }

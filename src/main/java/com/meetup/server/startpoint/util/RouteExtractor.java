@@ -1,15 +1,13 @@
-package com.meetup.server.startpoint.implement;
+package com.meetup.server.startpoint.util;
 
 import com.meetup.server.event.dto.response.DrivingRouteResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-public class RouteValidator {
+public class RouteExtractor {
 
-    public int extractValidTransitTotalTime(OdsayTransitRouteSearchResponse transitResponse) {
+    public static int extractValidTransitTotalTime(OdsayTransitRouteSearchResponse transitResponse) {
         if (transitResponse == null || transitResponse.data() == null) {
             return 0;
         }
@@ -22,7 +20,7 @@ public class RouteValidator {
         return paths.getFirst().info().totalTime();
     }
 
-    public int extractValidDrivingTotalTime(List<DrivingRouteResponse> drivingRoutes) {
+    public static int extractValidDrivingTotalTime(List<DrivingRouteResponse> drivingRoutes) {
         if (drivingRoutes == null || drivingRoutes.isEmpty() || drivingRoutes.getFirst() == null) {
             return 0;
         }
