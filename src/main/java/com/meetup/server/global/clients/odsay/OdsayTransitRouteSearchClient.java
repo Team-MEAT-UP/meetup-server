@@ -1,0 +1,38 @@
+package com.meetup.server.global.clients.odsay;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class OdsayTransitRouteSearchClient {
+
+    private final WebClient webClient;
+    private final OdsayProperties odsayProperties;
+
+    public OdsayTransitRouteSearchResponse sendRequest(OdsayTransitRouteSearchRequest request) {
+        URI uri = UriComponentsBuilder.fromUriString(odsayProperties.baseUrl() + "/searchPubTransPathT")
+                .queryParam("apiKey", odsayProperties.secretKey())
+                .queryParam("SX", request.sx())
+                .queryParam("SY", request.sy())
+                .queryParam("EX", request.ex())
+                .queryParam("EY", request.ey())
+                .queryParamIfPresent("OPT", Optional.ofNullable(request.opt()))
+                .queryParamIfPresent("SearchType", Optional.ofNullable(request.searchType()))
+                .queryParamIfPresent("SearchPathType", Optional.ofNullable(request.searchPathType()))
+                .build(true)
+                .toUri();
+
+        return webClient
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(OdsayTransitRouteSearchResponse.class)
+                .block();
+    }
+}
