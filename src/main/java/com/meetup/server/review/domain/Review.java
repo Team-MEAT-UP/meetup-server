@@ -2,6 +2,7 @@ package com.meetup.server.review.domain;
 
 import com.meetup.server.recommend.domain.RecommendPlace;
 import com.meetup.server.review.domain.type.VisitedTime;
+import com.meetup.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,11 @@ public class Review {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private Long reviewId;
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommend_place_id", nullable = false)
@@ -35,8 +40,9 @@ public class Review {
     private String etcReason;
 
     @Builder
-    public Review(RecommendPlace recommendPlace, boolean isVisited, VisitedTime visitedTime, String content, String etcReason) {
+    public Review(RecommendPlace recommendPlace, boolean isVisited, VisitedTime visitedTime, String content, String etcReason, User user) {
         this.recommendPlace = recommendPlace;
+        this.user = user;
         this.isVisited = isVisited;
         this.visitedTime = visitedTime;
         this.content = content;

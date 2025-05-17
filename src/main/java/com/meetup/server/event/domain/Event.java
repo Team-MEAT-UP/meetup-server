@@ -30,8 +30,12 @@ public class Event extends BaseEntity {
     @JoinColumn(name = "recommend_id", nullable = true)
     private RecommendPlace recommendPlace;
 
+    @Column(name = "is_reviwed", nullable = false)
+    private boolean isReviewed;
+
     @PrePersist
     public void prePersist() {
+
         this.eventId = UuidCreator.getTimeOrderedEpoch();
     }
 
