@@ -29,9 +29,9 @@ class GooglePlaceClientTest {
         GoogleSearchTextResponse response = googleSearchTextClient.sendRequest(request);
 
         assertNotNull(response);
-        assertNotNull(response.places()[0].id());
+        assertNotNull(response.places().getFirst().id());
 
-        String name = response.places()[0].photos()[0].name();
+        String name = response.places().getFirst().photos().getFirst().name();
         assertNotNull(name);
 
         GooglePhotoRequest photoRequest = GooglePhotoRequest.builder()
