@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @Operation(summary = "유저 참여 모임 리스트 조회", description = "유저가 참여한 모임 리스트를 조회합니다")
-    @GetMapping("/users/{userId}/events")
+    @GetMapping("/{userId}/events")
     public ApiResponse<List<UserEventHistoryResponse>> getUserEventHistory(
             @AuthenticationPrincipal Long userId
     ) {
