@@ -20,7 +20,7 @@ public class UserReader {
         return userRepository.findById(userId);
     }
 
-    public User readUser(Long userId) {
+    public User read(Long userId) {
         return readUserIfExists(userId)
                 .orElseThrow(() -> new UserException(UserErrorType.USER_NOT_FOUND));
     }
