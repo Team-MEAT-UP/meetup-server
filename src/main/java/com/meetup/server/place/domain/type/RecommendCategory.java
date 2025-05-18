@@ -1,4 +1,4 @@
-package com.meetup.server.recommend.domain.type;
+package com.meetup.server.place.domain.type;
 
 public enum RecommendCategory {
 

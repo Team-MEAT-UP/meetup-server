@@ -1,9 +1,8 @@
 package com.meetup.server.event.domain;
 
-
 import com.github.f4b6a3.uuid.UuidCreator;
 import com.meetup.server.global.domain.BaseEntity;
-import com.meetup.server.recommend.domain.RecommendPlace;
+import com.meetup.server.place.domain.RecommendPlace;
 import com.meetup.server.subway.domain.Subway;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -27,7 +26,7 @@ public class Event extends BaseEntity {
     private Subway subway;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recommend_id", nullable = true)
+    @JoinColumn(name = "recommend_place_id", nullable = true)
     private RecommendPlace recommendPlace;
 
     @PrePersist

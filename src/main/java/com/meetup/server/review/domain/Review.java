@@ -1,6 +1,6 @@
 package com.meetup.server.review.domain;
 
-import com.meetup.server.recommend.domain.RecommendPlace;
+import com.meetup.server.place.domain.RecommendPlace;
 import com.meetup.server.review.domain.type.VisitedTime;
 import jakarta.persistence.*;
 import lombok.Builder;
