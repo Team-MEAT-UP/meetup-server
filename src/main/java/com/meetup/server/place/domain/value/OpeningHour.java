@@ -12,7 +12,7 @@ public record OpeningHour(
         LocalTime openTime,
         LocalTime closeTime
 ) {
-    public static OpeningHour of(GoogleSearchTextResponse.Period period) {
+    public static OpeningHour from(GoogleSearchTextResponse.Period period) {
         GoogleSearchTextResponse.OpenClose open = period.open();
         GoogleSearchTextResponse.OpenClose close = period.close();
         int day = open.day();

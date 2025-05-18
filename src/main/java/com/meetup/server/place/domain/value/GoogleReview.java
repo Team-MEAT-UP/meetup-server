@@ -15,7 +15,7 @@ public record GoogleReview(
         String authorProfileImage,
         LocalDateTime publishTime
 ) {
-    public static GoogleReview of(GoogleSearchTextResponse.Review review) {
+    public static GoogleReview from(GoogleSearchTextResponse.Review review) {
         LocalDateTime publishTime = OffsetDateTime.parse(review.publishTime())
                 .atZoneSameInstant(ZoneId.systemDefault())
                 .toLocalDateTime();
