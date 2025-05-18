@@ -1,5 +1,6 @@
 package com.meetup.server.global.clients.kakao.mobility;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ class KakaoMobilityClientTest {
     @Autowired
     private KakaoMobilityClient kakaoMobilityClient;
 
+    @Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
     @Test
     void 카카오_자동차_길찾기_조회에_성공한다() {
         // given
