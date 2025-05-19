@@ -17,4 +17,8 @@ public class PlaceRating {
     private int seat;
 
     private int quiet;
+
+    public static PlaceRating of(int socket, int seat, int quiet) {
+        return new PlaceRating(socket, seat, quiet);
+    }
 }

@@ -20,7 +20,7 @@ public class UserEventHistoryAssembler {
     private final ReviewChecker reviewChecker;
     private final ParticipantExtractor participantExtractor;
 
-    public List<UserEventHistoryResponse> assemble(List<StartPoint> startPointList, List<StartPoint> allStartPoints) {
+    public List<UserEventHistoryResponse> assemble(List<StartPoint> startPointList, List<StartPoint> allStartPoints, Long userId) {
         Map<Event, List<StartPoint>> eventStartPointsMap = startPointList.stream()
                 .collect(Collectors.groupingBy(StartPoint::getEvent));
 
@@ -31,7 +31,7 @@ public class UserEventHistoryAssembler {
                     List<User> loginParticipants = participantExtractor.extract(allStartPoints, event.getEventId());
                     int participantCount = participantExtractor.count(allStartPoints, event.getEventId());
 
-                    boolean isReviewed = reviewChecker.isReviewed(event, loginParticipants);
+                    boolean isReviewed = reviewChecker.isReviewed(event, userId);
 
                     return UserEventHistoryResponse.of(loginParticipants, event, participantCount, isReviewed);
                 })

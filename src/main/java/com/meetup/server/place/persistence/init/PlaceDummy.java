@@ -1,7 +1,5 @@
 package com.meetup.server.place.persistence.init;
 
-import com.meetup.server.event.domain.Event;
-import com.meetup.server.event.persistence.EventRepository;
 import com.meetup.server.global.support.DummyDataInit;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.place.domain.type.PlaceCategory;
@@ -16,7 +14,6 @@ import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +23,6 @@ import java.util.UUID;
 public class PlaceDummy implements ApplicationRunner {
 
     private final PlaceRepository placeRepository;
-    private final EventRepository eventRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -35,17 +31,12 @@ public class PlaceDummy implements ApplicationRunner {
         } else {
             List<Place> placeList = new ArrayList<>();
 
-            UUID eventId = UUID.fromString("0196e8b5-2701-71ef-85df-ff58ed3980c8");
-            Event event = eventRepository.findByEventId(eventId);
-
-
             placeList.add(Place.builder()
                     .name("스타벅스 강남점")
                     .googlePlaceId("GOOGLE_PLACE_ID")
                     .kakaoPlaceId("KAKAO_PLACE_ID")
                     .location(Location.of(37.4979, 127.0276))
                     .category(PlaceCategory.CAFE)
-                    .event(event)
                     .build());
 
             placeRepository.saveAll(placeList);

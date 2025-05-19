@@ -45,7 +45,14 @@ public class Review extends BaseEntity {
         this.nonVisitedReview = nonVisitedReview;
     }
 
-    public boolean isWrittenBy(User user) {
-        return this.user != null && user != null && this.user.getUserId().equals(user.getUserId());
+    public boolean isWrittenBy(Long userId) {
+        return this.user.getUserId().equals(userId);
+    }
+
+    public void addVisitedReview(VisitedReview visitedReview) {
+        this.visitedReview = visitedReview;
+        if (visitedReview.getReview() != this) {
+            visitedReview.assignTo(this);
+        }
     }
 }

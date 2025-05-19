@@ -2,10 +2,12 @@ package com.meetup.server.user.dto.response;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.util.TimeUtil;
+import com.meetup.server.place.domain.Place;
 import com.meetup.server.user.domain.User;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Builder
@@ -22,7 +24,9 @@ public record UserEventHistoryResponse(
         return UserEventHistoryResponse.builder()
                 .eventId(event.getEventId())
                 .middlePointName(event.getSubway().getName())
-                .placeName(event.getPlace() != null ? event.getPlace().getName() : null)
+                .placeName(Optional.ofNullable(event.getPlace())
+                        .map(Place::getName)
+                        .orElse(null))
                 .participatedPeopleCount(participatedPeopleCount)
                 .userProfileImageUrls(userList.stream()
                         .map(User::getProfileImage)

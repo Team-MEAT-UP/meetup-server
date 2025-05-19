@@ -2,11 +2,8 @@ package com.meetup.server.review.implement;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.place.domain.Place;
-import com.meetup.server.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -14,7 +11,7 @@ public class ReviewChecker {
 
     private final ReviewReader reviewReader;
 
-    public boolean isReviewed(Event event, List<User> participants) {
+    public boolean isReviewed(Event event, Long userId) {
         Place place = event.getPlace();
         if (place == null) {
             return false;
@@ -22,7 +19,6 @@ public class ReviewChecker {
 
         return reviewReader.readAll(place)
                 .stream()
-                .anyMatch(review ->
-                        participants.stream().anyMatch(review::isWrittenBy));
+                .anyMatch(review -> review.isWrittenBy(userId));
     }
 }

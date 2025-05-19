@@ -42,6 +42,6 @@ public class UserService {
         List<StartPoint> userStartPoints = startPointReader.readAll(userId);
         List<StartPoint> allEventStartPoints = startPointReader.readAll(userStartPoints);
 
-        return userEventHistoryAssembler.assemble(userStartPoints, allEventStartPoints);
+        return userEventHistoryAssembler.assemble(userStartPoints, allEventStartPoints, userId);
     }
 }

@@ -4,8 +4,11 @@ import com.meetup.server.global.support.DummyDataInit;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.place.persistence.PlaceRepository;
 import com.meetup.server.review.domain.Review;
+import com.meetup.server.review.domain.VisitedReview;
 import com.meetup.server.review.domain.type.VisitedTime;
+import com.meetup.server.review.domain.value.PlaceRating;
 import com.meetup.server.review.persistence.ReviewRepository;
+import com.meetup.server.user.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -26,7 +29,7 @@ public class ReviewDummy implements ApplicationRunner {
 
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
-    private final com.meetup.server.user.persistence.UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -35,19 +38,24 @@ public class ReviewDummy implements ApplicationRunner {
         } else {
             List<Review> reviewList = new ArrayList<>();
 
-            UUID placeId = UUID.fromString("0196e8ba-af20-7fb4-9102-8e86ca89e76e");
+            UUID placeId = UUID.fromString("0196e96a-3993-7035-8caf-0436872b6644");
             Place place = placeRepository.findById(placeId).orElseThrow();
 
             Review DUMMY_REVIEW_1 = Review.builder()
                     .place(place)
                     .user(userRepository.findById(4L).orElseThrow())
                     .isVisited(true)
+                    .build();
+
+            VisitedReview DUMMY_VISITED_REVIEW_1 = VisitedReview.builder()
+                    .review(DUMMY_REVIEW_1)
                     .visitedTime(VisitedTime.MORNING)
-                    .content("공부에 집중하기 딱 좋은 느좋 카페입니다.")
-                    .etcReason(null)
+                    .placeRating(PlaceRating.of(5, 4, 3))
+                    .content("아침에 갔는데 너무 좋았어요")
                     .build();
 
             reviewList.add(DUMMY_REVIEW_1);
+            DUMMY_REVIEW_1.addVisitedReview(DUMMY_VISITED_REVIEW_1);
 
             reviewRepository.saveAll(reviewList);
         }
