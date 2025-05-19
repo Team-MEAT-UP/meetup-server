@@ -1,7 +1,8 @@
 package com.meetup.server.review.persistence.init;
 
 import com.meetup.server.global.support.DummyDataInit;
-import com.meetup.server.recommend.persistence.RecommendPlaceRepository;
+import com.meetup.server.place.domain.Place;
+import com.meetup.server.place.persistence.PlaceRepository;
 import com.meetup.server.review.domain.Review;
 import com.meetup.server.review.domain.type.VisitedTime;
 import com.meetup.server.review.persistence.ReviewRepository;
@@ -14,6 +15,7 @@ import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ import java.util.List;
 public class ReviewDummy implements ApplicationRunner {
 
     private final ReviewRepository reviewRepository;
-    private final RecommendPlaceRepository recommendPlaceRepository;
+    private final PlaceRepository placeRepository;
     private final com.meetup.server.user.persistence.UserRepository userRepository;
 
     @Override
@@ -33,8 +35,11 @@ public class ReviewDummy implements ApplicationRunner {
         } else {
             List<Review> reviewList = new ArrayList<>();
 
+            UUID placeId = UUID.fromString("0196e8ba-af20-7fb4-9102-8e86ca89e76e");
+            Place place = placeRepository.findById(placeId).orElseThrow();
+
             Review DUMMY_REVIEW_1 = Review.builder()
-                    .place(recommendPlaceRepository.findById(1L).orElseThrow())
+                    .place(place)
                     .user(userRepository.findById(4L).orElseThrow())
                     .isVisited(true)
                     .visitedTime(VisitedTime.MORNING)

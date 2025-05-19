@@ -29,9 +29,6 @@ public class Event extends BaseEntity {
     @JoinColumn(name = "place_id", nullable = true)
     private Place place;
 
-    @Column(name = "is_reviwed", nullable = false)
-    private boolean isReviewed;
-
     @PrePersist
     public void prePersist() {
 

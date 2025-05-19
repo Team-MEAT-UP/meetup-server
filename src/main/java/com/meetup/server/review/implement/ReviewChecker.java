@@ -16,17 +16,13 @@ public class ReviewChecker {
 
     public boolean isReviewed(Event event, List<User> participants) {
         Place place = event.getPlace();
-//        if (place == null || !place.getEvent().getEventId().equals(event.getEventId())) {
         if (place == null) {
             return false;
         }
 
-        return reviewReader.readAll(place.getId())
-                .orElse(List.of())
+        return reviewReader.readAll(place)
                 .stream()
-                .filter(review -> review.getPlace().getId().equals(place.getId()))
-                .map(review -> review.getUser().getUserId())
-                .anyMatch(reviewerId ->
-                        participants.stream().anyMatch(user -> user.getUserId().equals(reviewerId)));
+                .anyMatch(review ->
+                        participants.stream().anyMatch(review::isWrittenBy));
     }
 }

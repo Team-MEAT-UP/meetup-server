@@ -1,6 +1,7 @@
 package com.meetup.server.place.domain;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.place.domain.type.PlaceCategory;
 import com.meetup.server.place.domain.value.GoogleReview;
@@ -27,6 +28,10 @@ public class Place extends BaseEntity {
     @Id
     @Column(name = "place_id")
     private UUID id;
+
+    @OneToOne
+    @JoinColumn(name = "event_id", nullable = true)
+    private Event event;
 
     @Column(name = "kakao_place_id", nullable = false)
     private String kakaoPlaceId;
@@ -72,7 +77,7 @@ public class Place extends BaseEntity {
     }
 
     @Builder
-    public Place(String kakaoPlaceId, String googlePlaceId, PlaceCategory category, String name, Double googleRating, List<Image> images, List<OpeningHour> openingHours, List<GoogleReview> googleReviews, Location location, Point point, String rawJson) {
+    public Place(String kakaoPlaceId, String googlePlaceId, PlaceCategory category, String name, Double googleRating, List<Image> images, List<OpeningHour> openingHours, List<GoogleReview> googleReviews, Location location, Point point, String rawJson, Event event) {
         this.kakaoPlaceId = kakaoPlaceId;
         this.googlePlaceId = googlePlaceId;
         this.category = category;
@@ -84,5 +89,6 @@ public class Place extends BaseEntity {
         this.location = location;
         this.point = point;
         this.rawJson = rawJson;
+        this.event = event;
     }
 }

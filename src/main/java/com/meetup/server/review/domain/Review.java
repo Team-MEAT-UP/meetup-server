@@ -48,4 +48,8 @@ public class Review {
         this.content = content;
         this.etcReason = etcReason;
     }
+
+    public boolean isWrittenBy(User user) {
+        return this.user != null && user != null && this.user.getUserId().equals(user.getUserId());
+    }
 }

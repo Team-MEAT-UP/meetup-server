@@ -2,19 +2,17 @@ package com.meetup.server.user.dto.response;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.util.TimeUtil;
-import com.meetup.server.place.domain.Place;
 import com.meetup.server.user.domain.User;
 import lombok.Builder;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Builder
 public record UserEventHistoryResponse(
         UUID eventId,
         String middlePointName,
-        Optional<String> placeName,
+        String placeName,
         int participatedPeopleCount,
         List<String> userProfileImageUrls,
         int eventMadeAgo,
@@ -24,15 +22,13 @@ public record UserEventHistoryResponse(
         return UserEventHistoryResponse.builder()
                 .eventId(event.getEventId())
                 .middlePointName(event.getSubway().getName())
-                .placeName(Optional.ofNullable(event.getPlace())
-                        .map(Place::getName))
+                .placeName(event.getPlace() != null ? event.getPlace().getName() : null)
                 .participatedPeopleCount(participatedPeopleCount)
                 .userProfileImageUrls(userList.stream()
                         .map(User::getProfileImage)
                         .toList())
                 .eventMadeAgo(TimeUtil.calculateDaysAgo(event.getCreatedAt()))
-                .isReviewed(event.isReviewed())
+                .isReviewed(isReviewed)
                 .build();
     }
-
 }
