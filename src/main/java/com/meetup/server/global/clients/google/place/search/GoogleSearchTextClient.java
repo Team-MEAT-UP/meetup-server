@@ -13,7 +13,7 @@ public class GoogleSearchTextClient {
     public GoogleSearchTextResponse sendRequest(GoogleSearchTextRequest request) {
         return googlePlaceWebClient.post()
                 .uri("/places:searchText")
-                .header("X-Goog-FieldMask", "places.id,places.displayName,places.photos")
+                .header("X-Goog-FieldMask", "*")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(GoogleSearchTextResponse.class)
