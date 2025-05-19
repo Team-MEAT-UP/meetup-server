@@ -15,9 +15,11 @@ public record GoogleReview(
         String authorProfileImage,
         LocalDateTime publishTime
 ) {
+    private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
+
     public static GoogleReview from(GoogleSearchTextResponse.Review review) {
         LocalDateTime publishTime = OffsetDateTime.parse(review.publishTime())
-                .atZoneSameInstant(ZoneId.systemDefault())
+                .atZoneSameInstant(KST_ZONE_ID)
                 .toLocalDateTime();
 
         return GoogleReview.builder()
