@@ -1,0 +1,7 @@
+package com.meetup.server.review.persistence;
+
+import com.meetup.server.review.domain.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+}
