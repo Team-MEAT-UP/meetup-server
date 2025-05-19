@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -14,7 +15,7 @@ public class ReviewReader {
 
     private final ReviewRepository reviewRepository;
 
-    public Optional<List<Review>> readAll(Long placeId) {
+    public Optional<List<Review>> readAll(UUID placeId) {
         return reviewRepository.findAllByPlaceId(placeId);
     }
 }

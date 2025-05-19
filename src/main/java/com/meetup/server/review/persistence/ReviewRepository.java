@@ -7,10 +7,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT r FROM Review r WHERE r.recommendPlace.recommendId = :placeId")
-    Optional<List<Review>> findAllByPlaceId(@Param("placeId") Long placeId);
+    @Query("SELECT r FROM Review r WHERE r.place.id = :placeId")
+    Optional<List<Review>> findAllByPlaceId(@Param("placeId") UUID placeId);
 }
 

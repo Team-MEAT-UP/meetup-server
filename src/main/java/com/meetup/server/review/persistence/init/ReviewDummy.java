@@ -34,7 +34,7 @@ public class ReviewDummy implements ApplicationRunner {
             List<Review> reviewList = new ArrayList<>();
 
             Review DUMMY_REVIEW_1 = Review.builder()
-                    .recommendPlace(recommendPlaceRepository.findById(1L).orElseThrow())
+                    .place(recommendPlaceRepository.findById(1L).orElseThrow())
                     .user(userRepository.findById(4L).orElseThrow())
                     .isVisited(true)
                     .visitedTime(VisitedTime.MORNING)

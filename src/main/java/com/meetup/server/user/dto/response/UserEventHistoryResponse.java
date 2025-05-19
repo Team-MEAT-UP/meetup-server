@@ -2,7 +2,7 @@ package com.meetup.server.user.dto.response;
 
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.util.TimeUtil;
-import com.meetup.server.recommend.domain.RecommendPlace;
+import com.meetup.server.place.domain.Place;
 import com.meetup.server.user.domain.User;
 import lombok.Builder;
 
@@ -24,8 +24,8 @@ public record UserEventHistoryResponse(
         return UserEventHistoryResponse.builder()
                 .eventId(event.getEventId())
                 .middlePointName(event.getSubway().getName())
-                .placeName(Optional.ofNullable(event.getRecommendPlace())
-                        .map(RecommendPlace::getPlaceName))
+                .placeName(Optional.ofNullable(event.getPlace())
+                        .map(Place::getName))
                 .participatedPeopleCount(participatedPeopleCount)
                 .userProfileImageUrls(userList.stream()
                         .map(User::getProfileImage)
