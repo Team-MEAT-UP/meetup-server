@@ -3,6 +3,7 @@ package com.meetup.server.user.presentation;
 import com.meetup.server.global.support.response.ApiResponse;
 import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.dto.request.UserAgreementRequest;
+import com.meetup.server.user.dto.response.UserEventHistoryResponse;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "User API", description = "사용자 API")
@@ -37,5 +40,14 @@ public class UserController {
     ) {
         userService.saveUserAgreement(userId, request.isPersonalInfoAgreement(), request.isMarketingAgreement());
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "유저 참여 모임 리스트 조회", description = "유저가 참여한 모임 리스트를 조회합니다")
+    @GetMapping("/events")
+    public ApiResponse<List<UserEventHistoryResponse>> getUserEventHistory(
+            @AuthenticationPrincipal Long userId
+    ) {
+        List<UserEventHistoryResponse> response = userService.getUserEventHistory(userId);
+        return ApiResponse.success(response);
     }
 }

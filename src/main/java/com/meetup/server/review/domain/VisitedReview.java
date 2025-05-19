@@ -40,4 +40,8 @@ public class VisitedReview extends BaseEntity {
         this.placeRating = placeRating;
         this.content = content;
     }
+
+    public void assignTo(Review review) {
+        this.review = review;
+    }
 }

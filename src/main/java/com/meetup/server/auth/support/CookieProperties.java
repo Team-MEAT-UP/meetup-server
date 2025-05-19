@@ -11,6 +11,7 @@ public record CookieProperties(
         int refreshTokenMaxAge,
         boolean httpOnly,
         boolean secure,
-        String sameSite
+        String sameSite,
+        String domain
 ) {
 }

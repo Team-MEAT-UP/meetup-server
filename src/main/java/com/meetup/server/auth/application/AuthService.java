@@ -7,6 +7,7 @@ import com.meetup.server.auth.support.CookieUtil;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
 import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.domain.User;
+import com.meetup.server.user.implement.UserReader;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtil cookieUtil;
     private final UserService userService;
+    private final UserReader userReader;
 
     public void logout(HttpServletResponse response) {
         cookieUtil.deleteAccessTokenCookie(response);
@@ -27,7 +29,7 @@ public class AuthService {
     }
 
     public String createAccessTokenForUser(Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userReader.read(userId);
         return jwtTokenProvider.createAccessToken(user);
     }
 
@@ -40,7 +42,7 @@ public class AuthService {
         }
 
         Long userId = jwtTokenProvider.extractUserIdFromToken(refreshToken);
-        User user = userService.getUserById(userId);
+        User user = userReader.read(userId);
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user);

@@ -37,7 +37,7 @@ public class MiddlePointService {
     @Transactional
     public MiddlePointResultResponse getMiddlePoint(UUID eventId) {
         Event event = eventReader.read(eventId);
-        List<StartPoint> startPoints = startPointReader.readAllByEvent(event);
+        List<StartPoint> startPoints = startPointReader.readAll(event);
         eventValidator.validateMinimumStartPoints(startPoints);
 
         Map<StartPoint, Subway> startPointToSubwayMap = subwayProcessor.mapStartPointsToClosestSubway(startPoints);

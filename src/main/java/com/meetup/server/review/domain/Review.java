@@ -17,7 +17,7 @@ public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private Long reviewId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
@@ -43,5 +43,16 @@ public class Review extends BaseEntity {
         this.isVisited = isVisited;
         this.visitedReview = visitedReview;
         this.nonVisitedReview = nonVisitedReview;
+    }
+
+    public boolean isWrittenBy(Long userId) {
+        return this.user.getUserId().equals(userId);
+    }
+
+    public void addVisitedReview(VisitedReview visitedReview) {
+        this.visitedReview = visitedReview;
+        if (visitedReview.getReview() != this) {
+            visitedReview.assignTo(this);
+        }
     }
 }

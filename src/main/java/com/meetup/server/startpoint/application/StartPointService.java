@@ -42,7 +42,7 @@ public class StartPointService {
         Event event = eventReader.read(eventId);
 
         Optional<User> optionalUser = userReader.readUserIfExists(userId);
-        List<StartPoint> startPointList = startPointReader.readAllByEvent(event);
+        List<StartPoint> startPointList = startPointReader.readAll(event);
 
         if (userId != null && validateAlreadyHasStartPoint(userId, startPointList)) {
             StartPoint startPoint = startPointProcessor.save(

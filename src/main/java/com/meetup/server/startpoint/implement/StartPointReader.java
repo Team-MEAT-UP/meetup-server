@@ -17,7 +17,7 @@ public class StartPointReader {
 
     private final StartPointRepository startPointRepository;
 
-    public List<StartPoint> readAllByEvent(Event event) {
+    public List<StartPoint> readAll(Event event) {
         return startPointRepository.findAllByEvent(event);
     }
 
@@ -28,5 +28,16 @@ public class StartPointReader {
 
     public String readName(UUID eventId) {
         return startPointRepository.findTopByEventIdOrderByCreatedAtAsc(eventId).getNonUserName();
+    }
+
+    public List<StartPoint> readAll(Long userId) {
+        return startPointRepository.findAllByUserId(userId);
+    }
+
+    public List<StartPoint> readAll(List<StartPoint> userStartPoints) {
+        return  userStartPoints.stream()
+                .map(startPoint -> readAll(startPoint.getEvent()))
+                .flatMap(List::stream)
+                .toList();
     }
 }
