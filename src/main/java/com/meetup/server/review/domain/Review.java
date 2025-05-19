@@ -1,7 +1,7 @@
 package com.meetup.server.review.domain;
 
+import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.place.domain.Place;
-import com.meetup.server.review.domain.type.VisitedTime;
 import com.meetup.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -12,41 +12,37 @@ import lombok.NoArgsConstructor;
 @Table(name = "review")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class Review {
+public class Review extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column(name = "review_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "is_visited", nullable = false)
     private boolean isVisited;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "visited_time", nullable = false)
-    private VisitedTime visitedTime;
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private VisitedReview visitedReview;
 
-    @Column(name = "review_content", length = 255, nullable = true)
-    private String content;
-
-    @Column(name = "etc_reason", length = 255, nullable = true)
-    private String etcReason;
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private NonVisitedReview nonVisitedReview;
 
     @Builder
-    public Review(Place place, boolean isVisited, VisitedTime visitedTime, String content, String etcReason, User user) {
+    public Review(Place place, User user, boolean isVisited, VisitedReview visitedReview, NonVisitedReview nonVisitedReview) {
         this.place = place;
         this.user = user;
         this.isVisited = isVisited;
-        this.visitedTime = visitedTime;
-        this.content = content;
-        this.etcReason = etcReason;
+        this.visitedReview = visitedReview;
+        this.nonVisitedReview = nonVisitedReview;
     }
 
     public boolean isWrittenBy(User user) {
