@@ -2,7 +2,7 @@ package com.meetup.server.place.domain;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import com.meetup.server.global.domain.BaseEntity;
-import com.meetup.server.place.domain.type.RecommendCategory;
+import com.meetup.server.place.domain.type.PlaceCategory;
 import com.meetup.server.place.domain.value.GoogleReview;
 import com.meetup.server.place.domain.value.Image;
 import com.meetup.server.place.domain.value.OpeningHour;
@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "recommend_place", uniqueConstraints = {@UniqueConstraint(columnNames = {"kakao_place_id", "google_place_id"})})
+@Table(name = "place", uniqueConstraints = {@UniqueConstraint(columnNames = {"kakao_place_id", "google_place_id"})})
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class RecommendPlace extends BaseEntity {
+public class Place extends BaseEntity {
 
     @Id
-    @Column(name = "recommend_place_id")
+    @Column(name = "place_id")
     private UUID id;
 
     @Column(name = "kakao_place_id", nullable = false)
@@ -36,7 +36,7 @@ public class RecommendPlace extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private RecommendCategory category;
+    private PlaceCategory category;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -72,7 +72,7 @@ public class RecommendPlace extends BaseEntity {
     }
 
     @Builder
-    public RecommendPlace(String kakaoPlaceId, String googlePlaceId, RecommendCategory category, String name, Double googleRating, List<Image> images, List<OpeningHour> openingHours, List<GoogleReview> googleReviews, Location location, Point point, String rawJson) {
+    public Place(String kakaoPlaceId, String googlePlaceId, PlaceCategory category, String name, Double googleRating, List<Image> images, List<OpeningHour> openingHours, List<GoogleReview> googleReviews, Location location, Point point, String rawJson) {
         this.kakaoPlaceId = kakaoPlaceId;
         this.googlePlaceId = googlePlaceId;
         this.category = category;

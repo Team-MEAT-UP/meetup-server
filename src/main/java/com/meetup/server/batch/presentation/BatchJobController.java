@@ -1,6 +1,6 @@
 package com.meetup.server.batch.presentation;
 
-import com.meetup.server.batch.place.job.RecommendPlaceSaveJob;
+import com.meetup.server.batch.place.job.PlaceSaveJob;
 import com.meetup.server.global.support.error.GlobalErrorType;
 import com.meetup.server.global.support.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -16,16 +16,16 @@ public class BatchJobController {
     @Value("${batch.secret-key}")
     private String batchSecretKey;
 
-    private final RecommendPlaceSaveJob recommendPlaceSaveJob;
+    private final PlaceSaveJob placeSaveJob;
 
     @Hidden
-    @PostMapping("/recommend-place")
-    public ApiResponse<?> runRecommendPlaceSaveJob(@RequestParam int page, @RequestHeader String secretKey) {
+    @PostMapping("/place")
+    public ApiResponse<?> runPlaceSaveJob(@RequestParam int page, @RequestHeader String secretKey) {
         if (!batchSecretKey.equals(secretKey)) {
             return ApiResponse.error(GlobalErrorType.UNAUTHORIZED);
         }
 
-        recommendPlaceSaveJob.saveRecommendPlaceJobScheduler(page);
+        placeSaveJob.savePlaceJobScheduler(page);
         return ApiResponse.success();
     }
 }

@@ -1,6 +1,6 @@
 package com.meetup.server.place.domain.type;
 
-public enum RecommendCategory {
+public enum PlaceCategory {
 
     CAFE,
     STUDY,

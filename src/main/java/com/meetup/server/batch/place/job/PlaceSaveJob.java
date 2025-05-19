@@ -8,19 +8,18 @@ import com.meetup.server.global.clients.google.place.photo.GooglePhotoResponse;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextClient;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextRequest;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextResponse;
-import com.meetup.server.global.clients.google.place.search.GoogleSearchTextResponse.Place;
 import com.meetup.server.global.clients.kakao.local.CategoryGroupCode;
 import com.meetup.server.global.clients.kakao.local.KakaoLocalCategoryClient;
 import com.meetup.server.global.clients.kakao.local.KakaoLocalRequest;
 import com.meetup.server.global.clients.kakao.local.KakaoLocalResponse;
 import com.meetup.server.global.clients.kakao.local.KakaoLocalResponse.KakaoSearchResponse;
 import com.meetup.server.global.util.CoordinateUtil;
-import com.meetup.server.place.domain.RecommendPlace;
-import com.meetup.server.place.domain.type.RecommendCategory;
+import com.meetup.server.place.domain.Place;
+import com.meetup.server.place.domain.type.PlaceCategory;
 import com.meetup.server.place.domain.value.GoogleReview;
 import com.meetup.server.place.domain.value.Image;
 import com.meetup.server.place.domain.value.OpeningHour;
-import com.meetup.server.place.persistence.RecommendPlaceRepository;
+import com.meetup.server.place.persistence.PlaceRepository;
 import com.meetup.server.startpoint.domain.type.Location;
 import com.meetup.server.subway.domain.Subway;
 import jakarta.persistence.EntityManagerFactory;
@@ -52,7 +51,7 @@ import java.util.Optional;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class RecommendPlaceSaveJob {
+public class PlaceSaveJob {
 
     private final String JOB_NAME = this.getClass().getSimpleName();
 
@@ -60,40 +59,40 @@ public class RecommendPlaceSaveJob {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final EntityManagerFactory entityManagerFactory;
-    private final RecommendPlaceRepository recommendPlaceRepository;
+    private final PlaceRepository placeRepository;
     private final KakaoLocalCategoryClient kakaoLocalCategoryClient;
     private final GoogleSearchTextClient googleSearchTextClient;
     private final GooglePhotoClient googlePhotoClient;
     private final ObjectMapper objectMapper;
 
     //    @Scheduled(cron = "0 0 3 1 * ?")
-    public void saveRecommendPlaceJobScheduler(int page) {
+    public void savePlaceJobScheduler(int page) {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addDate("time", new Date())
                 .addLong("page", (long) page)
                 .toJobParameters();
         try {
-            jobLauncher.run(saveRecommendPlaceJob(), jobParameters);
+            jobLauncher.run(savePlaceJob(), jobParameters);
         } catch (Exception e) {
             log.error(JOB_NAME, e);
         }
     }
 
     @Bean
-    public Job saveRecommendPlaceJob() {
+    public Job savePlaceJob() {
         return new JobBuilder(JOB_NAME, jobRepository)
-                .start(saveRecommendPlaceStep(null))
+                .start(savePlaceStep(null))
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step saveRecommendPlaceStep(@Value("#{jobParameters[page]}") Long page) {
-        return new StepBuilder("saveRecommendPlaceStep", jobRepository)
-                .<Subway, List<RecommendPlace>>chunk(5, platformTransactionManager)
+    public Step savePlaceStep(@Value("#{jobParameters[page]}") Long page) {
+        return new StepBuilder("savePlaceStep", jobRepository)
+                .<Subway, List<Place>>chunk(5, platformTransactionManager)
                 .reader(subwayReader())
-                .processor(convertToRecommendPlace(page))
-                .writer(recommendPlaceWriter())
+                .processor(convertToPlace(page))
+                .writer(placeWriter())
                 .build();
     }
 
@@ -106,35 +105,35 @@ public class RecommendPlaceSaveJob {
                 .build();
     }
 
-    private ItemProcessor<Subway, List<RecommendPlace>> convertToRecommendPlace(Long page) {
+    private ItemProcessor<Subway, List<Place>> convertToPlace(Long page) {
         return subway -> {
-            List<RecommendPlace> recommendPlaces = new ArrayList<>();
+            List<Place> places = new ArrayList<>();
             KakaoLocalResponse kakaoLocalResponse = fetchKakaoPlaces(subway, page);
 
             for (KakaoSearchResponse kakaoSearchResponse : kakaoLocalResponse.getKakaoSearchResponses()) {
                 try {
-                    if (recommendPlaceRepository.existsByKakaoPlaceId(kakaoSearchResponse.getId())) {
+                    if (placeRepository.existsByKakaoPlaceId(kakaoSearchResponse.getId())) {
                         log.info("이미 존재하는 장소, 건너뜀: {}", kakaoSearchResponse.getPlaceName());
                         continue;
                     }
 
-                    RecommendPlace recommendPlace = createRecommendPlace(kakaoSearchResponse);
-                    recommendPlaces.add(recommendPlace);
+                    Place place = createPlace(kakaoSearchResponse);
+                    places.add(place);
                 } catch (Exception e) {
-                    log.warn("RecommendPlace 생성 실패: {}", e.getMessage());
+                    log.warn("Place 생성 실패: {}", e.getMessage());
                 }
             }
 
-            return recommendPlaces;
+            return places;
         };
     }
 
-    private ItemWriter<List<RecommendPlace>> recommendPlaceWriter() {
+    private ItemWriter<List<Place>> placeWriter() {
         return items -> {
-            List<RecommendPlace> flatList = items.getItems().stream()
+            List<Place> flatList = items.getItems().stream()
                     .flatMap(List::stream)
                     .toList();
-            recommendPlaceRepository.saveAll(flatList);
+            placeRepository.saveAll(flatList);
         };
     }
 
@@ -149,11 +148,11 @@ public class RecommendPlaceSaveJob {
                 .build());
     }
 
-    private RecommendPlace createRecommendPlace(KakaoSearchResponse kakaoSearchResponse) throws JsonProcessingException {
+    private Place createPlace(KakaoSearchResponse kakaoSearchResponse) throws JsonProcessingException {
         GoogleSearchTextResponse googleSearchTextResponse =
                 googleSearchTextClient.sendRequest(GoogleSearchTextRequest.from(kakaoSearchResponse.getPlaceName()));
 
-        Place googlePlace = googleSearchTextResponse.places().getFirst();
+        GoogleSearchTextResponse.Place googlePlace = googleSearchTextResponse.places().getFirst();
 
         String photoName = googlePlace.photos().getFirst().name();
         GooglePhotoResponse googlePhotoResponse = fetchGooglePhoto(photoName);
@@ -161,10 +160,10 @@ public class RecommendPlaceSaveJob {
         double longitude = Double.parseDouble(kakaoSearchResponse.getX());
         double latitude = Double.parseDouble(kakaoSearchResponse.getY());
 
-        return RecommendPlace.builder()
+        return Place.builder()
                 .kakaoPlaceId(kakaoSearchResponse.getId())
                 .googlePlaceId(googlePlace.id())
-                .category(RecommendCategory.CAFE)
+                .category(PlaceCategory.CAFE)
                 .name(kakaoSearchResponse.getPlaceName())
                 .googleRating(googlePlace.rating())
                 .images(List.of(Image.from(googlePhotoResponse)))
