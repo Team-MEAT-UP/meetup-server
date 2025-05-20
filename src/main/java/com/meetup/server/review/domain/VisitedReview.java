@@ -2,7 +2,7 @@ package com.meetup.server.review.domain;
 
 import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.review.domain.type.VisitedTime;
-import com.meetup.server.review.domain.value.PlaceRating;
+import com.meetup.server.review.domain.value.PlaceScore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,16 +28,16 @@ public class VisitedReview extends BaseEntity {
     private VisitedTime visitedTime;
 
     @Embedded
-    private PlaceRating placeRating;
+    private PlaceScore placeScore;
 
     @Column(name = "content")
     private String content;
 
     @Builder
-    public VisitedReview(Review review, VisitedTime visitedTime, PlaceRating placeRating, String content) {
+    public VisitedReview(Review review, VisitedTime visitedTime, PlaceScore placeScore, String content) {
         this.review = review;
         this.visitedTime = visitedTime;
-        this.placeRating = placeRating;
+        this.placeScore = placeScore;
         this.content = content;
     }
 

@@ -6,7 +6,7 @@ import com.meetup.server.place.persistence.PlaceRepository;
 import com.meetup.server.review.domain.Review;
 import com.meetup.server.review.domain.VisitedReview;
 import com.meetup.server.review.domain.type.VisitedTime;
-import com.meetup.server.review.domain.value.PlaceRating;
+import com.meetup.server.review.domain.value.PlaceScore;
 import com.meetup.server.review.persistence.ReviewRepository;
 import com.meetup.server.user.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class ReviewDummy implements ApplicationRunner {
             VisitedReview DUMMY_VISITED_REVIEW_1 = VisitedReview.builder()
                     .review(DUMMY_REVIEW_1)
                     .visitedTime(VisitedTime.MORNING)
-                    .placeRating(PlaceRating.of(5, 4, 3))
+                    .placeScore(PlaceScore.of(5, 4, 3))
                     .content("아침에 갔는데 너무 좋았어요")
                     .build();
 

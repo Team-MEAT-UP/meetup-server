@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class PlaceRating {
+public class PlaceScore {
 
     private int socket;
 
@@ -18,7 +18,7 @@ public class PlaceRating {
 
     private int quiet;
 
-    public static PlaceRating of(int socket, int seat, int quiet) {
-        return new PlaceRating(socket, seat, quiet);
+    public static PlaceScore of(int socket, int seat, int quiet) {
+        return new PlaceScore(socket, seat, quiet);
     }
 }
