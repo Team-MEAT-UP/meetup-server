@@ -21,7 +21,7 @@ public class StartPointController {
 
     private final StartPointService startPointService;
 
-    @Operation(summary = "장소 검색하기", description = "외부 API를 통해 장소를 검색합니다.")
+    @Operation(summary = "장소 검색 API", description = "외부 API를 통해 장소를 검색합니다.")
     @GetMapping("/start-points/search")
     public ApiResponse<KakaoLocalResponse> searchStartPoint(
             @RequestParam(name = "textQuery") String textQuery) {

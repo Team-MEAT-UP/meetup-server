@@ -43,4 +43,19 @@ public class Event extends BaseEntity {
     public void updateSubway(Subway subway) {
         this.subway = subway;
     }
+
+    public void confirmPlace(Place place) {
+        this.place = place;
+    }
+
+    public void updatePlace(Place place) {
+        if (this.place.getId().equals(place.getId())) {
+            return;
+        }
+        this.place = place;
+    }
+
+    public boolean hasNoPlace() {
+        return this.place == null;
+    }
 }
