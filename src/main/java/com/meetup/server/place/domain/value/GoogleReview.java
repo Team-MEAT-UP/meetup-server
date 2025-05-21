@@ -5,7 +5,8 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
+
+import static com.meetup.server.global.util.TimeUtil.KST_ZONE_ID;
 
 @Builder
 public record GoogleReview(
@@ -15,8 +16,6 @@ public record GoogleReview(
         String authorProfileImage,
         LocalDateTime publishTime
 ) {
-    private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
-
     public static GoogleReview from(GoogleSearchTextResponse.Review review) {
         LocalDateTime publishTime = OffsetDateTime.parse(review.publishTime())
                 .atZoneSameInstant(KST_ZONE_ID)

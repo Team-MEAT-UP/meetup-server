@@ -49,13 +49,10 @@ public class Event extends BaseEntity {
     }
 
     public void updatePlace(Place place) {
-        if (this.place.getId().equals(place.getId())) {
+        if (this.place.isSamePlace(place)) {
             return;
         }
         this.place = place;
     }
 
-    public boolean hasNoPlace() {
-        return this.place == null;
-    }
 }
