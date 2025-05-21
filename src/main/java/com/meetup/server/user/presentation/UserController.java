@@ -23,7 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "유저 프로필 정보", description = "유저의 프로필 정보를 조회합니다")
+    @Operation(summary = "사용자 프로필 정보 조회 API", description = "유저의 프로필 정보를 조회합니다")
     @GetMapping("")
     public ApiResponse<?> getUserProfileInfo(
             @AuthenticationPrincipal Long userId
@@ -32,7 +32,7 @@ public class UserController {
         return ApiResponse.success(response);
     }
 
-    @Operation(summary = "유저 약관 동의 저장", description = "유저의 개인정보 이용 동의와 마케팅 이용 동의를 저장합니다")
+    @Operation(summary = "사용자 약관 동의 저장 API", description = "사용자의 개인정보 이용 동의와 마케팅 이용 동의를 저장합니다")
     @PostMapping("/agreement")
     public ApiResponse<?> saveUserAgreement(
             @AuthenticationPrincipal Long userId,
@@ -42,7 +42,7 @@ public class UserController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "유저 참여 모임 리스트 조회", description = "유저가 참여한 모임 리스트를 조회합니다")
+    @Operation(summary = "모임 히스토리 리스트 조회 API", description = "로그인 한 사용자가 참여한 모임 리스트를 조회합니다")
     @GetMapping("/events")
     public ApiResponse<List<UserEventHistoryResponse>> getUserEventHistory(
             @AuthenticationPrincipal Long userId
