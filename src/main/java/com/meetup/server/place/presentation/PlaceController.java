@@ -2,6 +2,7 @@ package com.meetup.server.place.presentation;
 
 import com.meetup.server.global.support.response.ApiResponse;
 import com.meetup.server.place.application.PlaceService;
+import com.meetup.server.place.dto.response.PlaceResponseList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,11 @@ public class PlaceController {
     ) {
         placeService.confirmPlace(eventId, placeId);
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "장소 추천 리스트 조회 API", description = "역 주변의 장소 추천 리스트를 조회합니다")
+    @GetMapping
+    public ApiResponse<PlaceResponseList> getAllPlaces(@RequestParam UUID eventId) {
+        return ApiResponse.success(placeService.getAllPlaces(eventId));
     }
 }

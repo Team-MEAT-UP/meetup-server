@@ -4,6 +4,7 @@ import com.meetup.server.global.clients.google.place.search.GoogleSearchTextResp
 import lombok.Builder;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Builder
@@ -22,5 +23,10 @@ public record OpeningHour(
                 .openTime(LocalTime.of(open.hour(), open.minute()))
                 .closeTime(LocalTime.of(close.hour(), close.minute()))
                 .build();
+    }
+
+    public boolean isToday(LocalDateTime now) {
+        DayOfWeek today = now.getDayOfWeek();
+        return day.equals(today);
     }
 }

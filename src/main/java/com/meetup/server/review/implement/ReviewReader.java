@@ -3,18 +3,35 @@ package com.meetup.server.review.implement;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.review.domain.Review;
 import com.meetup.server.review.persistence.ReviewRepository;
+import com.meetup.server.review.persistence.VisitedReviewRepository;
+import com.meetup.server.review.persistence.projection.PlaceWithRating;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class ReviewReader {
 
     private final ReviewRepository reviewRepository;
+    private final VisitedReviewRepository visitedReviewRepository;
 
     public List<Review> readAll(Place place) {
         return reviewRepository.findAllByPlace(place);
+    }
+
+    public List<PlaceWithRating> readPlaceRatings(List<UUID> placeIds) {
+        return visitedReviewRepository.findPlaceRatingsByPlaceIds(placeIds);
+    }
+
+    public Map<Place, PlaceWithRating> readPlaceRatingsAsMap(List<UUID> placeIds) {
+        return readPlaceRatings(placeIds)
+                .stream()
+                .collect(Collectors.toMap(PlaceWithRating::place, Function.identity()));
     }
 }

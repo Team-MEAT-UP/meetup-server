@@ -85,4 +85,8 @@ public class Place extends BaseEntity {
         this.point = point;
         this.rawJson = rawJson;
     }
+
+    public boolean isSamePlace(Place place) {
+        return this.id.equals(place.getId());
+    }
 }
