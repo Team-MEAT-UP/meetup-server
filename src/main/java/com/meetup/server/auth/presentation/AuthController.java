@@ -18,13 +18,13 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "Access Token 발급", description = "Swagger Test 를 위한 Access Token을 발급합니다.")
+    @Operation(summary = "Test 를 위한 Access Token 발급", description = "Swagger Test 를 위한 Access Token을 발급합니다.")
     @GetMapping("/test/{userId}")
     public String getAccessToken(@PathVariable Long userId) {
         return authService.createAccessTokenForUser(userId);
     }
 
-    @Operation(summary = "로그아웃", description = "사용자 로그아웃을 진행합니다.")
+    @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 진행합니다.")
     @PostMapping("/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
         authService.logout(response);
