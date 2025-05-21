@@ -3,6 +3,7 @@ package com.meetup.server.review.persistence.projection;
 import com.meetup.server.place.domain.Place;
 
 import java.util.Objects;
+import java.util.OptionalDouble;
 import java.util.stream.Stream;
 
 public record PlaceWithRating(
@@ -12,13 +13,12 @@ public record PlaceWithRating(
         Double avgQuiet
 ) {
 
-    public double calculateAverageRating() {
-        double averageRating = Stream.of(this.avgSocket(), this.avgSeat(), this.avgQuiet())
+    public Double calculateAverageRating() {
+        OptionalDouble averageRating = Stream.of(this.avgSocket(), this.avgSeat(), this.avgQuiet())
                 .filter(Objects::nonNull)
                 .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
+                .average();
 
-        return Math.round(averageRating * 10.0) / 10.0;
+        return averageRating.isPresent() ? Math.round(averageRating.getAsDouble() * 10.0) / 10.0 : null;
     }
 }

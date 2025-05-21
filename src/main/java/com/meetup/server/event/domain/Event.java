@@ -55,7 +55,4 @@ public class Event extends BaseEntity {
         this.place = place;
     }
 
-    public boolean hasNoPlace() {
-        return this.place == null;
-    }
 }

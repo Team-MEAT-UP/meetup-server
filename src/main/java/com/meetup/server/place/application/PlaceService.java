@@ -37,15 +37,14 @@ public class PlaceService {
         Event event = eventReader.read(eventId);
         Place place = placeReader.read(placeId);
 
-        if (event.hasNoPlace()) {
+        if (event.getPlace() == null) {
             event.confirmPlace(place);
         } else {
             event.updatePlace(place);
         }
     }
 
-    @Transactional(readOnly = true)
-    public PlaceResponseList findAllPlaces(UUID eventId) {
+    public PlaceResponseList getAllPlaces(UUID eventId) {
         Event event = eventReader.read(eventId);
         Subway subway = event.getSubway();
 
