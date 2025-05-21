@@ -21,4 +21,12 @@ public class PlaceScore {
     public static PlaceScore of(int socket, int seat, int quiet) {
         return new PlaceScore(socket, seat, quiet);
     }
+
+    public static PlaceScore fromRoundedAverages(double socket, double seat, double quiet) {
+        return PlaceScore.of(
+                (int) Math.round(socket),
+                (int) Math.round(seat),
+                (int) Math.round(quiet)
+        );
+    }
 }

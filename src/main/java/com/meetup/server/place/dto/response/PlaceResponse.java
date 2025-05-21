@@ -13,10 +13,8 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static com.meetup.server.global.util.TimeUtil.KST_ZONE_ID;
 
@@ -69,22 +67,13 @@ public record PlaceResponse(
                 .distance(distance)
                 .averageRating(
                         Optional.ofNullable(placeWithRating)
-                                .map(pwr -> Stream.of(pwr.avgSocket(), pwr.avgSeat(), pwr.avgQuiet())
-                                        .filter(Objects::nonNull)
-                                        .mapToDouble(Double::doubleValue)
-                                        .average()
-                                        .orElse(0.0))
-                                .map(avg -> Math.round(avg * 10.0) / 10.0)
+                                .map(PlaceWithRating::calculateAverageRating)
                                 .orElse(null)
                 )
                 .googleRating(googleRating)
                 .placeScore(
                         Optional.ofNullable(placeWithRating)
-                                .map(pwr -> PlaceScore.of(
-                                        (int) Math.round(pwr.avgSocket()),
-                                        (int) Math.round(pwr.avgSeat()),
-                                        (int) Math.round(pwr.avgQuiet())
-                                ))
+                                .map(scores -> PlaceScore.fromRoundedAverages(scores.avgSocket(), scores.avgSeat(), scores.avgQuiet()))
                                 .orElse(null)
                 )
                 .build();
