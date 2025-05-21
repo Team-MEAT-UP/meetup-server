@@ -50,12 +50,16 @@ public class PlaceService {
         Subway subway = event.getSubway();
 
         Place confirmedPlace = event.getPlace();
-        PlaceWithDistance confirmedPlaceWithDistance = placeReader.readWithDistance(confirmedPlace, subway.getPoint());
-        PlaceWithRating confirmedPlaceWithRating = reviewReader.readPlaceRatingsAsMap(List.of(confirmedPlace.getId())).get(confirmedPlace);
+        PlaceResponse confirmedPlaceResponse = null;
+        if (confirmedPlace != null) {
+            PlaceWithDistance confirmedPlaceWithDistance = placeReader.readWithDistance(confirmedPlace, subway.getPoint());
+            PlaceWithRating confirmedPlaceWithRating = reviewReader.readPlaceRatingsAsMap(List.of(confirmedPlace.getId())).get(confirmedPlace);
+            confirmedPlaceResponse = PlaceResponse.of(confirmedPlaceWithDistance, confirmedPlaceWithRating);
+        }
 
         List<PlaceWithDistance> nearbyPlaces = placeReader.readAllWithinRadius(subway.getPoint(), RADIUS);
         List<PlaceResponse> recommendedPlaces = placeProcessor.getRecommendedPlaces(confirmedPlace, nearbyPlaces);
 
-        return PlaceResponseList.of(subway, PlaceResponse.of(confirmedPlaceWithDistance, confirmedPlaceWithRating), recommendedPlaces);
+        return PlaceResponseList.of(subway, confirmedPlaceResponse, recommendedPlaces);
     }
 }
