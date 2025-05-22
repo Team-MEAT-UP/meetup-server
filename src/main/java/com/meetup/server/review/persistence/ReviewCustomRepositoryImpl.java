@@ -18,13 +18,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
     @Override
     public Map<UUID, Boolean> findReviewsWrittenByUser(List<EventHistoryProjection> projections, Long userId) {
-        Map<UUID, UUID> eventToPlaceMap = projections.stream()
+        Map<UUID, UUID> placeOfEventMap = projections.stream()
                 .filter(projection -> projection.placeId() != null)
                 .collect(Collectors.toMap(EventHistoryProjection::eventId, EventHistoryProjection::placeId));
 
-        List<UUID> placeIds = new ArrayList<>(new HashSet<>(eventToPlaceMap.values()));
+        List<UUID> placeIds = new ArrayList<>(new HashSet<>(placeOfEventMap.values()));
 
-        Set<UUID> reviewedPlaceIds = new HashSet<>(
+        Set<UUID> reviewedAllPlaceIds = new HashSet<>(
                 jpaQueryFactory
                         .select(review.place.id)
                         .from(review)
@@ -35,10 +35,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         .fetch()
         );
 
-        return eventToPlaceMap.entrySet().stream()
+        return placeOfEventMap.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> reviewedPlaceIds.contains(entry.getValue())
+                        entry -> reviewedAllPlaceIds.contains(entry.getValue())
                 ));
     }
 }

@@ -23,7 +23,7 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<EventHistoryProjection> findUserEventProjections(Long userId, UUID lastViewedEventId, int size) {
+    public List<EventHistoryProjection> findEvents(Long userId, UUID lastViewedEventId, int size) {
         LocalDateTime lastViewedTime;
         BooleanExpression cursor = null;
         BooleanExpression cursorFilter = null;
@@ -67,7 +67,7 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     }
 
     @Override
-    public List<ParticipantProjection> findParticipantInfosByEventIds(List<UUID> eventIds) {
+    public List<ParticipantProjection> findParticipantsWithImageUrls(List<UUID> eventIds) {
         return jpaQueryFactory
                 .select(Projections.constructor(ParticipantProjection.class,
                         startPoint.event.eventId,
@@ -78,7 +78,7 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     }
 
     @Override
-    public List<ParticipantCountProjection> findParticipantCountsByEventIds(List<UUID> eventIds) {
+    public List<ParticipantCountProjection> findParticipantsCounts(List<UUID> eventIds) {
         return jpaQueryFactory
                 .select(Projections.constructor(
                         ParticipantCountProjection.class,

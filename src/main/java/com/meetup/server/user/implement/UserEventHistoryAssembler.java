@@ -22,16 +22,16 @@ public class UserEventHistoryAssembler {
     private final ReviewChecker reviewChecker;
     private final StartPointReader startPointReader;
 
-    public List<UserEventHistoryResponse> assemble(List<EventHistoryProjection> displayEvents, Long userId) {
-        List<UUID> eventIds = displayEvents.stream()
+    public List<UserEventHistoryResponse> assemble(List<EventHistoryProjection> events, Long userId) {
+        List<UUID> eventIds = events.stream()
                 .map(EventHistoryProjection::eventId)
                 .toList();
 
         Map<UUID, List<String>> imageUrlMap = getParticipantsWithImageUrls(eventIds);
         Map<UUID, Integer> participantsMap = getParticipantsCount(eventIds);
-        Map<UUID, Boolean> isReviewedMap = reviewChecker.isReviewed(displayEvents, userId);
+        Map<UUID, Boolean> isReviewedMap = reviewChecker.isReviewed(events, userId);
 
-        return displayEvents.stream()
+        return events.stream()
                 .filter(event -> {
                     return participantsMap.getOrDefault(event.eventId(), 0) > 1 ;
                 })
@@ -52,7 +52,7 @@ public class UserEventHistoryAssembler {
     }
 
     private Map<UUID, List<String>> getParticipantsWithImageUrls(List<UUID> eventIds) {
-        return startPointReader.findParticipants(eventIds).stream()
+        return startPointReader.readParticipantsWithUrls(eventIds).stream()
                 .collect(Collectors.groupingBy(
                         ParticipantProjection::eventId,
                         Collectors.mapping(
@@ -62,7 +62,7 @@ public class UserEventHistoryAssembler {
     }
 
     private Map<UUID, Integer> getParticipantsCount(List<UUID> eventIds) {
-        return startPointReader.findParticipantCounts(eventIds).stream()
+        return startPointReader.readParticipantCounts(eventIds).stream()
                 .collect(Collectors.toMap(
                         ParticipantCountProjection::eventId,
                         participants -> participants.count().intValue()

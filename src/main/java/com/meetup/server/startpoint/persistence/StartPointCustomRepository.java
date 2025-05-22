@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface StartPointCustomRepository {
-    List<EventHistoryProjection> findUserEventProjections(Long userId, UUID lastViewedEventId, int size);
+    List<EventHistoryProjection> findEvents(Long userId, UUID lastViewedEventId, int size);
 
-    List<ParticipantProjection> findParticipantInfosByEventIds(List<UUID> eventIds);
+    List<ParticipantProjection> findParticipantsWithImageUrls(List<UUID> eventIds);
 
-    List<ParticipantCountProjection> findParticipantCountsByEventIds(List<UUID> eventIds);
+    List<ParticipantCountProjection> findParticipantsCounts(List<UUID> eventIds);
 }

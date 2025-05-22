@@ -33,26 +33,15 @@ public class StartPointReader {
         return startPointRepository.findTopByEventIdOrderByCreatedAtAsc(eventId).getNonUserName();
     }
 
-    public List<StartPoint> readAll(Long userId) {
-        return startPointRepository.findAllByUserId(userId);
+    public List<EventHistoryProjection> readAllEvents(Long userId, UUID lastViewedEventId, int size) {
+        return startPointRepository.findEvents(userId, lastViewedEventId, size);
     }
 
-    public List<StartPoint> readAll(List<StartPoint> userStartPoints) {
-        return  userStartPoints.stream()
-                .map(startPoint -> readAll(startPoint.getEvent()))
-                .flatMap(List::stream)
-                .toList();
+    public List<ParticipantProjection> readParticipantsWithUrls(List<UUID> eventIds) {
+        return startPointRepository.findParticipantsWithImageUrls(eventIds);
     }
 
-    public List<EventHistoryProjection> findEvents(Long userId, UUID lastViewedEventId, int size) {
-        return startPointRepository.findUserEventProjections(userId, lastViewedEventId, size);
-    }
-
-    public List<ParticipantProjection> findParticipants(List<UUID> eventIds) {
-        return startPointRepository.findParticipantInfosByEventIds(eventIds);
-    }
-
-    public List<ParticipantCountProjection> findParticipantCounts(List<UUID> eventIds) {
-        return startPointRepository.findParticipantCountsByEventIds(eventIds);
+    public List<ParticipantCountProjection> readParticipantCounts(List<UUID> eventIds) {
+        return startPointRepository.findParticipantsCounts(eventIds);
     }
 }

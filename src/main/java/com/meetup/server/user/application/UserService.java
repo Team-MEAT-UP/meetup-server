@@ -1,6 +1,5 @@
 package com.meetup.server.user.application;
 
-import com.meetup.server.review.implement.ReviewChecker;
 import com.meetup.server.startpoint.implement.StartPointReader;
 import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
 import com.meetup.server.user.domain.User;
@@ -28,7 +27,6 @@ public class UserService {
     private final AgreementValidator agreementValidator;
     private final UserReader userReader;
     private final UserEventHistoryAssembler userEventHistoryAssembler;
-    private final ReviewChecker reviewChecker;
 
     public UserProfileInfoResponse getUserProfileInfo(Long userId) {
         return UserProfileInfoResponse.from(userReader.read(userId));
@@ -43,7 +41,7 @@ public class UserService {
     }
 
     public UserEventHistoryResponseList getUserEventHistory(Long userId, UUID lastViewedEventId, int size) {
-        List<EventHistoryProjection> fetchedEvents = startPointReader.findEvents(userId, lastViewedEventId, size + 1);
+        List<EventHistoryProjection> fetchedEvents = startPointReader.readAllEvents(userId, lastViewedEventId, size + 1);
         List<UserEventHistoryResponse> responses = userEventHistoryAssembler.assemble(fetchedEvents, userId);
 
         boolean hasNext = responses.size() > size;
