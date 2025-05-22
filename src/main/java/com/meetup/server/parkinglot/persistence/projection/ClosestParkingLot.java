@@ -1,4 +1,4 @@
-package com.meetup.server.parkinglot.dto;
+package com.meetup.server.parkinglot.persistence.projection;
 
 import com.meetup.server.parkinglot.domain.ParkingLot;
 

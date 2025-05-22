@@ -1,7 +1,7 @@
 package com.meetup.server.parkinglot.implement;
 
-import com.meetup.server.parkinglot.dto.ClosestParkingLot;
 import com.meetup.server.parkinglot.persistence.ParkingLotRepository;
+import com.meetup.server.parkinglot.persistence.projection.ClosestParkingLot;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
