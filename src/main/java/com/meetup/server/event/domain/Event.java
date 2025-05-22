@@ -54,5 +54,4 @@ public class Event extends BaseEntity {
         }
         this.place = place;
     }
-
 }

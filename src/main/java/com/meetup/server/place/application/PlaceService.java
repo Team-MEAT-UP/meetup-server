@@ -3,11 +3,13 @@ package com.meetup.server.place.application;
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.event.implement.EventReader;
 import com.meetup.server.place.domain.Place;
-import com.meetup.server.place.dto.response.PlaceResponse;
-import com.meetup.server.place.dto.response.PlaceResponseList;
+import com.meetup.server.place.domain.value.GoogleReview;
+import com.meetup.server.place.dto.response.*;
 import com.meetup.server.place.implement.PlaceProcessor;
 import com.meetup.server.place.implement.PlaceReader;
+import com.meetup.server.place.implement.PlaceSorter;
 import com.meetup.server.place.persistence.projection.PlaceWithDistance;
+import com.meetup.server.review.domain.Review;
 import com.meetup.server.review.implement.ReviewReader;
 import com.meetup.server.review.persistence.projection.PlaceWithRating;
 import com.meetup.server.subway.domain.Subway;
@@ -31,6 +33,7 @@ public class PlaceService {
     private final PlaceProcessor placeProcessor;
     private final EventReader eventReader;
     private final ReviewReader reviewReader;
+    private final PlaceSorter placeSorter;
 
     @Transactional
     public void confirmPlace(UUID eventId, UUID placeId) {
@@ -60,5 +63,30 @@ public class PlaceService {
         List<PlaceResponse> recommendedPlaces = placeProcessor.getRecommendedPlaces(confirmedPlace, nearbyPlaces);
 
         return PlaceResponseList.of(subway, confirmedPlaceResponse, recommendedPlaces);
+    }
+
+    public PlaceDetailResponse getPlace(UUID eventId, UUID placeId) {
+        Event event = eventReader.read(eventId);
+        Place place = placeReader.read(placeId);
+
+        List<Review> reviews = placeSorter.sortSpotReviewsByNewest(reviewReader.readAll(place));
+        List<GoogleReview> googleReviews = placeSorter.sortGoogleReviewByNewest(place.getGoogleReviews());
+
+        PlaceWithDistance placeWithDistance = placeReader.readWithDistance(place, event.getSubway().getPoint());
+        PlaceWithRating placeWithRating = reviewReader.readPlaceRatingsAsMap(List.of(place.getId())).get(place);
+        PlaceResponse placeResponse = PlaceResponse.of(placeWithDistance, placeWithRating);
+
+        boolean isConfirmed = event.getPlace() != null;
+        boolean isChanged = event.getPlace() != null && !event.getPlace().isSamePlace(place);
+
+        return PlaceDetailResponse.of(
+                place,
+                placeResponse,
+                reviewReader.readQuietnessRating(place.getId()),
+                ReviewResponse.fromList(reviews),
+                GoogleReviewResponse.fromList(googleReviews),
+                isConfirmed,
+                isChanged
+        );
     }
 }
