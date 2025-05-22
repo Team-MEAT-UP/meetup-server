@@ -20,7 +20,10 @@ public class PlaceSorter {
 
         List<PlaceResponse> placeResponsesWithoutReview = placeResponses.stream()
                 .filter(placeResponse -> placeResponse.averageRating() == null)
-                .sorted(Comparator.comparing(PlaceResponse::googleRating).reversed())
+                .sorted(Comparator.comparing(
+                        PlaceResponse::googleRating,
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                ))
                 .toList();
 
         List<PlaceResponse> mergedPlaceResponses = new ArrayList<>();
