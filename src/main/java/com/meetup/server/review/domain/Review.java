@@ -55,4 +55,11 @@ public class Review extends BaseEntity {
             visitedReview.assignTo(this);
         }
     }
+
+    public void addNotVisitedReview(NonVisitedReview nonVisitedReview) {
+        this.nonVisitedReview = nonVisitedReview;
+        if (nonVisitedReview.getReview() != this) {
+            nonVisitedReview.assignTo(this);
+        }
+    }
 }
