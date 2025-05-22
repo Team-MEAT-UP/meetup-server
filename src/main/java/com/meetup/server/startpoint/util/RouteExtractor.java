@@ -1,9 +1,7 @@
 package com.meetup.server.startpoint.util;
 
-import com.meetup.server.event.dto.response.DrivingRouteResponse;
+import com.meetup.server.event.dto.response.DrivingInfoResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
-
-import java.util.List;
 
 public class RouteExtractor {
 
@@ -20,10 +18,10 @@ public class RouteExtractor {
         return paths.getFirst().info().totalTime();
     }
 
-    public static int extractValidDrivingTotalTime(List<DrivingRouteResponse> drivingRoutes) {
-        if (drivingRoutes == null || drivingRoutes.isEmpty() || drivingRoutes.getFirst() == null) {
+    public static int extractValidDrivingTotalTime(DrivingInfoResponse drivingInfoResponse) {
+        if (drivingInfoResponse == null) {
             return 0;
         }
-        return drivingRoutes.getFirst().duration();
+        return drivingInfoResponse.duration();
     }
 }
