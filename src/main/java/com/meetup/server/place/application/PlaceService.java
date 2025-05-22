@@ -89,4 +89,14 @@ public class PlaceService {
                 isChanged
         );
     }
+
+    public PlaceResponseList getPlaceForReview(UUID eventId) {
+        Event event = eventReader.read(eventId);
+        Subway subway = event.getSubway();
+        Place place = event.getPlace();
+
+        PlaceWithDistance placeWithDistance = placeReader.readWithDistance(place, subway.getPoint());
+        PlaceWithRating placeWithRating = reviewReader.readPlaceRatingsAsMap(List.of(place.getId())).get(place);
+        return PlaceResponseList.of(subway, PlaceResponse.of(placeWithDistance, placeWithRating), null);
+    }
 }
