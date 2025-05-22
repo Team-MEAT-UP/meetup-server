@@ -1,6 +1,7 @@
 package com.meetup.server.review.persistence;
 
 import com.meetup.server.review.domain.VisitedReview;
+import com.meetup.server.review.persistence.projection.PlaceQuietnessWithRating;
 import com.meetup.server.review.persistence.projection.PlaceWithRating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +24,16 @@ public interface VisitedReviewRepository extends JpaRepository<VisitedReview, Lo
                 GROUP BY vr.review.place
             """)
     List<PlaceWithRating> findPlaceRatingsByPlaceIds(@Param("placeIds") List<UUID> placeIds);
+
+
+    @Query("""
+                SELECT new com.meetup.server.review.persistence.projection.PlaceQuietnessWithRating(
+                    AVG(CASE WHEN vr.visitedTime = 'MORNING' THEN vr.placeScore.quiet ELSE NULL END),
+                    AVG(CASE WHEN vr.visitedTime = 'LUNCH' THEN vr.placeScore.quiet ELSE NULL END),
+                    AVG(CASE WHEN vr.visitedTime = 'NIGHT' THEN vr.placeScore.quiet ELSE NULL END)
+                )
+                FROM VisitedReview vr
+                WHERE vr.review.place.id = :placeId
+            """)
+    PlaceQuietnessWithRating findQuietnessRatingByPlaceId(@Param("placeId") UUID placeId);
 }

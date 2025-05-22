@@ -34,14 +34,26 @@ public class ReviewDummy implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if (reviewRepository.count() > 0) {
-            log.info("[REVIEW]더미 데이터 존재");
+            log.info("[Review]더미 데이터 존재");
         } else {
             List<Review> reviewList = new ArrayList<>();
 
-            UUID placeId = UUID.fromString("0196e96a-3993-7035-8caf-0436872b6644");
+            UUID placeId = UUID.fromString("0196e4a6-e812-74a7-9525-7ae7c5345490");
             Place place = placeRepository.findById(placeId).orElseThrow();
 
             Review DUMMY_REVIEW_1 = Review.builder()
+                    .place(place)
+                    .user(userRepository.findById(1L).orElseThrow())
+                    .isVisited(true)
+                    .build();
+
+            Review DUMMY_REVIEW_2 = Review.builder()
+                    .place(place)
+                    .user(userRepository.findById(2L).orElseThrow())
+                    .isVisited(true)
+                    .build();
+
+            Review DUMMY_REVIEW_3 = Review.builder()
                     .place(place)
                     .user(userRepository.findById(4L).orElseThrow())
                     .isVisited(true)
@@ -54,8 +66,27 @@ public class ReviewDummy implements ApplicationRunner {
                     .content("아침에 갔는데 너무 좋았어요")
                     .build();
 
+            VisitedReview DUMMY_VISITED_REVIEW_2 = VisitedReview.builder()
+                    .review(DUMMY_REVIEW_2)
+                    .visitedTime(VisitedTime.LUNCH)
+                    .placeScore(PlaceScore.of(5, 4, 3))
+                    .content("점심에 갔는데 너무 좋았어요")
+                    .build();
+
+            VisitedReview DUMMY_VISITED_REVIEW_3 = VisitedReview.builder()
+                    .review(DUMMY_REVIEW_3)
+                    .visitedTime(VisitedTime.NIGHT)
+                    .placeScore(PlaceScore.of(5, 4, 3))
+                    .content("저녁에 갔는데 너무 좋았어요")
+                    .build();
+
             reviewList.add(DUMMY_REVIEW_1);
+            reviewList.add(DUMMY_REVIEW_2);
+            reviewList.add(DUMMY_REVIEW_3);
+
             DUMMY_REVIEW_1.addVisitedReview(DUMMY_VISITED_REVIEW_1);
+            DUMMY_REVIEW_2.addVisitedReview(DUMMY_VISITED_REVIEW_2);
+            DUMMY_REVIEW_3.addVisitedReview(DUMMY_VISITED_REVIEW_3);
 
             reviewRepository.saveAll(reviewList);
         }

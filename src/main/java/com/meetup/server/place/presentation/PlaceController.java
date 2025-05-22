@@ -2,6 +2,7 @@ package com.meetup.server.place.presentation;
 
 import com.meetup.server.global.support.response.ApiResponse;
 import com.meetup.server.place.application.PlaceService;
+import com.meetup.server.place.dto.response.PlaceDetailResponse;
 import com.meetup.server.place.dto.response.PlaceResponseList;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,5 +35,20 @@ public class PlaceController {
     @GetMapping
     public ApiResponse<PlaceResponseList> getAllPlaces(@RequestParam UUID eventId) {
         return ApiResponse.success(placeService.getAllPlaces(eventId));
+    }
+
+    @Operation(summary = "장소 상세 조회 API", description = "장소 ID를 통해 장소의 상세 정보를 조회합니다.")
+    @GetMapping("/{placeId}")
+    public ApiResponse<PlaceDetailResponse> getPlaceDetails(
+            @PathVariable UUID placeId,
+            @RequestParam UUID eventId
+    ) {
+        return ApiResponse.success(placeService.getPlace(eventId, placeId));
+    }
+
+    @Operation(summary = "리뷰용 장소 조회 API", description = "리뷰 작성을 위해 이벤트 ID로 확정된 장소 정보를 조회합니다.")
+    @GetMapping("/review")
+    public ApiResponse<PlaceResponseList> getPlaceForReview(@RequestParam UUID eventId) {
+        return ApiResponse.success(placeService.getPlaceForReview(eventId));
     }
 }
