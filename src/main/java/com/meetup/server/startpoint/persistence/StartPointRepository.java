@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.UUID;
 
-public interface StartPointRepository extends JpaRepository<StartPoint, UUID> {
+public interface StartPointRepository extends JpaRepository<StartPoint, UUID>, StartPointCustomRepository {
 
     int countByEvent(Event event);
 

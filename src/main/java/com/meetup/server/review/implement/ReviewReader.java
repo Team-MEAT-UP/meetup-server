@@ -39,4 +39,6 @@ public class ReviewReader {
     public PlaceQuietnessWithRating readQuietnessRating(UUID placeId) {
         return visitedReviewRepository.findQuietnessRatingByPlaceId(placeId);
     }
+
+
 }

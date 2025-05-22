@@ -26,6 +26,11 @@ public class UserEventHistoryAssembler {
 
         return eventStartPointsMap.entrySet().stream()
                 .sorted((e1, e2) -> e2.getKey().getCreatedAt().compareTo(e1.getKey().getCreatedAt()))
+                .filter(entry -> {
+                            Event event = entry.getKey();
+                            return participantExtractor.count(allStartPoints, event.getEventId()) > 1;
+                        }
+                )
                 .map(entry -> {
                     Event event = entry.getKey();
                     List<User> loginParticipants = participantExtractor.extract(allStartPoints, event.getEventId());
