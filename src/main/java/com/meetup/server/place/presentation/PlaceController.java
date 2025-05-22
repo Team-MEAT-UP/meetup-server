@@ -45,4 +45,10 @@ public class PlaceController {
     ) {
         return ApiResponse.success(placeService.getPlace(eventId, placeId));
     }
+
+    @Operation(summary = "리뷰용 장소 조회 API", description = "리뷰 작성을 위해 이벤트 ID로 확정된 장소 정보를 조회합니다.")
+    @GetMapping("/review")
+    public ApiResponse<PlaceResponseList> getPlaceForReview(@RequestParam UUID eventId) {
+        return ApiResponse.success(placeService.getPlaceForReview(eventId));
+    }
 }
