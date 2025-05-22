@@ -16,7 +16,7 @@ public record UserEventHistoryResponse(
         UUID eventId,
         String middlePointName,
         String placeName,
-        int participatedPeopleCount,
+        long participatedPeopleCount,
         List<String> userProfileImageUrls,
         int eventMadeAgo,
         String eventTimeAgo,

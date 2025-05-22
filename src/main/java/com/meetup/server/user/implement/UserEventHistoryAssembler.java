@@ -1,16 +1,18 @@
 package com.meetup.server.user.implement;
 
-import com.meetup.server.event.domain.Event;
+import com.meetup.server.global.util.TimeUtil;
 import com.meetup.server.review.implement.ReviewChecker;
-import com.meetup.server.startpoint.domain.StartPoint;
-import com.meetup.server.startpoint.implement.ParticipantExtractor;
-import com.meetup.server.user.domain.User;
+import com.meetup.server.startpoint.implement.StartPointReader;
+import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
 import com.meetup.server.user.dto.response.UserEventHistoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,28 +20,52 @@ import java.util.stream.Collectors;
 public class UserEventHistoryAssembler {
 
     private final ReviewChecker reviewChecker;
-    private final ParticipantExtractor participantExtractor;
+    private final StartPointReader startPointReader;
 
-    public List<UserEventHistoryResponse> assemble(List<StartPoint> startPointList, List<StartPoint> allStartPoints, Long userId) {
-        Map<Event, List<StartPoint>> eventStartPointsMap = startPointList.stream()
-                .collect(Collectors.groupingBy(StartPoint::getEvent));
-
-        return eventStartPointsMap.entrySet().stream()
-                .sorted((e1, e2) -> e2.getKey().getCreatedAt().compareTo(e1.getKey().getCreatedAt()))
-                .filter(entry -> {
-                            Event event = entry.getKey();
-                            return participantExtractor.count(allStartPoints, event.getEventId()) > 1;
-                        }
-                )
-                .map(entry -> {
-                    Event event = entry.getKey();
-                    List<User> loginParticipants = participantExtractor.extract(allStartPoints, event.getEventId());
-                    int participantCount = participantExtractor.count(allStartPoints, event.getEventId());
-
-                    boolean isReviewed = reviewChecker.isReviewed(event, userId);
-
-                    return UserEventHistoryResponse.of(loginParticipants, event, participantCount, isReviewed);
-                })
+    public List<UserEventHistoryResponse> assemble(List<EventHistoryProjection> displayEvents, Long userId) {
+        List<UUID> eventIds = displayEvents.stream()
+                .map(EventHistoryProjection::eventId)
                 .toList();
+
+        Map<UUID, List<String>> imageUrlMap = getParticipantsWithImageUrls(eventIds);
+        Map<UUID, Integer> participantsMap = getParticipantsCount(eventIds);
+        Map<UUID, Boolean> isReviewedMap = reviewChecker.isReviewed(displayEvents, userId);
+
+        return displayEvents.stream()
+                .filter(event -> {
+                    return participantsMap.getOrDefault(event.eventId(), 0) > 1 ;
+                })
+                .map(event -> {
+                    List<String> imageUrls = imageUrlMap.getOrDefault(event.eventId(), List.of());
+
+                    return UserEventHistoryResponse.builder()
+                            .eventId(event.eventId())
+                            .middlePointName(event.subwayName())
+                            .placeName(event.placeName())
+                            .participatedPeopleCount(participantsMap.getOrDefault(event.eventId(), 0))
+                            .userProfileImageUrls(imageUrls)
+                            .eventMadeAgo(TimeUtil.calculateDaysAgo(event.createdAt()))
+                            .eventTimeAgo(TimeUtil.calculateTimeAgo(event.createdAt()))
+                            .isReviewed(isReviewedMap.getOrDefault(event.eventId(), false))
+                            .build();
+                }).toList();
+    }
+
+    private Map<UUID, List<String>> getParticipantsWithImageUrls(List<UUID> eventIds) {
+        return startPointReader.findParticipants(eventIds).stream()
+                .collect(Collectors.groupingBy(
+                        ParticipantProjection::eventId,
+                        Collectors.mapping(
+                                ParticipantProjection::profileImageUrl,
+                                Collectors.toList())
+                ));
+    }
+
+    private Map<UUID, Integer> getParticipantsCount(List<UUID> eventIds) {
+        return startPointReader.findParticipantCounts(eventIds).stream()
+                .collect(Collectors.toMap(
+                        ParticipantCountProjection::eventId,
+                        participants -> participants.count().intValue()
+                ));
     }
 }

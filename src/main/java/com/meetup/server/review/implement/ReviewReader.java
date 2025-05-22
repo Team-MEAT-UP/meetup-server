@@ -6,6 +6,7 @@ import com.meetup.server.review.persistence.ReviewRepository;
 import com.meetup.server.review.persistence.VisitedReviewRepository;
 import com.meetup.server.review.persistence.projection.PlaceQuietnessWithRating;
 import com.meetup.server.review.persistence.projection.PlaceWithRating;
+import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -40,5 +41,7 @@ public class ReviewReader {
         return visitedReviewRepository.findQuietnessRatingByPlaceId(placeId);
     }
 
-
+    public Map<UUID, Boolean> findReviewsWrittenByUser(List<EventHistoryProjection> projections, Long userId) {
+        return reviewRepository.findReviewsWrittenByUser(projections, userId);
+    }
 }

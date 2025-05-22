@@ -1,10 +1,8 @@
 package com.meetup.server.startpoint.persistence;
 
-import com.meetup.server.event.domain.QEvent;
-import com.meetup.server.startpoint.domain.QStartPoint;
-import com.meetup.server.startpoint.domain.StartPoint;
-import com.meetup.server.user.domain.QUser;
-import com.meetup.server.user.dto.response.UserEventHistoryProjection;
+import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,50 +13,53 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.meetup.server.event.domain.QEvent.event;
+import static com.meetup.server.startpoint.domain.QStartPoint.startPoint;
+
 @Repository
 @RequiredArgsConstructor
 public class StartPointCustomRepositoryImpl implements StartPointCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final QStartPoint sp = QStartPoint.startPoint;
-    private final QEvent event = QEvent.event;
-    private final QUser user = QUser.user;
 
     @Override
-    public List<UserEventHistoryProjection> findUserEventProjections(Long userId, UUID lastViewedEventId, int size) {
-        LocalDateTime lastViewedCreatedAt = null;
-        BooleanExpression cursorCondition = null;
+    public List<EventHistoryProjection> findUserEventProjections(Long userId, UUID lastViewedEventId, int size) {
+        LocalDateTime lastViewedTime;
+        BooleanExpression cursor = null;
+        BooleanExpression cursorFilter = null;
 
         if (lastViewedEventId != null) {
-            lastViewedCreatedAt = jpaQueryFactory
+            lastViewedTime = jpaQueryFactory
                     .select(event.createdAt)
                     .from(event)
                     .where(event.eventId.eq(lastViewedEventId))
                     .fetchOne();
 
-            if (lastViewedCreatedAt != null) {
-                cursorCondition = event.createdAt.lt(lastViewedCreatedAt)
-                        .or(event.createdAt.eq(lastViewedCreatedAt).and(event.eventId.lt(lastViewedEventId)));
+            if (lastViewedTime != null) {
+                cursor = event.createdAt.lt(lastViewedTime)
+                        .or(event.createdAt.eq(lastViewedTime).and(event.eventId.lt(lastViewedEventId)));
             }
         }
 
-        BooleanExpression predicate = sp.user.userId.eq(userId);
-        if (cursorCondition != null) {
-            predicate = predicate.and(cursorCondition);
+        BooleanExpression isUser = startPoint.user.userId.eq(userId);
+        if (cursor != null) {
+            cursorFilter = isUser.and(cursor);
         }
 
         return jpaQueryFactory
                 .select(Projections.constructor(
-                        UserEventHistoryProjection.class,
+                        EventHistoryProjection.class,
                         event.eventId,
                         event.place.id,
                         event.subway.name,
                         event.place.name,
                         event.createdAt
                 ))
-                .from(sp)
-                .join(sp.event, event)
-                .where(predicate)
+                .from(startPoint)
+                .join(startPoint.event, event)
+                .leftJoin(event.place)
+                .leftJoin(event.subway)
+                .where(cursorFilter)
                 .orderBy(event.createdAt.desc(), event.eventId.desc())
                 .distinct()
                 .limit(size)
@@ -66,11 +67,27 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     }
 
     @Override
-    public List<StartPoint> findParticipantsByEventIds(List<UUID> eventIds) {
+    public List<ParticipantProjection> findParticipantInfosByEventIds(List<UUID> eventIds) {
         return jpaQueryFactory
-                .selectFrom(sp)
-                .join(sp.user, user).fetchJoin()
-                .where(sp.event.eventId.in(eventIds))
+                .select(Projections.constructor(ParticipantProjection.class,
+                        startPoint.event.eventId,
+                        startPoint.user.profileImage))
+                .from(startPoint)
+                .where(startPoint.event.eventId.in(eventIds))
+                .fetch();
+    }
+
+    @Override
+    public List<ParticipantCountProjection> findParticipantCountsByEventIds(List<UUID> eventIds) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        ParticipantCountProjection.class,
+                        startPoint.event.eventId,
+                        startPoint.count()
+                ))
+                .from(startPoint)
+                .where(startPoint.event.eventId.in(eventIds))
+                .groupBy(startPoint.event.eventId)
                 .fetch();
     }
 }

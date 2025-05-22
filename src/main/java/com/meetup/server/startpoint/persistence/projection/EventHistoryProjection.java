@@ -1,9 +1,9 @@
-package com.meetup.server.user.dto.response;
+package com.meetup.server.startpoint.persistence.projection;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record UserEventHistoryProjection(
+public record EventHistoryProjection(
         UUID eventId,
         UUID placeId,
         String subwayName,
