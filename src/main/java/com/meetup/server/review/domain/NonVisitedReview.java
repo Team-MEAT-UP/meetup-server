@@ -31,7 +31,7 @@ public class NonVisitedReview extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Enumerated(EnumType.STRING)
-    private List<NonVisitedReasonCategory> category = new ArrayList<>();
+    private List<NonVisitedReasonCategory> categories = new ArrayList<>();
 
     @Column(name = "etc_reason")
     private String etcReason;
@@ -40,10 +40,14 @@ public class NonVisitedReview extends BaseEntity {
     private ActualVisitedPlace actualVisitedPlace;
 
     @Builder
-    public NonVisitedReview(Review review, List<NonVisitedReasonCategory> category, String etcReason, ActualVisitedPlace actualVisitedPlace) {
+    public NonVisitedReview(Review review, List<NonVisitedReasonCategory> categories, String etcReason, ActualVisitedPlace actualVisitedPlace) {
         this.review = review;
-        this.category = category;
+        this.categories = categories;
         this.etcReason = etcReason;
         this.actualVisitedPlace = actualVisitedPlace;
+    }
+
+    public void assignTo(Review review) {
+        this.review = review;
     }
 }
