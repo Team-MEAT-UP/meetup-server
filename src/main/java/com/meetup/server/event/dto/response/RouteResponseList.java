@@ -1,6 +1,6 @@
 package com.meetup.server.event.dto.response;
 
-import com.meetup.server.parkinglot.dto.ClosestParkingLot;
+import com.meetup.server.parkinglot.persistence.projection.ClosestParkingLot;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

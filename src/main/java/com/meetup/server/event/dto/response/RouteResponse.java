@@ -31,6 +31,7 @@ public class RouteResponse {
     private double startLongitude;  // 실제 출발지 경도(:longitude)
     private double startLatitude;  // 실제 출발지 위도(:latitude)
     private List<TransitRouteResponse> transitRoute;
+    private DrivingInfoResponse drivingInfo;
     private List<DrivingRouteResponse> drivingRoute;
     private int totalTime;
     private int transitTime;
@@ -43,7 +44,6 @@ public class RouteResponse {
                                    int transitTime,
                                    int driveTime) {
 
-
         return RouteResponse.builder()
                 .isTransit(startPoint.isTransit())
                 .isMe(false)
@@ -54,6 +54,7 @@ public class RouteResponse {
                 .startLongitude(startPoint.getLocation().getRoadLongitude())
                 .startLatitude(startPoint.getLocation().getRoadLatitude())
                 .transitRoute(TransitRouteResponse.from(transitResponse))
+                .drivingInfo(DrivingInfoResponse.from(drivingResponse))
                 .drivingRoute(DrivingRouteResponse.from(drivingResponse))
                 .totalTime(startPoint.isTransit() ? transitTime : driveTime)
                 .transitTime(transitTime)

@@ -1,6 +1,6 @@
 package com.meetup.server.event.application;
 
-import com.meetup.server.event.dto.response.DrivingRouteResponse;
+import com.meetup.server.event.dto.response.DrivingInfoResponse;
 import com.meetup.server.event.dto.response.RouteResponse;
 import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
@@ -35,7 +35,7 @@ public class RouteDetailService {
         }
 
         int transitTotalTime = RouteExtractor.extractValidTransitTotalTime(transitRoute);
-        int drivingTotalTime = RouteExtractor.extractValidDrivingTotalTime(DrivingRouteResponse.from(drivingRoute));
+        int drivingTotalTime = RouteExtractor.extractValidDrivingTotalTime(DrivingInfoResponse.from(drivingRoute));
 
         return RouteResponse.of(startPoint, startPoint.getUser(), transitRoute, drivingRoute, transitTotalTime, drivingTotalTime);
     }
