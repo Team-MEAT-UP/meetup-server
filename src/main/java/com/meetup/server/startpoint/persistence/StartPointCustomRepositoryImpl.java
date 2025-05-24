@@ -24,7 +24,30 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
 
     @Override
     public List<EventHistory> findEventHistories(Long userId, UUID lastViewedEventId, int size) {
-        LocalDateTime lastViewedTime;
+        BooleanExpression cursorFilter = cursorFilter(userId, lastViewedEventId);
+
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        EventHistory.class,
+                        event.eventId,
+                        event.place.id,
+                        event.subway.name,
+                        event.place.name,
+                        event.createdAt
+                ))
+                .from(startPoint)
+                .join(startPoint.event, event)
+                .leftJoin(event.place)
+                .leftJoin(event.subway)
+                .where(cursorFilter)
+                .orderBy(event.createdAt.desc(), event.eventId.desc())
+                .distinct()
+                .limit(size)
+                .fetch();
+    }
+
+    private BooleanExpression cursorFilter(Long userId, UUID lastViewedEventId) {
+        LocalDateTime lastViewedTime = null;
         BooleanExpression cursor = null;
 
         if (lastViewedEventId != null) {
@@ -41,28 +64,7 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
         }
 
         BooleanExpression isUser = startPoint.user.userId.eq(userId);
-        if (cursor != null) {
-            cursor = isUser.and(cursor);
-        }
-
-        return jpaQueryFactory
-                .select(Projections.constructor(
-                        EventHistory.class,
-                        event.eventId,
-                        event.place.id,
-                        event.subway.name,
-                        event.place.name,
-                        event.createdAt
-                ))
-                .from(startPoint)
-                .join(startPoint.event, event)
-                .leftJoin(event.place)
-                .leftJoin(event.subway)
-                .where(cursor)
-                .orderBy(event.createdAt.desc(), event.eventId.desc())
-                .distinct()
-                .limit(size)
-                .fetch();
+        return (cursor != null) ? isUser.and(cursor) : isUser;
     }
 
     @Override
