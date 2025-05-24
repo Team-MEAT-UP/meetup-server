@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,16 +37,18 @@ class EventServiceTest extends IntegrationTestContainer {
 
     private User user;
     private StartPointRequest startPointRequest;
+    private UUID guestId;
 
     @BeforeEach
     void setUp() {
         user = userRepository.save(UserFixture.getUser());
         startPointRequest = StartPointFixture.getStartPointRequest();
+        guestId = UUID.randomUUID();
     }
 
     @Test
     void 비로그인_사용자가_이벤트를_생성한다() {
-        EventStartPointResponse eventStartPointResponse = eventService.createEvent(null, startPointRequest);
+        EventStartPointResponse eventStartPointResponse = eventService.createEvent(null, guestId, startPointRequest);
 
         Optional<Event> optionalEvent = eventRepository.findById(eventStartPointResponse.eventId());
         assertThat(optionalEvent).isPresent();
@@ -60,12 +63,13 @@ class EventServiceTest extends IntegrationTestContainer {
         assertThat(optionalStartPoint.get().getAddress().getRoadAddress()).isEqualTo(startPointRequest.roadAddress());
         assertThat(optionalStartPoint.get().getLocation().getRoadLongitude()).isEqualTo(startPointRequest.longitude());
         assertThat(optionalStartPoint.get().getLocation().getRoadLatitude()).isEqualTo(startPointRequest.latitude());
+        assertThat(optionalStartPoint.get().getGuestId()).isEqualTo(guestId);
     }
 
     @Transactional
     @Test
     void 로그인_사용자가_이벤트를_생성한다() {
-        EventStartPointResponse eventStartPointResponse = eventService.createEvent(user.getUserId(), startPointRequest);
+        EventStartPointResponse eventStartPointResponse = eventService.createEvent(user.getUserId(), null, startPointRequest);
 
         Optional<Event> optionalEvent = eventRepository.findById(eventStartPointResponse.eventId());
         assertThat(optionalEvent).isPresent();
@@ -80,6 +84,7 @@ class EventServiceTest extends IntegrationTestContainer {
         assertThat(optionalStartPoint.get().getAddress().getRoadAddress()).isEqualTo(startPointRequest.roadAddress());
         assertThat(optionalStartPoint.get().getLocation().getRoadLongitude()).isEqualTo(startPointRequest.longitude());
         assertThat(optionalStartPoint.get().getLocation().getRoadLatitude()).isEqualTo(startPointRequest.latitude());
+        assertThat(optionalStartPoint.get().getGuestId()).isNull();
     }
 
 }

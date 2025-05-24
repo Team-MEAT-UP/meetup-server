@@ -53,13 +53,20 @@ public class StartPoint extends BaseEntity {
     @Column(columnDefinition = "geography(Point, 4326)")
     private Point point;
 
+    @Column(name = "guest_id")
+    private UUID guestId;
+
     @PrePersist
     public void prePersist() {
         this.startPointId = UuidCreator.getTimeOrderedEpoch();
+
+        if (!isUser && this.guestId == null) {
+            this.guestId = UuidCreator.getTimeOrderedEpoch();
+        }
     }
 
     @Builder
-    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, Point point, boolean isUser) {
+    public StartPoint(Event event, User user, String name, Address address, Location location, String nonUserName, Point point, boolean isUser, UUID guestId) {
         this.event = event;
         this.user = user;
         this.name = name;
@@ -69,6 +76,7 @@ public class StartPoint extends BaseEntity {
         this.point = point;
         this.isUser = isUser;
         this.isTransit = true;
+        this.guestId = guestId;
     }
 
     public boolean getIsUser() {

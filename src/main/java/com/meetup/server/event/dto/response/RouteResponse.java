@@ -25,6 +25,8 @@ public class RouteResponse {
     private Boolean isTransit;  // true: 대중교통, false: 자동차
     private Boolean isMe;
     private UUID id;
+    private Long userId;
+    private UUID guestId;
     private String nickname;
     private String profileImage;
     private String startName;  // 출발지 주소
@@ -43,11 +45,12 @@ public class RouteResponse {
                                    KakaoMobilityResponse drivingResponse,
                                    int transitTime,
                                    int driveTime) {
-
         return RouteResponse.builder()
                 .isTransit(startPoint.isTransit())
                 .isMe(false)
                 .id(startPoint.getStartPointId())
+                .userId(startPoint.getIsUser() ? user.getUserId() : null)
+                .guestId(startPoint.getGuestId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
                 .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
                 .startName(convertStartPointName(startPoint.getAddress().getAddress()))
