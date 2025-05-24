@@ -3,7 +3,7 @@ package com.meetup.server.user.presentation;
 import com.meetup.server.global.support.response.ApiResponse;
 import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.dto.request.UserAgreementRequest;
-import com.meetup.server.user.dto.response.UserEventHistoryResponse;
+import com.meetup.server.user.dto.response.UserEventHistoryResponseList;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Tag(name = "User API", description = "사용자 API")
@@ -44,10 +44,12 @@ public class UserController {
 
     @Operation(summary = "모임 히스토리 리스트 조회 API", description = "로그인 한 사용자가 참여한 모임 리스트를 조회합니다")
     @GetMapping("/events")
-    public ApiResponse<List<UserEventHistoryResponse>> getUserEventHistory(
-            @AuthenticationPrincipal Long userId
+    public ApiResponse<UserEventHistoryResponseList> getUserEventHistory(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam(value = "lastViewedEventId", required = false) UUID lastViewedEventId,
+            @RequestParam(value = "size", required = true) int size
     ) {
-        List<UserEventHistoryResponse> response = userService.getUserEventHistory(userId);
+        UserEventHistoryResponseList response = userService.getUserEventHistory(userId, lastViewedEventId, size);
         return ApiResponse.success(response);
     }
 }

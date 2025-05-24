@@ -1,9 +1,10 @@
 package com.meetup.server.user.application;
 
-import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.implement.StartPointReader;
+import com.meetup.server.startpoint.persistence.projection.EventHistory;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.dto.response.UserEventHistoryResponse;
+import com.meetup.server.user.dto.response.UserEventHistoryResponseList;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import com.meetup.server.user.implement.AgreementValidator;
 import com.meetup.server.user.implement.UserEventHistoryAssembler;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class UserService {
     private final UserEventHistoryAssembler userEventHistoryAssembler;
 
     public UserProfileInfoResponse getUserProfileInfo(Long userId) {
-        return UserProfileInfoResponse.from( userReader.read(userId));
+        return UserProfileInfoResponse.from(userReader.read(userId));
     }
 
     @Transactional
@@ -38,10 +40,15 @@ public class UserService {
         user.updateAgreement(personalInfoAgreement, marketingAgreement);
     }
 
-    public List<UserEventHistoryResponse> getUserEventHistory(Long userId) {
-        List<StartPoint> userStartPoints = startPointReader.readAll(userId);
-        List<StartPoint> allEventStartPoints = startPointReader.readAll(userStartPoints);
+    public UserEventHistoryResponseList getUserEventHistory(Long userId, UUID lastViewedEventId, int size) {
+        List<EventHistory> fetchedEvents = startPointReader.readEventHistories(userId, lastViewedEventId, size + 1);
+        List<UserEventHistoryResponse> responses = userEventHistoryAssembler.assemble(fetchedEvents, userId);
 
-        return userEventHistoryAssembler.assemble(userStartPoints, allEventStartPoints, userId);
+        boolean hasNext = responses.size() > size;
+        List<UserEventHistoryResponse> displayResponses = hasNext ? responses.subList(0, size) : responses;
+        UUID lastEventId = displayResponses.isEmpty() ? null : displayResponses.getLast().eventId();
+
+        return UserEventHistoryResponseList.of(displayResponses, hasNext, lastEventId);
+
     }
 }

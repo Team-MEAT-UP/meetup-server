@@ -19,6 +19,7 @@ public record UserEventHistoryResponse(
         int participatedPeopleCount,
         List<String> userProfileImageUrls,
         int eventMadeAgo,
+        int eventHourAgo,
         boolean isReviewed
 ) {
     public static UserEventHistoryResponse of(List<User> userList, Event event, int participatedPeopleCount, boolean isReviewed) {
@@ -35,6 +36,7 @@ public record UserEventHistoryResponse(
                         .map(User::getProfileImage)
                         .toList())
                 .eventMadeAgo(TimeUtil.calculateDaysAgo(event.getCreatedAt()))
+                .eventHourAgo(TimeUtil.calculateHoursAgo(event.getCreatedAt()))
                 .isReviewed(isReviewed)
                 .build();
     }
