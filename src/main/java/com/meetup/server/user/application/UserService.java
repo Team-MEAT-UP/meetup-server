@@ -1,7 +1,7 @@
 package com.meetup.server.user.application;
 
 import com.meetup.server.startpoint.implement.StartPointReader;
-import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
+import com.meetup.server.startpoint.persistence.projection.EventHistory;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.dto.response.UserEventHistoryResponse;
 import com.meetup.server.user.dto.response.UserEventHistoryResponseList;
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public UserEventHistoryResponseList getUserEventHistory(Long userId, UUID lastViewedEventId, int size) {
-        List<EventHistoryProjection> fetchedEvents = startPointReader.readAllEvents(userId, lastViewedEventId, size + 1);
+        List<EventHistory> fetchedEvents = startPointReader.readEventHistories(userId, lastViewedEventId, size + 1);
         List<UserEventHistoryResponse> responses = userEventHistoryAssembler.assemble(fetchedEvents, userId);
 
         boolean hasNext = responses.size() > size;

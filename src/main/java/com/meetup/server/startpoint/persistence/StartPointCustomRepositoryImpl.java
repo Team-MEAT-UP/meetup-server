@@ -1,6 +1,6 @@
 package com.meetup.server.startpoint.persistence;
 
-import com.meetup.server.startpoint.persistence.projection.EventHistoryProjection;
+import com.meetup.server.startpoint.persistence.projection.EventHistory;
 import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
 import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
 import com.querydsl.core.types.Projections;
@@ -23,10 +23,9 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<EventHistoryProjection> findEvents(Long userId, UUID lastViewedEventId, int size) {
+    public List<EventHistory> findEventHistories(Long userId, UUID lastViewedEventId, int size) {
         LocalDateTime lastViewedTime;
         BooleanExpression cursor = null;
-        BooleanExpression cursorFilter = null;
 
         if (lastViewedEventId != null) {
             lastViewedTime = jpaQueryFactory
@@ -43,12 +42,12 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
 
         BooleanExpression isUser = startPoint.user.userId.eq(userId);
         if (cursor != null) {
-            cursorFilter = isUser.and(cursor);
+            cursor = isUser.and(cursor);
         }
 
         return jpaQueryFactory
                 .select(Projections.constructor(
-                        EventHistoryProjection.class,
+                        EventHistory.class,
                         event.eventId,
                         event.place.id,
                         event.subway.name,
@@ -59,7 +58,7 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
                 .join(startPoint.event, event)
                 .leftJoin(event.place)
                 .leftJoin(event.subway)
-                .where(cursorFilter)
+                .where(cursor)
                 .orderBy(event.createdAt.desc(), event.eventId.desc())
                 .distinct()
                 .limit(size)
