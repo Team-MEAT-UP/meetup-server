@@ -5,8 +5,8 @@ import com.meetup.server.startpoint.domain.StartPoint;
 import com.meetup.server.startpoint.exception.StartPointErrorType;
 import com.meetup.server.startpoint.exception.StartPointException;
 import com.meetup.server.startpoint.persistence.StartPointRepository;
-import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
-import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantCount;
+import com.meetup.server.startpoint.persistence.projection.Participant;
 import com.meetup.server.startpoint.persistence.projection.EventHistory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,11 +37,11 @@ public class StartPointReader {
         return startPointRepository.findEventHistories(userId, lastViewedEventId, size);
     }
 
-    public List<ParticipantProjection> readParticipantsWithUrls(List<UUID> eventIds) {
+    public List<Participant> readParticipantsWithUrls(List<UUID> eventIds) {
         return startPointRepository.findParticipantsWithImageUrls(eventIds);
     }
 
-    public List<ParticipantCountProjection> readParticipantCounts(List<UUID> eventIds) {
+    public List<ParticipantCount> readParticipantCounts(List<UUID> eventIds) {
         return startPointRepository.findParticipantsCounts(eventIds);
     }
 }

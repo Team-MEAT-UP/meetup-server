@@ -2,8 +2,7 @@ package com.meetup.server.startpoint.persistence.projection;
 
 import java.util.UUID;
 
-public record ParticipantProjection(
+public record ParticipantCount(
         UUID eventId,
-        String profileImageUrl
-) {
-}
+        Long count
+) {}

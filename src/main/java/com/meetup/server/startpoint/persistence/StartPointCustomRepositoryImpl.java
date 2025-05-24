@@ -1,8 +1,8 @@
 package com.meetup.server.startpoint.persistence;
 
 import com.meetup.server.startpoint.persistence.projection.EventHistory;
-import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
-import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantCount;
+import com.meetup.server.startpoint.persistence.projection.Participant;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -66,9 +66,9 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     }
 
     @Override
-    public List<ParticipantProjection> findParticipantsWithImageUrls(List<UUID> eventIds) {
+    public List<Participant> findParticipantsWithImageUrls(List<UUID> eventIds) {
         return jpaQueryFactory
-                .select(Projections.constructor(ParticipantProjection.class,
+                .select(Projections.constructor(Participant.class,
                         startPoint.event.eventId,
                         startPoint.user.profileImage))
                 .from(startPoint)
@@ -77,10 +77,10 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
     }
 
     @Override
-    public List<ParticipantCountProjection> findParticipantsCounts(List<UUID> eventIds) {
+    public List<ParticipantCount> findParticipantsCounts(List<UUID> eventIds) {
         return jpaQueryFactory
                 .select(Projections.constructor(
-                        ParticipantCountProjection.class,
+                        ParticipantCount.class,
                         startPoint.event.eventId,
                         startPoint.count()
                 ))

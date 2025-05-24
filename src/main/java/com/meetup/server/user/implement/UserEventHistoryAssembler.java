@@ -4,8 +4,8 @@ import com.meetup.server.global.util.TimeUtil;
 import com.meetup.server.review.implement.ReviewReader;
 import com.meetup.server.startpoint.implement.StartPointReader;
 import com.meetup.server.startpoint.persistence.projection.EventHistory;
-import com.meetup.server.startpoint.persistence.projection.ParticipantCountProjection;
-import com.meetup.server.startpoint.persistence.projection.ParticipantProjection;
+import com.meetup.server.startpoint.persistence.projection.ParticipantCount;
+import com.meetup.server.startpoint.persistence.projection.Participant;
 import com.meetup.server.user.dto.response.UserEventHistoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -52,9 +52,9 @@ public class UserEventHistoryAssembler {
     private Map<UUID, List<String>> getParticipantsWithImageUrls(List<UUID> eventIds) {
         return startPointReader.readParticipantsWithUrls(eventIds).stream()
                 .collect(Collectors.groupingBy(
-                        ParticipantProjection::eventId,
+                        Participant::eventId,
                         Collectors.mapping(
-                                ParticipantProjection::profileImageUrl,
+                                Participant::profileImageUrl,
                                 Collectors.toList())
                 ));
     }
@@ -62,7 +62,7 @@ public class UserEventHistoryAssembler {
     private Map<UUID, Integer> getParticipantsCount(List<UUID> eventIds) {
         return startPointReader.readParticipantCounts(eventIds).stream()
                 .collect(Collectors.toMap(
-                        ParticipantCountProjection::eventId,
+                        ParticipantCount::eventId,
                         participants -> participants.count().intValue()
                 ));
     }
