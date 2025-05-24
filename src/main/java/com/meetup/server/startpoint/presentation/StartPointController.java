@@ -34,8 +34,9 @@ public class StartPointController {
     public ApiResponse<EventStartPointResponse> createStartPoint(
             @PathVariable UUID eventId,
             @Valid @RequestBody StartPointRequest startPointRequest,
-            @AuthenticationPrincipal Long userId
+            @AuthenticationPrincipal Long userId,
+            @RequestParam(required = false) UUID guestId
     ) {
-        return ApiResponse.success(startPointService.createStartPoint(eventId, userId, startPointRequest));
+        return ApiResponse.success(startPointService.createStartPoint(eventId, userId, guestId, startPointRequest));
     }
 }

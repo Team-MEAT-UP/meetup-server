@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
@@ -42,17 +42,18 @@ public class EventProcessor {
         routeResponseList.updateRouteResponse(routes);
     }
 
-    public void prioritizeMyRoute(UUID startPointId, List<RouteResponse> routeList) {
-        if (startPointId != null) {
-            Optional<RouteResponse> myRoute = routeList.stream()
-                    .filter(route -> startPointId.equals(route.getId()))
-                    .findFirst();
+    public void prioritizeMyRoute(Long userId, UUID guestId, List<RouteResponse> routeList) {
+        Predicate<RouteResponse> isOwnedByUserOrGuest = (userId != null)
+                ? route -> userId.equals(route.getUserId())
+                : route -> guestId != null && guestId.equals(route.getGuestId());
 
-            myRoute.ifPresent(route -> {
-                route.updateIsMe(true);
-                routeList.remove(route);
-                routeList.addFirst(route);
-            });
-        }
+        routeList.stream()
+                .filter(isOwnedByUserOrGuest)
+                .findFirst()
+                .ifPresent(route -> {
+                    route.updateIsMe(true);
+                    routeList.remove(route);
+                    routeList.addFirst(route);
+                });
     }
 }
