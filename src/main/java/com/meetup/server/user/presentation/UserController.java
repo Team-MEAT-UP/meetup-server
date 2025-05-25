@@ -52,4 +52,23 @@ public class UserController {
         UserEventHistoryResponseList response = userService.getUserEventHistory(userId, lastViewedEventId, size);
         return ApiResponse.success(response);
     }
+
+    @Operation(summary = "사용자 닉네임 수정 API", description = "사용자의 닉네임을 수정합니다")
+    @PatchMapping("")
+    public ApiResponse<?> updateNickname(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam String nickname
+    ) {
+        userService.updateNickname(userId, nickname);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "사용자 탈퇴 API", description = "사용자를 탈퇴시킵니다")
+    @DeleteMapping("")
+    public ApiResponse<?> deleteUser(
+            @AuthenticationPrincipal Long userId
+    ) {
+        userService.deleteUser(userId);
+        return ApiResponse.success();
+    }
 }
