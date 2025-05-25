@@ -3,6 +3,7 @@ package com.meetup.server.event.dto.response;
 import com.meetup.server.global.clients.kakao.mobility.KakaoMobilityResponse;
 import com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchResponse;
 import com.meetup.server.startpoint.domain.StartPoint;
+import com.meetup.server.startpoint.util.UsernameExtractor;
 import com.meetup.server.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,7 +52,7 @@ public class RouteResponse {
                 .id(startPoint.getStartPointId())
                 .userId(startPoint.getIsUser() ? user.getUserId() : null)
                 .guestId(startPoint.getGuestId())
-                .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
+                .nickname(UsernameExtractor.extractDisplayName(startPoint))
                 .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
                 .startName(convertStartPointName(startPoint.getAddress().getAddress()))
                 .startLongitude(startPoint.getLocation().getRoadLongitude())

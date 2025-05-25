@@ -1,6 +1,8 @@
 package com.meetup.server.event.dto.response;
 
 import com.meetup.server.parkinglot.persistence.projection.ClosestParkingLot;
+import com.meetup.server.startpoint.domain.StartPoint;
+import com.meetup.server.startpoint.util.UsernameExtractor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,9 +23,9 @@ public class RouteResponseList {
     private List<RouteResponse> routeResponse;
     private ParkingLotResponse parkingLot;
 
-    public static RouteResponseList of(String eventMaker, List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
+    public static RouteResponseList of(StartPoint startPoint, List<RouteResponse> routeResponse, MeetingPoint meetingPoint, ClosestParkingLot closestParkingLot) {
         return RouteResponseList.builder()
-                .eventMaker(eventMaker)
+                .eventMaker(UsernameExtractor.extractDisplayName(startPoint))
                 .averageTime(calculateAverageTime(routeResponse))
                 .peopleCount(routeResponse.size())
                 .meetingPoint(meetingPoint)

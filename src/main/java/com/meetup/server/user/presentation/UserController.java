@@ -7,15 +7,19 @@ import com.meetup.server.user.dto.response.UserEventHistoryResponseList;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Slf4j
 @Tag(name = "User API", description = "사용자 API")
+@Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -57,7 +61,7 @@ public class UserController {
     @PatchMapping("")
     public ApiResponse<?> updateNickname(
             @AuthenticationPrincipal Long userId,
-            @RequestParam String nickname
+            @RequestParam @NotBlank @Size(min = 1, max = 5) String nickname
     ) {
         userService.updateNickname(userId, nickname);
         return ApiResponse.success();
