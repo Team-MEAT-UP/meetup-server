@@ -30,15 +30,15 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             jpaQueryFactory.delete(nonVisitedReview)
                     .where(nonVisitedReview.review.id.in(reviewIds))
                     .execute();
+
+            jpaQueryFactory.delete(visitedReview)
+                    .where(visitedReview.review.id.in(reviewIds))
+                    .execute();
+
+            jpaQueryFactory.delete(review)
+                    .where(review.user.userId.eq(user.getUserId()))
+                    .execute();
         }
-
-        jpaQueryFactory.delete(visitedReview)
-                .where(nonVisitedReview.review.id.in(reviewIds))
-                .execute();
-
-        jpaQueryFactory.delete(review)
-                .where(review.user.userId.eq(user.getUserId()))
-                .execute();
 
         jpaQueryFactory.delete(startPoint)
                 .where(startPoint.user.userId.eq(user.getUserId()))
