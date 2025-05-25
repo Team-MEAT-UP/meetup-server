@@ -1,11 +1,12 @@
 package com.meetup.server.startpoint.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 public record StartPointRequest(
+
+        @NotBlank
+        @Size(min = 1, max = 5)
         @Schema(description = "사용자명", example = "안연아바보")
         String username,
 

@@ -44,7 +44,7 @@ public class RouteService {
 
         ClosestParkingLot closestParkingLot = parkingLotFinder.findClosestParkingLot(event.getSubway().getPoint());
 
-        String eventMaker = startPointReader.readName(event.getEventId());
-        return RouteResponseList.of(eventMaker, routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
+        StartPoint earliestStartPoint = startPointReader.readEarliestByEventId(event.getEventId());
+        return RouteResponseList.of(earliestStartPoint, routeList, MeetingPoint.of(endStationName, endX, endY), closestParkingLot);
     }
 }

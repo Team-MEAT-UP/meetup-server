@@ -43,7 +43,6 @@ public class StartPointProcessor {
                 .location(Location.of(startPointRequest.longitude(), startPointRequest.latitude()))
                 .point(CoordinateUtil.createPoint(startPointRequest.longitude(), startPointRequest.latitude()))
                 .isUser(true)
-                .nonUserName(user.getNickname())
                 .build();
 
         return startPointRepository.save(startPoint);

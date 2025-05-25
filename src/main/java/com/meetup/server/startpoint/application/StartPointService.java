@@ -44,11 +44,11 @@ public class StartPointService {
                     null,
                     startPointRequest
             );
-            return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
+            return EventStartPointResponse.of(event, startPoint);
         }
 
         StartPoint startPoint = startPointProcessor.save(event, userId, guestId, startPointRequest);
-        return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
+        return EventStartPointResponse.of(event, startPoint);
     }
 
     private boolean validateAlreadyHasStartPoint(Long userId, List<StartPoint> startPointList) {

@@ -27,7 +27,7 @@ public class EventService {
     public EventStartPointResponse createEvent(Long userId, UUID guestId, StartPointRequest startPointRequest) {
         Event event = eventProcessor.save();
         StartPoint startPoint = startPointProcessor.save(event, userId, guestId, startPointRequest);
-        return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
+        return EventStartPointResponse.of(event, startPoint);
     }
 
     @Transactional
