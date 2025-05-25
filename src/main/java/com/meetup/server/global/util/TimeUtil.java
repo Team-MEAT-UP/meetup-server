@@ -1,9 +1,13 @@
 package com.meetup.server.global.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TimeUtil {
 
     public static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
