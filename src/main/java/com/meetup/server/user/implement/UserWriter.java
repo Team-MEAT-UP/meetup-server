@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserStore {
+public class UserWriter {
 
     private final UserRepository userRepository;
 

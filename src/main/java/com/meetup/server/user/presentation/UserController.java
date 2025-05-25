@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @Operation(summary = "사용자 닉네임 수정 API", description = "사용자의 닉네임을 수정합니다")
-    @PutMapping("")
+    @PatchMapping("")
     public ApiResponse<?> updateNickname(
             @AuthenticationPrincipal Long userId,
             @RequestParam String nickname

@@ -32,7 +32,6 @@ public class UserEventHistoryAssembler {
         Map<UUID, Boolean> isReviewedMap = reviewReader.readReviewsWrittenByUser(eventHistories, userId);
 
         return eventHistories.stream()
-                .filter(event -> participantsMap.getOrDefault(event.eventId(), 0) > 1)
                 .map(event -> {
                     List<String> imageUrls = imageUrlMap.getOrDefault(event.eventId(), List.of());
 

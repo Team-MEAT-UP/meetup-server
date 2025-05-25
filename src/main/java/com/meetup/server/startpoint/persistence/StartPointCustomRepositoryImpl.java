@@ -39,9 +39,19 @@ public class StartPointCustomRepositoryImpl implements StartPointCustomRepositor
                 .join(startPoint.event, event)
                 .leftJoin(event.place)
                 .leftJoin(event.subway)
-                .where(cursorFilter)
+                .where(
+                        cursorFilter
+                                .and(
+                                        startPoint.event.eventId.in(
+                                                jpaQueryFactory
+                                                        .select(startPoint.event.eventId)
+                                                        .from(startPoint)
+                                                        .groupBy(startPoint.event.eventId)
+                                                        .having(startPoint.count().goe(2))
+                                        )
+                                )
+                )
                 .orderBy(event.createdAt.desc(), event.eventId.desc())
-                .distinct()
                 .limit(size)
                 .fetch();
     }
