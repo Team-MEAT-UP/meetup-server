@@ -55,4 +55,8 @@ public class User extends BaseEntity {
         this.personalInfoAgreement = personalInfoAgreement;
         this.marketingAgreement = marketingAgreement;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
