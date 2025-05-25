@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static com.meetup.server.review.domain.QNonVisitedReview.nonVisitedReview;
 import static com.meetup.server.review.domain.QReview.review;
 import static com.meetup.server.review.domain.QVisitedReview.visitedReview;
@@ -19,20 +21,19 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     @Override
     public void deleteUser(User user) {
-        jpaQueryFactory.delete(nonVisitedReview)
-                .where(nonVisitedReview.review.id.in(
-                        jpaQueryFactory.select(review.id)
-                                .from(review)
-                                .where(review.user.userId.eq(user.getUserId()))
-                ))
-                .execute();
+        List<Long> reviewIds = jpaQueryFactory.select(review.id)
+                .from(review)
+                .where(review.user.userId.eq(user.getUserId()))
+                .fetch();
+
+        if (!reviewIds.isEmpty()) {
+            jpaQueryFactory.delete(nonVisitedReview)
+                    .where(nonVisitedReview.review.id.in(reviewIds))
+                    .execute();
+        }
 
         jpaQueryFactory.delete(visitedReview)
-                .where(visitedReview.review.id.in(
-                        jpaQueryFactory.select(review.id)
-                                .from(review)
-                                .where(review.user.userId.eq(user.getUserId()))
-                ))
+                .where(nonVisitedReview.review.id.in(reviewIds))
                 .execute();
 
         jpaQueryFactory.delete(review)
