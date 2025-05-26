@@ -35,20 +35,20 @@ public class ResponseContextFilter extends OncePerRequestFilter {
 
         if (refreshToken != null) {
             try {
-                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(response, refreshToken);
-                setResponseCookies(response, reissueTokenResponse);
+                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(request, response, refreshToken);
+                setResponseCookies(request, response, reissueTokenResponse);
 
             } catch (UserException e) {
                 log.error("token is invalidate and check user: {}", e.getMessage());
-                cookieUtil.deleteAccessTokenCookie(response);
-                cookieUtil.deleteRefreshTokenCookie(response);
+                cookieUtil.deleteAccessTokenCookie(request, response);
+                cookieUtil.deleteRefreshTokenCookie(request, response);
             }
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private void setResponseCookies(HttpServletResponse response, ReissueTokenResponse reissueTokenResponse) {
-        cookieUtil.setRefreshTokenCookie(response, reissueTokenResponse.refreshToken());
+    private void setResponseCookies(HttpServletRequest request, HttpServletResponse response, ReissueTokenResponse reissueTokenResponse) {
+        cookieUtil.setRefreshTokenCookie(request, response, reissueTokenResponse.refreshToken());
     }
 }

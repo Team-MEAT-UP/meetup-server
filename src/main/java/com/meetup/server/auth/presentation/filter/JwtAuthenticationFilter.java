@@ -52,13 +52,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = cookieUtil.getRefreshTokenFromCookie(request);
         if (refreshToken != null) {
             try {
-                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(response, refreshToken);
-                cookieUtil.setAccessTokenCookie(response, reissueTokenResponse.accessToken());
+                ReissueTokenResponse reissueTokenResponse = authService.reIssueToken(request, response, refreshToken);
+                cookieUtil.setAccessTokenCookie(request, response, reissueTokenResponse.accessToken());
                 authenticationUtil.setAuthenticationFromRequest(request, reissueTokenResponse.accessToken());
             } catch (UserException e) {
                 log.error("Token is invalid, user check failed: {}", e.getMessage());
-                cookieUtil.deleteAccessTokenCookie(response);
-                cookieUtil.deleteRefreshTokenCookie(response);
+                cookieUtil.deleteAccessTokenCookie(request, response);
+                cookieUtil.deleteRefreshTokenCookie(request, response);
             }
         }
     }

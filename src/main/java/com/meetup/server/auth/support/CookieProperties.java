@@ -9,9 +9,13 @@ public record CookieProperties(
         String setCookie,
         int accessTokenMaxAge,
         int refreshTokenMaxAge,
-        boolean httpOnly,
-        boolean secure,
-        String sameSite,
-        String domain
+        CookieSetting develop,
+        CookieSetting local
 ) {
+    public record CookieSetting(
+            boolean httpOnly,
+            boolean secure,
+            String sameSite,
+            String domain
+    ) {}
 }

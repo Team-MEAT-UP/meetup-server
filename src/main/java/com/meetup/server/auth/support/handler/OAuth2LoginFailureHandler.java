@@ -1,10 +1,10 @@
 package com.meetup.server.auth.support.handler;
 
+import com.meetup.server.auth.support.resolver.RedirectUriResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -17,8 +17,7 @@ import java.io.IOException;
 @Component
 public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${app.oauth2.failureRedirectUri}")
-    private String redirectUri;
+    private final RedirectUriResolver redirectUriResolver;
 
     @Override
     public void onAuthenticationFailure(
@@ -27,7 +26,9 @@ public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 
         log.info("OAuth2 login failed: {}", exception.getMessage());
 
-        String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
+        String failureRedirectUri = redirectUriResolver.resolveFailureRedirectUri(request);
+
+        String targetUrl = UriComponentsBuilder.fromUriString(failureRedirectUri)
                 .queryParam("error", exception.getLocalizedMessage())
                 .build().toUriString();
 

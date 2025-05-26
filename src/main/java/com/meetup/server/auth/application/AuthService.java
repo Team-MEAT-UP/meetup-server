@@ -5,9 +5,9 @@ import com.meetup.server.auth.exception.AuthErrorType;
 import com.meetup.server.auth.exception.AuthException;
 import com.meetup.server.auth.support.CookieUtil;
 import com.meetup.server.global.support.jwt.JwtTokenProvider;
-import com.meetup.server.user.application.UserService;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.implement.UserReader;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,11 @@ public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtil cookieUtil;
-    private final UserService userService;
     private final UserReader userReader;
 
-    public void logout(HttpServletResponse response) {
-        cookieUtil.deleteAccessTokenCookie(response);
-        cookieUtil.deleteRefreshTokenCookie(response);
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        cookieUtil.deleteAccessTokenCookie(request, response);
+        cookieUtil.deleteRefreshTokenCookie(request, response);
     }
 
     public String createAccessTokenForUser(Long userId) {
@@ -33,7 +32,7 @@ public class AuthService {
         return jwtTokenProvider.createAccessToken(user);
     }
 
-    public ReissueTokenResponse reIssueToken(HttpServletResponse response, String refreshToken) {
+    public ReissueTokenResponse reIssueToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
 
         refreshToken = resolveToken(refreshToken);
 
@@ -47,8 +46,8 @@ public class AuthService {
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
 
-        cookieUtil.setRefreshTokenCookie(response, newRefreshToken);
-        cookieUtil.setAccessTokenCookie(response, accessToken);
+        cookieUtil.setRefreshTokenCookie(request, response, newRefreshToken);
+        cookieUtil.setAccessTokenCookie(request, response, accessToken);
 
         return ReissueTokenResponse.from(accessToken, newRefreshToken);
     }

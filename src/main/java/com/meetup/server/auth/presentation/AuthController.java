@@ -4,6 +4,7 @@ import com.meetup.server.auth.application.AuthService;
 import com.meetup.server.global.support.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class AuthController {
 
     @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 진행합니다.")
     @PostMapping("/logout")
-    public ApiResponse<?> logout(HttpServletResponse response) {
-        authService.logout(response);
+    public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        authService.logout(request, response);
         return ApiResponse.success();
     }
 }
