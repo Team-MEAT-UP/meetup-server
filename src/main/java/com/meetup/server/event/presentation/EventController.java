@@ -26,14 +26,20 @@ public class EventController {
 
     @Operation(summary = "모임 생성 API", description = "모임 생성자의 출발지를 입력받아 모임을 생성합니다")
     @PostMapping
-    public ApiResponse<EventStartPointResponse> createEvent(@Valid @RequestBody StartPointRequest startPointRequest, @AuthenticationPrincipal Long userId) {
-        return ApiResponse.success(eventService.createEvent(userId, startPointRequest));
+    public ApiResponse<EventStartPointResponse> createEvent(
+            @Valid @RequestBody StartPointRequest startPointRequest,
+            @AuthenticationPrincipal Long userId,
+            @RequestParam(required = false) UUID guestId) {
+        return ApiResponse.success(eventService.createEvent(userId, guestId, startPointRequest));
     }
 
     @Operation(summary = "지도 조회 API", description = "모임의 중간 지점 계산 및 모임 참여자의 경로 조회를 진행합니다")
     @GetMapping("/{eventId}")
-    public ApiResponse<RouteResponseList> getEventMap(@PathVariable UUID eventId, @RequestParam(required = false) UUID startPointId) {
-        return ApiResponse.success(eventService.getEventMap(eventId, startPointId));
+    public ApiResponse<RouteResponseList> getEventMap(
+            @PathVariable UUID eventId,
+            @AuthenticationPrincipal Long userId,
+            @RequestParam(required = false) UUID guestId) {
+        return ApiResponse.success(eventService.getEventMap(eventId, userId, guestId));
     }
 
     @Operation(summary = "대중교통 선택 API", description = "본인의 대중교통, 자가용 선택 여부를 설정합니다")

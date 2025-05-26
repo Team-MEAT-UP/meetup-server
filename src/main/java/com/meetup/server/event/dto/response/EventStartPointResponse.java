@@ -15,6 +15,9 @@ public record EventStartPointResponse(
         @Schema(description = "출발지 ID", example = "01968fe2-5277-712a-ad3c-98f29c2782e1")
         UUID startPointId,
 
+        @Schema(description = "비회원 ID", example = "01968fe2-5277-712a-ad3c-98f29c2782e1")
+        UUID guestId,
+
         @Schema(description = "지번주소", example = "땡수팟")
         String username
 ) {
@@ -22,6 +25,7 @@ public record EventStartPointResponse(
         return EventStartPointResponse.builder()
                 .eventId(event.getEventId())
                 .startPointId(startPoint.getStartPointId())
+                .guestId(startPoint.getGuestId())
                 .username(username)
                 .build();
     }

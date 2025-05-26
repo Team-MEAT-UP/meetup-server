@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,12 +39,14 @@ class StartPointServiceTest extends IntegrationTestContainer {
     private Event event;
     private StartPointRequest startPointRequest;
     private User user;
+    private UUID guestId;
 
     @BeforeEach
     void setUp() {
         event = eventRepository.save(EventFixture.getEvent());
         startPointRequest = StartPointFixture.getStartPointRequest();
         user = userRepository.save(UserFixture.getUser());
+        guestId = UUID.randomUUID();
     }
 
     @Test
@@ -51,7 +54,7 @@ class StartPointServiceTest extends IntegrationTestContainer {
         EventStartPointResponse eventStartPointResponse = startPointService.createStartPoint(
                 event.getEventId(),
                 null,
-                startPointRequest
+                guestId, startPointRequest
         );
 
         assertThat(event.getEventId()).isEqualTo(eventStartPointResponse.eventId());
@@ -59,7 +62,8 @@ class StartPointServiceTest extends IntegrationTestContainer {
         Optional<StartPoint> optionalStartPoint = startPointRepository.findById(eventStartPointResponse.startPointId());
         assertThat(optionalStartPoint).isPresent();
         assertThat(optionalStartPoint.get().getStartPointId()).isEqualTo(eventStartPointResponse.startPointId());
-        assertThat(optionalStartPoint.get().getUser()).isEqualTo(null);
+        assertThat(optionalStartPoint.get().getUser()).isNull();
+        assertThat(optionalStartPoint.get().getGuestId()).isEqualTo(guestId);
     }
 
     @Transactional
@@ -68,7 +72,7 @@ class StartPointServiceTest extends IntegrationTestContainer {
         EventStartPointResponse eventStartPointResponse = startPointService.createStartPoint(
                 event.getEventId(),
                 user.getUserId(),
-                startPointRequest
+                null, startPointRequest
         );
 
         assertThat(event.getEventId()).isEqualTo(eventStartPointResponse.eventId());
@@ -77,5 +81,6 @@ class StartPointServiceTest extends IntegrationTestContainer {
         assertThat(optionalStartPoint).isPresent();
         assertThat(optionalStartPoint.get().getStartPointId()).isEqualTo(eventStartPointResponse.startPointId());
         assertThat(optionalStartPoint.get().getUser()).isEqualTo(user);
+        assertThat(optionalStartPoint.get().getGuestId()).isNull();
     }
 }

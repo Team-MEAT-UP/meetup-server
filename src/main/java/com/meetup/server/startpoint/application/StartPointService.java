@@ -9,8 +9,6 @@ import com.meetup.server.startpoint.dto.request.StartPointRequest;
 import com.meetup.server.startpoint.implement.StartPointProcessor;
 import com.meetup.server.startpoint.implement.StartPointReader;
 import com.meetup.server.startpoint.implement.StartPointSearcher;
-import com.meetup.server.user.domain.User;
-import com.meetup.server.user.implement.UserReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -30,7 +27,6 @@ public class StartPointService {
     private final StartPointProcessor startPointProcessor;
     private final StartPointSearcher startPointSearcher;
     private final EventReader eventReader;
-    private final UserReader userReader;
 
     public KakaoLocalResponse searchStartPoint(String textQuery) {
         return startPointSearcher.search(textQuery);
@@ -38,14 +34,12 @@ public class StartPointService {
 
     @Transactional
     @CacheEvict(value = "routeDetails", key = "#eventId")
-    public EventStartPointResponse createStartPoint(UUID eventId, Long userId, StartPointRequest startPointRequest) {
+    public EventStartPointResponse createStartPoint(UUID eventId, Long userId, UUID guestId, StartPointRequest startPointRequest) {
         Event event = eventReader.read(eventId);
 
-        Optional<User> optionalUser = userReader.readUserIfExists(userId);
         List<StartPoint> startPointList = startPointReader.readAll(event);
-
         if (userId != null && validateAlreadyHasStartPoint(userId, startPointList)) {
-            StartPoint startPoint = startPointProcessor.save(
+            StartPoint startPoint = startPointProcessor.saveByGuest(
                     event,
                     null,
                     startPointRequest
@@ -53,11 +47,7 @@ public class StartPointService {
             return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
         }
 
-        StartPoint startPoint = startPointProcessor.save(
-                event,
-                optionalUser.orElse(null),
-                startPointRequest
-        );
+        StartPoint startPoint = startPointProcessor.save(event, userId, guestId, startPointRequest);
         return EventStartPointResponse.of(event, startPoint, startPointRequest.username());
     }
 

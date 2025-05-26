@@ -25,12 +25,15 @@ public class RouteResponse {
     private Boolean isTransit;  // true: 대중교통, false: 자동차
     private Boolean isMe;
     private UUID id;
+    private Long userId;
+    private UUID guestId;
     private String nickname;
     private String profileImage;
     private String startName;  // 출발지 주소
     private double startLongitude;  // 실제 출발지 경도(:longitude)
     private double startLatitude;  // 실제 출발지 위도(:latitude)
     private List<TransitRouteResponse> transitRoute;
+    private DrivingInfoResponse drivingInfo;
     private List<DrivingRouteResponse> drivingRoute;
     private int totalTime;
     private int transitTime;
@@ -42,18 +45,19 @@ public class RouteResponse {
                                    KakaoMobilityResponse drivingResponse,
                                    int transitTime,
                                    int driveTime) {
-
-
         return RouteResponse.builder()
                 .isTransit(startPoint.isTransit())
                 .isMe(false)
                 .id(startPoint.getStartPointId())
+                .userId(startPoint.getIsUser() ? user.getUserId() : null)
+                .guestId(startPoint.getGuestId())
                 .nickname(startPoint.getIsUser() ? user.getNickname() : startPoint.getNonUserName())
                 .profileImage(startPoint.getIsUser() ? user.getProfileImage() : null)
                 .startName(convertStartPointName(startPoint.getAddress().getAddress()))
                 .startLongitude(startPoint.getLocation().getRoadLongitude())
                 .startLatitude(startPoint.getLocation().getRoadLatitude())
                 .transitRoute(TransitRouteResponse.from(transitResponse))
+                .drivingInfo(DrivingInfoResponse.from(drivingResponse))
                 .drivingRoute(DrivingRouteResponse.from(drivingResponse))
                 .totalTime(startPoint.isTransit() ? transitTime : driveTime)
                 .transitTime(transitTime)

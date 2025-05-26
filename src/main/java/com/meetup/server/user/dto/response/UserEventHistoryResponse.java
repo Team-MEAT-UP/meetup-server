@@ -3,6 +3,7 @@ package com.meetup.server.user.dto.response;
 import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.util.TimeUtil;
 import com.meetup.server.place.domain.Place;
+import com.meetup.server.subway.domain.Subway;
 import com.meetup.server.user.domain.User;
 import lombok.Builder;
 
@@ -18,12 +19,15 @@ public record UserEventHistoryResponse(
         int participatedPeopleCount,
         List<String> userProfileImageUrls,
         int eventMadeAgo,
+        int eventHourAgo,
         boolean isReviewed
 ) {
     public static UserEventHistoryResponse of(List<User> userList, Event event, int participatedPeopleCount, boolean isReviewed) {
         return UserEventHistoryResponse.builder()
                 .eventId(event.getEventId())
-                .middlePointName(event.getSubway().getName())
+                .middlePointName(Optional.ofNullable(event.getSubway())
+                        .map(Subway::getName)
+                        .orElse(null))
                 .placeName(Optional.ofNullable(event.getPlace())
                         .map(Place::getName)
                         .orElse(null))
@@ -32,6 +36,7 @@ public record UserEventHistoryResponse(
                         .map(User::getProfileImage)
                         .toList())
                 .eventMadeAgo(TimeUtil.calculateDaysAgo(event.getCreatedAt()))
+                .eventHourAgo(TimeUtil.calculateHoursAgo(event.getCreatedAt()))
                 .isReviewed(isReviewed)
                 .build();
     }
