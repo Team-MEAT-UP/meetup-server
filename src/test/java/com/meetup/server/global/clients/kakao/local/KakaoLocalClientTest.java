@@ -1,17 +1,15 @@
 package com.meetup.server.global.clients.kakao.local;
 
+import com.meetup.server.support.IntegrationTestContainer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ActiveProfiles("h2")
-@SpringBootTest
-class KakaoLocalClientTest {
+@Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
+class KakaoLocalClientTest extends IntegrationTestContainer {
 
     @Autowired
     private KakaoLocalCategoryClient kakaoLocalCategoryClient;
@@ -19,7 +17,6 @@ class KakaoLocalClientTest {
     @Autowired
     private KakaoLocalKeywordClient kakaoLocalKeywordClient;
 
-    @Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
     @Test
     void 카카오_카테고리_조회에_성공한다() {
         // given
@@ -36,7 +33,6 @@ class KakaoLocalClientTest {
         assertFalse(response.getKakaoSearchResponses().isEmpty());
     }
 
-    @Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
     @Test
     void 카카오_키워드_조회에_성공한다() {
         // given

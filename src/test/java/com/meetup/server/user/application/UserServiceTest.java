@@ -2,20 +2,17 @@ package com.meetup.server.user.application;
 
 
 import com.meetup.server.fixture.UserFixture;
+import com.meetup.server.support.IntegrationTestContainer;
 import com.meetup.server.user.domain.User;
 import com.meetup.server.user.dto.response.UserProfileInfoResponse;
 import com.meetup.server.user.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("h2")
-@SpringBootTest
-class UserServiceTest {
+class UserServiceTest extends IntegrationTestContainer {
 
     @Autowired
     private UserRepository userRepository;

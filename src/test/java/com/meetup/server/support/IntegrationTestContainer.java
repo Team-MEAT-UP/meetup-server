@@ -8,7 +8,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@ActiveProfiles("postgres")
+@ActiveProfiles("test")
 @Testcontainers
 @SpringBootTest
 public abstract class IntegrationTestContainer {
