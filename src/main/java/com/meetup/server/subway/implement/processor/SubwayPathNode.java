@@ -5,6 +5,7 @@ import java.util.List;
 public record SubwayPathNode(
         int subwayId,
         int totalTime,
-        List<Integer> subwayIds
+        List<Integer> subwayIds,
+        int transferCount
 ) {
 }
