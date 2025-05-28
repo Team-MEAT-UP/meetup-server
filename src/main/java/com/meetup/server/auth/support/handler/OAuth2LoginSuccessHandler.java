@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtTokenProvider tokenProvider;
     private final CookieUtil cookieUtil;
+
+    @Value("${app.oauth2.successRedirectUri}")
+    private String successRedirectUri;
 
     @Override
     public void onAuthenticationSuccess(
@@ -40,7 +44,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     private String createRedirectUrlWithTokens(HttpServletRequest request) {
-        log.info("[Redriect URI] - {}", createRedirectUrl(request));
+        log.info("[Redirect URI] - {}", createRedirectUrl(request));
         return UriComponentsBuilder.fromUriString(createRedirectUrl(request))
                 .build()
                 .toUriString();
@@ -48,29 +52,30 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private String createRedirectUrl(HttpServletRequest request) {
         String state = request.getParameter("state");
-        String decodedState = java.net.URLDecoder.decode(state, java.nio.charset.StandardCharsets.UTF_8);
-
         String to = null;
         String eventId = null;
 
-        for (String param : decodedState.split("&")) {
-            String[] keyValue = param.split("=", 2);
-            if (keyValue.length == 2) {
-                if ("to".equals(keyValue[0])) {
-                    to = keyValue[1];
-                } else if ("eventId".equals(keyValue[0])) {
-                    eventId = keyValue[1];
+        if (state != null && !state.isBlank()) {
+            String decodedState = java.net.URLDecoder.decode(state, java.nio.charset.StandardCharsets.UTF_8);
+
+            for (String param : decodedState.split("&")) {
+                String[] keyValue = param.split("=", 2);
+                if (keyValue.length == 2) {
+                    if ("to".equals(keyValue[0])) {
+                        to = keyValue[1];
+                    } else if ("eventId".equals(keyValue[0])) {
+                        eventId = keyValue[1];
+                    }
                 }
             }
         }
 
-        if (to == null) {
-            to = "http://localhost:5173/history"; // 원하는 fallback URL
-        }
+        String redirectBase = successRedirectUri + "/oauth/kakao/callback";
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(redirectBase);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(to);
 
-        if (eventId != null) {
+        if (eventId != null && !eventId.isBlank()) {
+            uriBuilder.queryParam("to", to);
             uriBuilder.queryParam("eventId", eventId);
         }
 
