@@ -14,8 +14,8 @@ public class CookieUtil {
 
     private final CookieProperties cookieProperties;
 
-    private void setCommonCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
-        ResponseCookie cookie = ResponseCookie.from(cookieName, cookieValue)
+    private void setCommonCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(cookieProperties.httpOnly())
                 .secure(cookieProperties.secure())
                 .path("/")

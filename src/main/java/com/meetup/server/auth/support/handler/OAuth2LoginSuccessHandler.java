@@ -20,11 +20,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Value("${app.oauth2.successRedirectUri}")
-    private String successRedirectUri;
-
     private final JwtTokenProvider tokenProvider;
     private final CookieUtil cookieUtil;
+
+    @Value("${app.oauth2.successRedirectUri}")
+    private String successRedirectUri;
 
     @Override
     public void onAuthenticationSuccess(
@@ -39,13 +39,46 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         cookieUtil.setAccessTokenCookie(response, accessToken);
         cookieUtil.setRefreshTokenCookie(response, refreshToken);
 
-        String targetUrl = createRedirectUrlWithTokens();
+        String targetUrl = createRedirectUrlWithTokens(request);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    private String createRedirectUrlWithTokens() {
-        return UriComponentsBuilder.fromUriString(successRedirectUri)
+    private String createRedirectUrlWithTokens(HttpServletRequest request) {
+        log.info("[Redirect URI] - {}", createRedirectUrl(request));
+        return UriComponentsBuilder.fromUriString(createRedirectUrl(request))
                 .build()
                 .toUriString();
+    }
+
+    private String createRedirectUrl(HttpServletRequest request) {
+        String state = request.getParameter("state");
+        String to = null;
+        String eventId = null;
+
+        if (state != null && !state.isBlank()) {
+            String decodedState = java.net.URLDecoder.decode(state, java.nio.charset.StandardCharsets.UTF_8);
+
+            for (String param : decodedState.split("&")) {
+                String[] keyValue = param.split("=", 2);
+                if (keyValue.length == 2) {
+                    if ("to".equals(keyValue[0])) {
+                        to = keyValue[1];
+                    } else if ("eventId".equals(keyValue[0])) {
+                        eventId = keyValue[1];
+                    }
+                }
+            }
+        }
+
+        String redirectBase = successRedirectUri + "/oauth/kakao/callback";
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(redirectBase);
+
+
+        if (eventId != null && !eventId.isBlank()) {
+            uriBuilder.queryParam("to", to);
+            uriBuilder.queryParam("eventId", eventId);
+        }
+
+        return uriBuilder.build().toUriString();
     }
 }
