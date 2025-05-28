@@ -6,17 +6,15 @@ import com.meetup.server.global.clients.google.place.photo.GooglePhotoResponse;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextClient;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextRequest;
 import com.meetup.server.global.clients.google.place.search.GoogleSearchTextResponse;
+import com.meetup.server.support.IntegrationTestContainer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ActiveProfiles("h2")
-@SpringBootTest
-class GooglePlaceClientTest {
+@Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
+class GooglePlaceClientTest extends IntegrationTestContainer {
 
     @Autowired
     private GoogleSearchTextClient googleSearchTextClient;
@@ -24,7 +22,6 @@ class GooglePlaceClientTest {
     @Autowired
     private GooglePhotoClient googlePhotoClient;
 
-    @Disabled("API 호출 시, 과금 가능성으로 인한 테스트 비활성화")
     @Test
     void 구글_텍스트_검색_요청에_성공하고_장소_사진_조회에_성공한다() {
         GoogleSearchTextRequest request = GoogleSearchTextRequest.from("스타벅스 방배점");

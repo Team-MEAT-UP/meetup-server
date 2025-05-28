@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoordinateUtil {
 
+    private static final double EARTH_RADIUS_KM = 6371.0;
+
     public static Point createPoint(double longitude, double latitude) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Coordinate coordinate = new Coordinate(longitude, latitude);
@@ -39,5 +41,20 @@ public class CoordinateUtil {
         double avgLatitude = sumLatitude / points.size();
 
         return createPoint(avgLongitude, avgLatitude);
+    }
+
+    public static double calculateDistance(Point start, Point end) {
+        double startLongitude = Math.toRadians(start.getX());
+        double startLatitude = Math.toRadians(start.getY());
+        double endLongitude = Math.toRadians(end.getX());
+        double endLatitude = Math.toRadians(end.getY());
+
+        double deltaLongitude = endLongitude - startLongitude;
+        double deltaLatitude = endLatitude - startLatitude;
+
+        double a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
+                Math.cos(startLatitude) * Math.cos(endLatitude) * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_KM * c;
     }
 }
