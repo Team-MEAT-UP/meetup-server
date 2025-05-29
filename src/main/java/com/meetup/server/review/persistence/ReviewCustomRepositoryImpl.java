@@ -1,6 +1,7 @@
 package com.meetup.server.review.persistence;
 
 import com.meetup.server.startpoint.persistence.projection.EventHistory;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,23 +23,29 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .filter(projection -> projection.placeId() != null)
                 .collect(Collectors.toMap(EventHistory::eventId, EventHistory::placeId));
 
-        List<UUID> placeIds = new ArrayList<>(new HashSet<>(placeOfEventMap.values()));
+        List<Tuple> reviewTuples = jpaQueryFactory
+                .select(review.event.eventId, review.place.id)
+                .from(review)
+                .where(
+                        review.place.id.in(placeOfEventMap.values()),
+                        review.user.userId.eq(userId),
+                        review.event.eventId.in(placeOfEventMap.keySet())
+                )
+                .fetch();
 
-        Set<UUID> reviewedAllPlaceIds = new HashSet<>(
-                jpaQueryFactory
-                        .select(review.place.id)
-                        .from(review)
-                        .where(
-                                review.place.id.in(placeIds),
-                                review.user.userId.eq(userId)
-                        )
-                        .fetch()
-        );
+        Set<UUID> reviewedEventIds = reviewTuples.stream()
+                .filter(tuple -> {
+                    UUID eventId = tuple.get(review.event.eventId);
+                    UUID placeId = tuple.get(review.place.id);
+                    return placeId != null && placeId.equals(placeOfEventMap.get(eventId));
+                })
+                .map(tuple -> tuple.get(review.event.eventId))
+                .collect(Collectors.toSet());
 
-        return placeOfEventMap.entrySet().stream()
+        return placeOfEventMap.keySet().stream()
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> reviewedAllPlaceIds.contains(entry.getValue())
+                        eventId -> eventId,
+                        reviewedEventIds::contains
                 ));
     }
 }

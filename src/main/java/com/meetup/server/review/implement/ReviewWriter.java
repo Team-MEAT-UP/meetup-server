@@ -1,5 +1,6 @@
 package com.meetup.server.review.implement;
 
+import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.util.CoordinateUtil;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.review.domain.NonVisitedReview;
@@ -23,10 +24,10 @@ public class ReviewWriter {
     private final ReviewRepository reviewRepository;
     private final ReviewValidator reviewValidator;
 
-    public void saveVisitedReview(Place place, User user, VisitedReviewRequest visitedReviewRequest) {
-        reviewValidator.validateReviewIsAlreadyWritten(place, user);
+    public void saveVisitedReview(Event event, Place place, User user, VisitedReviewRequest visitedReviewRequest) {
+        reviewValidator.validateReviewIsAlreadyWritten(event, place, user);
 
-        Review review = createReview(place, user, true);
+        Review review = createReview(event, place, user, true);
 
         VisitedReview visitedReview = VisitedReview.builder()
                 .review(review)
@@ -39,10 +40,10 @@ public class ReviewWriter {
         reviewRepository.save(review);
     }
 
-    public void saveNonVisitedReview(Place place, User user, NonVisitedReviewRequest nonVisitedReviewRequest) {
-        reviewValidator.validateReviewIsAlreadyWritten(place, user);
+    public void saveNonVisitedReview(Event event, Place place, User user, NonVisitedReviewRequest nonVisitedReviewRequest) {
+        reviewValidator.validateReviewIsAlreadyWritten(event, place, user);
 
-        Review review = createReview(place, user, false);
+        Review review = createReview(event, place, user, false);
 
         NonVisitedReview.NonVisitedReviewBuilder nonVisitedReviewBuilder = NonVisitedReview.builder()
                 .review(review)
@@ -66,8 +67,9 @@ public class ReviewWriter {
         reviewRepository.save(review);
     }
 
-    private Review createReview(Place place, User user, boolean isVisited) {
+    private Review createReview(Event event, Place place, User user, boolean isVisited) {
         return Review.builder()
+                .event(event)
                 .place(place)
                 .user(user)
                 .isVisited(isVisited)

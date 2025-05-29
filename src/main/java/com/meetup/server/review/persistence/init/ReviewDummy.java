@@ -1,5 +1,7 @@
 package com.meetup.server.review.persistence.init;
 
+import com.meetup.server.event.domain.Event;
+import com.meetup.server.event.persistence.EventRepository;
 import com.meetup.server.global.support.DummyDataInit;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.place.persistence.PlaceRepository;
@@ -30,6 +32,7 @@ public class ReviewDummy implements ApplicationRunner {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -40,20 +43,25 @@ public class ReviewDummy implements ApplicationRunner {
 
             UUID placeId = UUID.fromString("0196e4a6-e812-74a7-9525-7ae7c5345490");
             Place place = placeRepository.findById(placeId).orElseThrow();
+            UUID eventId = UUID.fromString("01971cac-d384-734e-ad79-ef8568129841");
+            Event event = eventRepository.findById(eventId).orElseThrow();
 
             Review DUMMY_REVIEW_1 = Review.builder()
+                    .event(event)
                     .place(place)
                     .user(userRepository.findById(1L).orElseThrow())
                     .isVisited(true)
                     .build();
 
             Review DUMMY_REVIEW_2 = Review.builder()
+                    .event(event)
                     .place(place)
                     .user(userRepository.findById(2L).orElseThrow())
                     .isVisited(true)
                     .build();
 
             Review DUMMY_REVIEW_3 = Review.builder()
+                    .event(event)
                     .place(place)
                     .user(userRepository.findById(4L).orElseThrow())
                     .isVisited(true)

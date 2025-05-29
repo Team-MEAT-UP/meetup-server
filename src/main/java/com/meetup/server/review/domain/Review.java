@@ -1,5 +1,6 @@
 package com.meetup.server.review.domain;
 
+import com.meetup.server.event.domain.Event;
 import com.meetup.server.global.domain.BaseEntity;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.user.domain.User;
@@ -24,6 +25,10 @@ public class Review extends BaseEntity {
     private Place place;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -37,12 +42,13 @@ public class Review extends BaseEntity {
     private NonVisitedReview nonVisitedReview;
 
     @Builder
-    public Review(Place place, User user, boolean isVisited, VisitedReview visitedReview, NonVisitedReview nonVisitedReview) {
+    public Review(Place place, User user, boolean isVisited, VisitedReview visitedReview, NonVisitedReview nonVisitedReview, Event event) {
         this.place = place;
         this.user = user;
         this.isVisited = isVisited;
         this.visitedReview = visitedReview;
         this.nonVisitedReview = nonVisitedReview;
+        this.event = event;
     }
 
     public boolean isWrittenBy(Long userId) {

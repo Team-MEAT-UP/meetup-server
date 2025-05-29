@@ -1,5 +1,6 @@
 package com.meetup.server.review.persistence;
 
+import com.meetup.server.event.domain.Event;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.review.domain.Review;
 import com.meetup.server.user.domain.User;
@@ -11,5 +12,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewCus
 
     List<Review> findAllByPlace(Place place);
 
-    boolean existsByPlaceAndUser(Place place, User user);
+    boolean existsByEventAndPlaceAndUser(Event event, Place place, User user);
 }
