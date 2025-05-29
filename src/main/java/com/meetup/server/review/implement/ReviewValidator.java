@@ -1,5 +1,6 @@
 package com.meetup.server.review.implement;
 
+import com.meetup.server.event.domain.Event;
 import com.meetup.server.place.domain.Place;
 import com.meetup.server.review.exception.ReviewErrorType;
 import com.meetup.server.review.exception.ReviewException;
@@ -14,8 +15,8 @@ public class ReviewValidator {
 
     private final ReviewRepository reviewRepository;
 
-    public void validateReviewIsAlreadyWritten(Place place, User user) {
-        if (reviewRepository.existsByPlaceAndUser(place, user)) {
+    public void validateReviewIsAlreadyWritten(Event event, Place place, User user) {
+        if (reviewRepository.existsByEventAndPlaceAndUser(event, place, user)) {
             throw new ReviewException(ReviewErrorType.ALREADY_REVIEW_EXISTS);
         }
     }

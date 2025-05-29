@@ -37,7 +37,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
         String to = request.getParameter("to");
         String eventId = request.getParameter("eventId");
 
-        if (to == null || eventId == null) {
+        if (to == null && eventId == null) {
             return req;
         }
 

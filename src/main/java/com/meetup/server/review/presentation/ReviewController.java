@@ -26,9 +26,10 @@ public class ReviewController {
     public ApiResponse<?> createVisitedReview(
             @PathVariable("placeId") UUID placeId,
             @AuthenticationPrincipal Long userId,
+            @RequestParam(value = "eventId") UUID eventId,
             @Valid @RequestBody VisitedReviewRequest visitedReviewRequest) {
 
-        reviewService.createVisitedReview(placeId, userId, visitedReviewRequest);
+        reviewService.createVisitedReview(eventId, placeId, userId, visitedReviewRequest);
         return ApiResponse.success();
     }
 
@@ -37,9 +38,10 @@ public class ReviewController {
     public ApiResponse<?> createNonVisitedReview(
             @PathVariable("placeId") UUID placeId,
             @AuthenticationPrincipal Long userId,
+            @RequestParam(value = "eventId") UUID eventId,
             @Valid @RequestBody NonVisitedReviewRequest nonVisitedReviewRequest) {
 
-        reviewService.createNonVisitedReview(placeId, userId, nonVisitedReviewRequest);
+        reviewService.createNonVisitedReview(eventId, placeId, userId, nonVisitedReviewRequest);
         return ApiResponse.success();
     }
 }
