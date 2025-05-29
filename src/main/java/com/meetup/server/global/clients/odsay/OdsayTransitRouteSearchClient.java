@@ -1,5 +1,6 @@
 package com.meetup.server.global.clients.odsay;
 
+import com.meetup.server.global.clients.util.LimitRequestPerDay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,6 +16,10 @@ public class OdsayTransitRouteSearchClient {
     private final WebClient webClient;
     private final OdsayProperties odsayProperties;
 
+    @LimitRequestPerDay(
+            key = "odsay-transit",
+            count = 1000
+    )
     public OdsayTransitRouteSearchResponse sendRequest(OdsayTransitRouteSearchRequest request) {
         URI uri = UriComponentsBuilder.fromUriString(odsayProperties.baseUrl() + "/searchPubTransPathT")
                 .queryParam("apiKey", odsayProperties.secretKey())
