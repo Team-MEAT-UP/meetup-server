@@ -1,5 +1,6 @@
 package com.meetup.server.global.clients.kakao.mobility;
 
+import com.meetup.server.global.clients.util.LimitRequestPerDay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,6 +13,10 @@ public class KakaoMobilityClient {
 
     private final WebClient kakaoMobilityWebClient;
 
+    @LimitRequestPerDay(
+            key = "kakao-mobility",
+            count = 10000
+    )
     public KakaoMobilityResponse sendRequest(KakaoMobilityRequest request) {
         return kakaoMobilityWebClient
                 .get()
