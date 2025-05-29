@@ -9,6 +9,9 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,6 +21,12 @@ import java.time.Duration;
 @Slf4j
 @Configuration
 public class RedisConfig {
+
+    @Value("${spring.data.redis.port}")
+    private int port;
+
+    @Value("${spring.data.redis.host}")
+    private String host;
 
     @Value("${spring.data.redis.time-to-live}")
     private long timeToLive;
@@ -35,5 +44,23 @@ public class RedisConfig {
                 RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),
                 redisCacheConfiguration
         );
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisRateLimitTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisRateLimitConnectionFactory());
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisConnectionFactory redisRateLimitConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+        lettuceConnectionFactory.afterPropertiesSet();
+        return lettuceConnectionFactory;
     }
 }
