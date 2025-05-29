@@ -23,15 +23,22 @@ public class RedisRateLimiter implements RateLimiter {
 
     @Override
     public void tryApiCall(LimitRequestPerDay limitRequestPerDay) {
+        String key = limitRequestPerDay.key();
+        int limitCount = limitRequestPerDay.count();
+
         Long result = redisRateLimitTemplate.execute(
                 redisRateLimitScript,
-                Collections.singletonList(limitRequestPerDay.key()),
+                Collections.singletonList(key),
                 String.valueOf(getTTL().toSeconds()),
-                String.valueOf(limitRequestPerDay.count())
+                String.valueOf(limitCount)
         );
 
         if (result == -1) {
             throw new ClientException(ClientErrorType.EXCEED_RATE_LIMIT_PER_DAY);
+        }
+
+        if (result >= limitCount - 50) {
+            log.warn("[RedisRateLimiter] Rate limit near threshold ({} / {}) for key: {}", result, limitCount, key);
         }
     }
 
