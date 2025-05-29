@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 @Slf4j
 @Aspect
@@ -22,14 +21,9 @@ public class RateLimiterAspect {
         this.rateLimiter = rateLimiter;
     }
 
-    @Around("execution(* com.meetup.server.global.clients.odsay.OdsayTransitRouteSearchClient.*(..)) || " +
-            "execution(* com.meetup.server.global.clients.kakao.mobility.KakaoMobilityClient.*(..))")
-    public Object findLimitRequestPerDayAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(com.meetup.server.global.clients.util.LimitRequestPerDay)")
+    public Object applyRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
         LimitRequestPerDay limitRequestPerDay = getLimitRequestPerDayAnnotationFromMethod(joinPoint);
-        if (Objects.isNull(limitRequestPerDay)) {
-            return joinPoint.proceed();
-        }
-
         rateLimiter.tryApiCall(limitRequestPerDay);
         return joinPoint.proceed();
     }
